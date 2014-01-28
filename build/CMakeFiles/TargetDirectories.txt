@@ -1,0 +1,4 @@
+/home/eric/workspace/chips/build/src/CMakeFiles/ObjLib.dir
+/home/eric/workspace/chips/build/src/CMakeFiles/TestObj.dir
+/home/eric/workspace/chips/build/src/CMakeFiles/chips.dir
+/home/eric/workspace/chips/build/src/CMakeFiles/chips_test.dir
