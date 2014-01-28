@@ -7,6 +7,7 @@
 
 ## History
  * Released in 1989 For Atari Lynx
+ * Designed by Chuck Sommervill for Epxy
  * Other Platforms: DOS, Windows 95, Commodore 64, and more...
  * Chucks Challenge now available for Android!
  
