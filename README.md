@@ -1,4 +1,6 @@
-# Chips Challenge
+# Codename Chips 
+
+Influenced by Chips Challenge
 
 
 
@@ -25,7 +27,7 @@
  * SDL2
  
 ## Why it's Retro
- * First released on Atari Lynx
+ * Original First released on Atari Lynx 
  * Simple 2D graphical style
- * Because I'm sentimental about it
+ * Because I'm sentimental about the original
  * Limited color and sound
