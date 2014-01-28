@@ -3,7 +3,7 @@
 <img src="http://upload.wikimedia.org/wikipedia/en/f/f7/Chip%27s_Challenge.png"
 	 alt="Chips" height="397" width="520"/>
 
-<link rel="Chips Challenge on Wikipedia" href="http://en.wikipedia.org/wiki/Chip's_Challenge"/>
+<a href="http://en.wikipedia.org/wiki/Chip's_Challenge">Chips Challenge on Wikipedia</a>
 
 ## History
  * Released in 1989 For Atari Lynx
