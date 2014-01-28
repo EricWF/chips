@@ -8,7 +8,7 @@
 set(LIBRARY_FLAGS "")
 set(UNIT_TEST_FLAGS "")
 
-# Probably
+# Probably uneeded
 # add_flags(LIBRARY_FLAGS -fPIC)
 
 if (CONFIG_ALL_WARNINGS)
@@ -50,6 +50,7 @@ set(LIBRARY_SRC "")
 set(UNIT_TEST_SRC "")
 
 # compile into objects
+add_src()
 
 add_library(ObjLib OBJECT ${LIBRARY_SRC})
 set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
@@ -59,17 +60,10 @@ set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
 
 find_package( Threads REQUIRED )
 
-add_library(elib SHARED $<TARGET_OBJECTS:ObjLib>)
-add_library(elib_static STATIC $<TARGET_OBJECTS:ObjLib>)  
+add_executable(chips $<TARGET_OBJECTS:ObjLib>)
 
-target_link_libraries(elib ${CMAKE_THREAD_LIBS_INIT} 
-                        ${STDLIB_LINK})
-                        
-target_link_libraries(elib_static ${CMAKE_THREAD_LIBS_INIT} ${STDLIB_LINK})
-
-install(TARGETS elib LIBRARY DESTINATION lib)
-install(TARGETS elib_static ARCHIVE DESTINATION lib)
-install(DIRECTORY ${headerDir} DESTINATION include)
+target_link_libraries(chips ${CMAKE_THREAD_LIBS_INIT} 
+                        	${STDLIB_LINK})
   
 
 
@@ -82,7 +76,16 @@ if(CONFIG_UNIT_TESTS)
 	set(Boost_USE_STATIC_RUNTIME OFF)
 	find_package(Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 	
+	include_directories(${Boost_INCLUDE_DIRS})
+	add_library(TestObj OBJECT ${UNIT_TEST_SRC} unit_test_main.cpp)
 	
+  	add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
+
+
+ 	target_link_libraries(chips_test 
+ 		${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
+  		)
+                      	
 endif()
 
 
