@@ -1,6 +1,8 @@
-# Codename Chips 
+# Chips 
 
 Influenced by Chips Challenge
+
+
 
 <img src="http://upload.wikimedia.org/wikipedia/en/f/f7/Chip%27s_Challenge.png"
 	 alt="Chips" height="397" width="520"/>
@@ -28,4 +30,4 @@ Influenced by Chips Challenge
  * Original First released on Atari Lynx 
  * Simple 2D graphical style
  * Because I'm sentimental about the original
-
+ * Limited color and sound
