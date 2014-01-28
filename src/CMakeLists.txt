@@ -50,7 +50,7 @@ set(LIBRARY_SRC "")
 set(UNIT_TEST_SRC "")
 
 # compile into objects
-add_src()
+include(chips/build.cmake)
 
 add_library(ObjLib OBJECT ${LIBRARY_SRC})
 set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
@@ -60,7 +60,7 @@ set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
 
 find_package( Threads REQUIRED )
 
-add_executable(chips $<TARGET_OBJECTS:ObjLib>)
+add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
 target_link_libraries(chips ${CMAKE_THREAD_LIBS_INIT} 
                         	${STDLIB_LINK})
