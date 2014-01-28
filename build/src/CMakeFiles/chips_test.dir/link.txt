@@ -1,1 +1,0 @@
-/usr/bin/c++     -std=c++11   -Wall -Wextra -pedantic   -fmax-errors=3   -g -fno-omit-frame-pointer  -DDELIB_WARN_ON     CMakeFiles/TestObj.dir/unit_test_main.cpp.o CMakeFiles/ObjLib.dir/unit_test_main.cpp.o CMakeFiles/ObjLib.dir/main.cpp.o  -o chips_test -rdynamic -lpthread -lboost_system -lboost_filesystem -lboost_unit_test_framework 
