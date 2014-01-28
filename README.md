@@ -14,7 +14,7 @@
  * C++
  * SDL2
  
-## Why its retro
+## Why it's Retro
  * First released on Atari Lynx 
  * Simple 2D graphical style
  * Because I'm sentimental about it
