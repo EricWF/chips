@@ -1,4 +1,4 @@
-# Codename Chips 
+# Chips 
 
 Influenced by Chips Challenge
 
