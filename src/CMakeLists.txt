@@ -45,6 +45,10 @@ if (CONFIG_ALL_WARNINGS)
   )
   
 endif()
+include(FindPkgConfig)
+pkg_search_module(SDL2 REQUIRED sdl2)
+include_directories(${SDL2_INCLUDE_DIRS})
+
 
 set(LIBRARY_SRC "")
 set(UNIT_TEST_SRC "")
@@ -62,7 +66,7 @@ find_package( Threads REQUIRED )
 
 add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
-target_link_libraries(chips -lSDL2main ${CMAKE_THREAD_LIBS_INIT} 
+target_link_libraries(chips ${SDL2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} 
                         	${STDLIB_LINK})
   
 
@@ -82,7 +86,7 @@ if(CONFIG_UNIT_TESTS)
   add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
- 	target_link_libraries(chips_test -lSDL2main
+ 	target_link_libraries(chips_test ${SDL2_LIBRARIES}
     ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
    )
    
