@@ -45,9 +45,10 @@ if (CONFIG_ALL_WARNINGS)
   )
   
 endif()
+
+
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
-include_directories(${SDL2_INCLUDE_DIRS})
 
 
 set(LIBRARY_SRC "")
@@ -69,7 +70,7 @@ add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 target_link_libraries(chips ${SDL2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} 
                         	${STDLIB_LINK})
   
-
+message(STATUS "${SDL2_LIBRARIES}")
 
 ################################################################################
 
