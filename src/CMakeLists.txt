@@ -74,18 +74,18 @@ if(CONFIG_UNIT_TESTS)
 	set(Boost_USE_STATIC_LIBS OFF)
 	set(Boost_USE_MULTITHREADED OFF)
 	set(Boost_USE_STATIC_RUNTIME OFF)
-	find_package(Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
+	find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 	
 	include_directories(${Boost_INCLUDE_DIRS})
 	add_library(TestObj OBJECT ${UNIT_TEST_SRC} unit_test_main.cpp)
 	
-  	add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
+  add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
  	target_link_libraries(chips_test -lSDL2main
- 		${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
-  		)
-                      	
+    ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
+   )
+   
 endif()
 
 
