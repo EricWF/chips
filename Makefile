@@ -33,3 +33,13 @@ redep:
 distclean: 
 	@ $(MAKE) --no-print-directory clean
 	@ rm -rf ./build ./bin
+	
+.PHONY: check
+check:
+	@ echo === Building tests ===
+	@ $(MAKE) --no-print-directory -C build
+	@ echo
+	@ echo === Running tests ===
+	@ ./bin/chips_test --log_level=message --report_level=short
+	
+	

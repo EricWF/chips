@@ -62,7 +62,7 @@ find_package( Threads REQUIRED )
 
 add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
-target_link_libraries(chips ${CMAKE_THREAD_LIBS_INIT} 
+target_link_libraries(chips -lSDL2main ${CMAKE_THREAD_LIBS_INIT} 
                         	${STDLIB_LINK})
   
 
@@ -82,7 +82,7 @@ if(CONFIG_UNIT_TESTS)
   	add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
- 	target_link_libraries(chips_test 
+ 	target_link_libraries(chips_test -lSDL2main
  		${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
   		)
                       	
