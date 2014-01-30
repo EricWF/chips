@@ -11,10 +11,10 @@ const int SCREEN_HEIGHT = 480;
 int chips_main(int, char**, char**)
 {
   //The window we'll be rendering to
-  SDL_Window* window = NULL;
+  SDL_Window* window = nullptr;
 	
   //The surface contained by the window
-  SDL_Surface* screenSurface = NULL;
+  SDL_Surface* screenSurface = nullptr;
 
   //Initialize SDL
   if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
