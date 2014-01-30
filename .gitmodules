@@ -1,0 +1,3 @@
+[submodule "elib"]
+	path = elib
+	url = git@code.efcs.ca:ewfiseli/elib.git
