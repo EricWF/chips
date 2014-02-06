@@ -49,6 +49,7 @@ endif()
 
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL REQUIRED sdl)
 
 
 set(LIBRARY_SRC "")
@@ -87,7 +88,7 @@ if(CONFIG_UNIT_TESTS)
   add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
- 	target_link_libraries(chips_test ${SDL2_LIBRARIES}
+ 	target_link_libraries(chips_test ${SDL2_LIBRARIES} ${SDL_LIBRARIES}
     ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
    )
    
