@@ -84,8 +84,8 @@ int chips_main(int, char**, char**){
   }
 	
   //The textures we'll be using
-  SDL_Texture *background = loadTexture("../res/Lesson3/background.png", renderer);
-  SDL_Texture *image = loadTexture("../res/Lesson3/image.png", renderer);
+  SDL_Texture *background = loadTexture("../res/background.png", renderer);
+  SDL_Texture *image = loadTexture("../res/image.png", renderer);
   //Make sure they both loaded ok
   if (background == nullptr || image == nullptr)
     return 4;
@@ -115,7 +115,7 @@ int chips_main(int, char**, char**){
 
   //Update the screen
   SDL_RenderPresent(renderer);
-  SDL_Delay(2000);
+  SDL_Delay(20000);
 
   //Destroy the various items
   SDL_DestroyTexture(background);
