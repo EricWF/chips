@@ -62,13 +62,13 @@ add_library(ObjLib OBJECT ${LIBRARY_SRC})
 set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
 
 ################################################################################
-  #create static & shared libraries
+#create static & shared libraries
 
 find_package( Threads REQUIRED )
 
 add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
-target_link_libraries(chips ${SDL2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} 
+target_link_libraries(chips SDL2_image ${SDL2_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT} 
                         	${STDLIB_LINK})
   
 message(STATUS "${SDL2_LIBRARIES}")
