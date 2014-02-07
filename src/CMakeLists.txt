@@ -88,7 +88,7 @@ if(CONFIG_UNIT_TESTS)
   add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
- 	target_link_libraries(chips_test ${SDL2_LIBRARIES} ${SDL_LIBRARIES}
+ 	target_link_libraries(chips_test SDL2_image ${SDL2_LIBRARIES} ${SDL_LIBRARIES}
     ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES}
    )
    
