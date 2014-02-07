@@ -49,7 +49,7 @@ endif()
 
 include(FindPkgConfig)
 pkg_search_module(SDL2 REQUIRED sdl2)
-pkg_search_module(SDL REQUIRED sdl)
+#include_directories(${SDL2_INCLUDE_DIRS})
 
 
 set(LIBRARY_SRC "")
