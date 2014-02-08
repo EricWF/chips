@@ -18,10 +18,11 @@ namespace chips
 		textureManager & operator=(textureManager &) = delete;
 
 		bool load(std::string, const std::string, SDL_Renderer*);
-		void draw(std::string, int, int, int, int,
+		void draw(const std::string, const int, const int, const int, const int,
 				  SDL_Renderer*, SDL_RendererFlip flip = SDL_FLIP_NONE);
-		void drawFrame(std::string, int, int, int, int, int, int,
-					   SDL_Renderer*, SDL_RendererFlip flip = SDL_FLIP_NONE);
+		void drawFrame(const std::string, const int, const int, const int,
+					   const int, const int, const int, SDL_Renderer*,
+					   SDL_RendererFlip flip = SDL_FLIP_NONE);
 
 	private:
 		std::map<std::string, SDL_Texture*> _textureMap;

@@ -28,7 +28,8 @@ namespace chips
 
 	}
 
-	void textureManager::draw(std:: string id, int x, int y, int width, int height,
+	void textureManager::draw(const std:: string id, const int x, const int y,
+							  const int width, const int height,
 							  SDL_Renderer* renderer, SDL_RendererFlip flip)
 	{
 		SDL_Rect srcRect;
@@ -45,8 +46,10 @@ namespace chips
 
 	}
 
-	void textureManager::drawFrame(std::string id, int x, int y, int width, int height, int currRow,
-								   int currFrame, SDL_Renderer *renderer, SDL_RendererFlip flip)
+	void textureManager::drawFrame(const std::string id, const int x, const int y,
+								   const int width, const int height, const int currRow,
+								   const int currFrame, SDL_Renderer *renderer,
+								   SDL_RendererFlip flip)
 	{
 		SDL_Rect srcRect;
 		SDL_Rect destRect;
