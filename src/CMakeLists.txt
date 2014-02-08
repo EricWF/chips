@@ -69,8 +69,6 @@ add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 target_link_libraries(chips ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}
                             ${CMAKE_THREAD_LIBS_INIT} ${STDLIB_LINK})
   
-message(STATUS "${SDL2_LIBRARIES}")
-
 ################################################################################
 
 if(CONFIG_UNIT_TESTS) 
