@@ -33,12 +33,13 @@ namespace chips
 		}
 		// else _renderer
 
-		if(!_tm.load("/Users/carson/dev/chips/res/elephant.png", "asd", _renderer))
+		if(!textureManager::instance()->load("/Users/carson/dev/chips/res/elephant.png",
+											 "asd", _renderer))
 		{
 			printf("Load image failed");
 			return false;
 		}
-    
+		
 		SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 		_running = true;
 
@@ -51,9 +52,11 @@ namespace chips
 	{
 		SDL_RenderClear(_renderer);
 
-		_tm.draw("asd", 0, 0, 132, 80, _renderer);
-		_tm.drawFrame("asd", 100, 100, 132, 80, 1, _currFrame, _renderer);
-		_tm.drawFrame("asd", 200, 200, 132, 80, 1, _currFrame, _renderer);
+		textureManager::instance()->draw("asd", 0, 0, 132, 80, _renderer);
+		textureManager::instance()->drawFrame("asd", 100, 100, 132, 80, 1,
+											  _currFrame, _renderer);
+		textureManager::instance()->drawFrame("asd", 200, 200, 132, 80, 1,
+											  _currFrame, _renderer);
       
 		SDL_RenderPresent(_renderer);
 	}

@@ -31,7 +31,7 @@ namespace chips
 		SDL_Renderer* _renderer{nullptr};
 
 		int _currFrame;
-		textureManager _tm;
+		//		textureManager _tm;
       
 	};
 }                                                           // namespace chips
