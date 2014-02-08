@@ -36,6 +36,8 @@ endif()
 # need C to get the pthreads library 
 project(Chips CXX C)
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/modules")
+
 ################################################################################
 #                       Toolchain config (Post-project)
 ################################################################################
