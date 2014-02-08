@@ -20,8 +20,10 @@ class Game{
   bool _running;
   SDL_Window* _window;
   SDL_Renderer* _renderer;
-
+  SDL_Texture* _texture;
   
+  SDL_Rect _sourceRect;
+  SDL_Rect _destRect;
 
 };
 

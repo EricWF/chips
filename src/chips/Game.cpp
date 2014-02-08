@@ -38,6 +38,18 @@ bool Game::init(const char* title, int xpos, int ypos,
       puts("SDL init failed");
     }
 
+  SDL_Surface* tempSurface = SDL_LoadBMP("../res/turtle.bmp");
+  _texture = SDL_CreateTextureFromSurface(_renderer, tempSurface);
+  SDL_FreeSurface(tempSurface);
+
+  SDL_QueryTexture(_texture, NULL, NULL,
+                   &_sourceRect.w, &_sourceRect.h);
+
+  _destRect.x = _sourceRect.x = 0;
+  _destRect.y = _sourceRect.y = 0;
+  _destRect.h = _sourceRect.h;
+  _destRect.w = _sourceRect.w;
+
   _running = true;
 
   return true;
@@ -47,6 +59,9 @@ bool Game::init(const char* title, int xpos, int ypos,
 void Game::render()
 {
   SDL_RenderClear(_renderer);
+
+  SDL_RenderCopy(_renderer, _texture, &_sourceRect, &_destRect);
+
   SDL_RenderPresent(_renderer);
 }
 
