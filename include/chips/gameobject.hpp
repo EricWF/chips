@@ -1,6 +1,7 @@
 #ifndef CHIPS_GAMEOBJECT_HPP
 #define CHIPS_GAMEOBJECT_HPP
 
+#include "chips/texturemanager.hpp"
 #include <SDL2/SDL.h>
 #include <string>
 
@@ -12,7 +13,7 @@ namespace chips
 		void load(const int, const int, const int,
 				  const int, const std::string);
 		void draw(SDL_Renderer*);
-		void update() {}
+		void update();
 		void clean() {}
 
 	protected:

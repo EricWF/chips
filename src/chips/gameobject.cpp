@@ -17,8 +17,11 @@ namespace chips
 
 	void gameObject::draw(SDL_Renderer *renderer)
 	{
-		
+		textureManager::instance()->drawFrame(_id, _x, _y, _w, _h,_currRow, _currFrame, renderer);
 	}
 
-
+	void gameObject::update()
+	{
+		_x += 1;
+	}
 }

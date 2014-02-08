@@ -2,6 +2,8 @@
 #define CHIPS_GAME_HPP
 
 #include "chips/texturemanager.hpp"
+#include "chips/gameobject.hpp"
+#include "chips/player.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -23,6 +25,9 @@ namespace chips
 		void clean();
 		bool running() const noexcept { return _running; }
 
+		gameObject go;
+		player p;
+		
 	private:
 		bool _running;
 		// TODO these should be released in the destructor

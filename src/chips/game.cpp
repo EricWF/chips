@@ -33,12 +33,16 @@ namespace chips
 		}
 		// else _renderer
 
-		if(!textureManager::instance()->load("/Users/carson/dev/chips/res/elephant.png",
-											 "asd", _renderer))
-		{
-			printf("Load image failed");
-			return false;
-		}
+		 if(!textureManager::instance()->load("/Users/carson/dev/chips/res/elephant.png",
+		 									 "asd", _renderer))
+		 {
+		 	printf("Load image failed");
+		 	return false;
+		 }
+
+		go.load(100, 100, 132, 80, "asd");
+		p.load(300, 300, 132, 80, "asd");
+
 		
 		SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 		_running = true;
@@ -52,12 +56,15 @@ namespace chips
 	{
 		SDL_RenderClear(_renderer);
 
-		textureManager::instance()->draw("asd", 0, 0, 132, 80, _renderer);
-		textureManager::instance()->drawFrame("asd", 100, 100, 132, 80, 1,
-											  _currFrame, _renderer);
-		textureManager::instance()->drawFrame("asd", 200, 200, 132, 80, 1,
-											  _currFrame, _renderer);
-      
+		// textureManager::instance()->draw("asd", 0, 0, 132, 80, _renderer);
+		// textureManager::instance()->drawFrame("asd", 100, 100, 132, 80, 1,
+		// 									  _currFrame, _renderer);
+		// textureManager::instance()->drawFrame("asd", 200, 200, 132, 80, 1,
+		// 									  _currFrame, _renderer);
+
+		go.draw(_renderer);
+		p.draw(_renderer);
+
 		SDL_RenderPresent(_renderer);
 	}
     
@@ -65,7 +72,8 @@ namespace chips
 	//
 	void game::update()
 	{
-		_currFrame = ((SDL_GetTicks() / 100) % 4);
+		go.update();
+		p.update();
 	}
 
 	////////////////////////////////////////////////////////////////////////////

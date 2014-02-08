@@ -12,6 +12,7 @@ namespace chips
             g.handleEvents();
             g.update();
             g.render();
+			SDL_Delay(10);
         }
         g.clean();
         return 0;
