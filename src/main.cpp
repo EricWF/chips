@@ -3,6 +3,6 @@
 
 int main(int argc, char * argv[], char * envp[])
 {
-	return chips_main(argc, argv, envp);
+	return chips::chips_main(argc, argv, envp);
 }
 

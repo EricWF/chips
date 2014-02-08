@@ -1,24 +1,19 @@
-
 #include "chips/chips_main.hpp"
+#include "chips/game.hpp"
 
-#include "Game.h"
-
-static Game* game = nullptr;
-
-int chips_main(int, char**, char**){
-
-  game = new Game();
-
-  game->init("chips", 100, 100, 640, 480, 0);
-
-  while(game->running())
+namespace chips
+{
+    int chips_main(int, char**, char**)
     {
-      game->handleEvents();
-      game->update();
-      game->render();
+        game g;
+        g.init("chips", 100, 100, 640, 480, 0);
+        while(g.running())
+        {
+            g.handleEvents();
+            g.update();
+            g.render();
+        }
+        g.clean();
+        return 0;
     }
-
-  game->clean();
-
-  return 0;
-}
+}                                                           // namespace chips
