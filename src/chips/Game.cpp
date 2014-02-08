@@ -38,7 +38,7 @@ bool Game::init(const char* title, int xpos, int ypos,
       puts("SDL init failed");
     }
 
-  SDL_Surface* tempSurface = SDL_LoadBMP("../res/turtle.bmp");
+  SDL_Surface* tempSurface = SDL_LoadBMP("../res/elephant.bmp");
   _texture = SDL_CreateTextureFromSurface(_renderer, tempSurface);
   SDL_FreeSurface(tempSurface);
 
@@ -47,9 +47,12 @@ bool Game::init(const char* title, int xpos, int ypos,
 
   _destRect.x = _sourceRect.x = 0;
   _destRect.y = _sourceRect.y = 0;
-  _destRect.h = _sourceRect.h;
-  _destRect.w = _sourceRect.w;
+  _destRect.w = 134;
+  _destRect.h = 84;
 
+  _sourceRect.w = 134;
+  _sourceRect.h = 84;
+    
   _running = true;
 
   return true;
@@ -66,7 +69,10 @@ void Game::render()
 }
 
 
-void Game::update(){}
+void Game::update()
+{
+  _sourceRect.x = 134 * ((int) (SDL_GetTicks() / 100) % 4);
+}
 
 void Game::handleEvents()
 {
