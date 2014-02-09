@@ -10,13 +10,15 @@ namespace chips
 	class gameObject
 	{
 	public:
-		void load(const int, const int, const int,
-				  const int, const std::string);
-		void draw(SDL_Renderer*);
-		void update();
-		void clean() {}
+		//gameObject() = default;
+		virtual void load(const int, const int, const int,
+						  const int, const std::string);
+		virtual void draw(SDL_Renderer*);
+		virtual void update();
+		virtual void clean() {}
 
 	protected:
+		virtual ~gameObject() {}
 		std::string _id;
 		int _currFrame;
 		int _currRow;

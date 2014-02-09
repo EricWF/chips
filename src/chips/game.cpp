@@ -3,6 +3,18 @@
 
 namespace chips
 {
+	game* game::theGame{nullptr};
+
+	game* game::instance()
+	{
+		if(!theGame)
+		{
+			theGame = new game();
+		}
+		
+		return theGame;
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	//
 	bool game::init(const char* title, int xpos, int ypos,
@@ -40,10 +52,15 @@ namespace chips
 		 	return false;
 		 }
 
-		go.load(100, 100, 132, 80, "asd");
-		p.load(300, 300, 132, 80, "asd");
+		 go = new gameObject();
+		 p  = new player();
 
-		
+		 go->load(100, 100, 132, 80, "asd");
+		 p->load(300, 300, 132, 80, "asd");
+
+		 _objs.push_back(go);
+		 _objs.push_back(p);
+
 		SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
 		_running = true;
 
@@ -56,14 +73,10 @@ namespace chips
 	{
 		SDL_RenderClear(_renderer);
 
-		// textureManager::instance()->draw("asd", 0, 0, 132, 80, _renderer);
-		// textureManager::instance()->drawFrame("asd", 100, 100, 132, 80, 1,
-		// 									  _currFrame, _renderer);
-		// textureManager::instance()->drawFrame("asd", 200, 200, 132, 80, 1,
-		// 									  _currFrame, _renderer);
-
-		go.draw(_renderer);
-		p.draw(_renderer);
+		for(auto obj : _objs)
+		{
+			obj->draw(_renderer);
+		}
 
 		SDL_RenderPresent(_renderer);
 	}
@@ -72,8 +85,10 @@ namespace chips
 	//
 	void game::update()
 	{
-		go.update();
-		p.update();
+		for(auto obj : _objs)
+		{
+			obj->update();
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -103,6 +118,8 @@ namespace chips
 		SDL_DestroyRenderer(_renderer);
 		SDL_Quit();
 	}
+
+	
 }                                                           // namespace chips
 
 

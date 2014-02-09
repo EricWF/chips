@@ -5,6 +5,7 @@
 #include "chips/gameobject.hpp"
 #include "chips/player.hpp"
 
+#include <vector>
 #include <SDL2/SDL.h>
 
 namespace chips
@@ -12,7 +13,6 @@ namespace chips
 	class game
 	{
 	public:
-		game() noexcept {}
 		~game() noexcept {}
         
 		game(game const &) = delete;
@@ -24,19 +24,25 @@ namespace chips
 		void handleEvents();
 		void clean();
 		bool running() const noexcept { return _running; }
+		SDL_Renderer* getRenderer() const { return _renderer; }
 
-		gameObject go;
-		player p;
+		static game* instance();
+
+		gameObject *go;
+		gameObject *p;
 		
 	private:
+		game() noexcept {}
 		bool _running;
 		// TODO these should be released in the destructor
 		// class should not be copyable (see RAII)
 		SDL_Window* _window{nullptr};
 		SDL_Renderer* _renderer{nullptr};
-
-		int _currFrame;
-		//		textureManager _tm;
+		static game* theGame;
+		std::vector<gameObject*> _objs;
+		// int _currFrame; unused
+		
+		
       
 	};
 }                                                           // namespace chips

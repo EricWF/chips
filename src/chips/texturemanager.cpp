@@ -4,7 +4,7 @@
 namespace chips
 {
 
-	textureManager *tm{nullptr};
+	textureManager* textureManager::tm{nullptr};
 
 	textureManager* textureManager::instance()
 	{
