@@ -8,7 +8,7 @@ namespace chips
 	class player : public gameObject
 	{
 	public:
-		player(const loader*) {}
+		player(const loader* param) : gameObject(param) {}
 		void draw(SDL_Renderer*);
 		void update();
 		void clean();

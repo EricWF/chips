@@ -4,8 +4,10 @@ namespace chips
 {
 	gameObject::gameObject(const loader *params)
 	{
-		_pos(0) = params->getX();
-		_pos(1) = params->getY();
+		_x = params->getX();
+		_y = params->getY();
+		_h = params->getHeight();
+		_w = params->getWidth();
 		_id = params->getID();
 		_currFrame = 1;
 		_currRow = 1;

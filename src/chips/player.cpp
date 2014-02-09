@@ -11,7 +11,7 @@ namespace chips
 	{
 		_x -= 1;
 	}
-
+	
 	void player::clean()
 	{
 		gameObject::clean();
