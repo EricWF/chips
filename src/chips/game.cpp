@@ -52,11 +52,11 @@ namespace chips
 		 	return false;
 		 }
 
-		 go = new gameObject();
-		 p  = new player();
-
-		 go->load(100, 100, 132, 80, "asd");
-		 p->load(300, 300, 132, 80, "asd");
+		 loader *l1 = new loader(100, 100, 132, 80, "asd");
+		 loader *l2 = new loader(300, 300, 132, 80, "asd");
+		 
+		 go = new gameObject(l1);
+		 p  = new player(l2);
 
 		 _objs.push_back(go);
 		 _objs.push_back(p);

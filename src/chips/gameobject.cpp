@@ -2,17 +2,13 @@
 
 namespace chips
 {
-	void gameObject::load(const int x, const int y, const int width,
-						  const int height, const std::string id)
+	gameObject::gameObject(const loader *params)
 	{
-		_x = x;
-		_y = y;
-		_w = width;
-		_h = height;
-		_id = id;
-
-		_currRow = 1;
+		_pos(0) = params->getX();
+		_pos(1) = params->getY();
+		_id = params->getID();
 		_currFrame = 1;
+		_currRow = 1;
 	}
 
 	void gameObject::draw(SDL_Renderer *renderer)

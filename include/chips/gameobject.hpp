@@ -2,6 +2,8 @@
 #define CHIPS_GAMEOBJECT_HPP
 
 #include "chips/texturemanager.hpp"
+#include "chips/loader.hpp"
+#include <boost/numeric/ublas/vector.hpp>
 #include <SDL2/SDL.h>
 #include <string>
 
@@ -10,9 +12,8 @@ namespace chips
 	class gameObject
 	{
 	public:
-		//gameObject() = default;
-		virtual void load(const int, const int, const int,
-						  const int, const std::string);
+		gameObject() = default;
+		gameObject(const loader*);
 		virtual void draw(SDL_Renderer*);
 		virtual void update();
 		virtual void clean() {}
@@ -24,8 +25,11 @@ namespace chips
 		int _currRow;
 		int _h;
 		int _w;
-		int _x;
-		int _y;
+		
+		int _x; // TODO: _pos replaces these
+		int _y; 
+
+		boost::numeric::ublas::vector<int> _pos;
 
 	};
 }
