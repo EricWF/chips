@@ -36,7 +36,7 @@ namespace chips
 
 	}
 
-	void textureManager::draw(const std:: string id, const int x, const int y,
+	void textureManager::draw(std:: string const & id, const int x, const int y,
 							  const int width, const int height,
 							  SDL_Renderer* renderer, SDL_RendererFlip flip)
 	{
@@ -54,7 +54,7 @@ namespace chips
 
 	}
 
-	void textureManager::drawFrame(const std::string id, const int x, const int y,
+	void textureManager::drawFrame(std::string const & id, const int x, const int y,
 								   const int width, const int height, const int currRow,
 								   const int currFrame, SDL_Renderer *renderer,
 								   SDL_RendererFlip flip)

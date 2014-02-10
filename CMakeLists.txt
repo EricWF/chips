@@ -37,6 +37,7 @@ endif()
 project(Chips CXX C)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/modules")
+add_definitions( "-DCHIPS_RES_ROOT=\"${CMAKE_CURRENT_LIST_DIR}/res/\"" )
 
 ################################################################################
 #                       Toolchain config (Post-project)

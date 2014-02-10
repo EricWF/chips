@@ -15,10 +15,10 @@ namespace chips
 		
 		bool load(std::string, const std::string, SDL_Renderer*);
 		
-		void draw(const std::string, const int, const int, const int, const int,
+		void draw(std::string const &, const int, const int, const int, const int,
 				  SDL_Renderer*, SDL_RendererFlip flip = SDL_FLIP_NONE);
 				  
-		void drawFrame(const std::string, const int, const int, const int,
+		void drawFrame(std::string const &, const int, const int, const int,
 					   const int, const int, const int, SDL_Renderer*,
 					   SDL_RendererFlip flip = SDL_FLIP_NONE);
 

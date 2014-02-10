@@ -1,4 +1,5 @@
 #include "chips/game.hpp"
+#include <elib/assert.hpp>
 #include <stdio.h>
 
 namespace chips
@@ -11,14 +12,15 @@ namespace chips
 
 	////////////////////////////////////////////////////////////////////////////
 	//
+	/* I think most of these errors are unrecoverable, so I'm just going 
+     * to move them over to asserts. */
 	bool game::init(const char* title, int xpos, int ypos,
 					int width, int height, Uint32 flags)
 	{
 
 		if(SDL_Init(SDL_INIT_EVERYTHING) != 0)
 		{
-			printf("SDL init failed");
-			return false;
+            ELIB_ASSERT(false, "SDL init failed");
 		}
 		// else init passed
         
@@ -26,21 +28,19 @@ namespace chips
 								   width, height, flags);
 		if(!_window)
 		{
-			printf("Window init failed");
-			return false;
+			ELIB_ASSERT(false, "Window init failed");
 		}
 		// else _window
             
 		_renderer = SDL_CreateRenderer(_window, -1, 0);
 		if (!_renderer)
 		{
-			printf("Renderer init failed");
-			return false;
+            ELIB_ASSERT(false, "Renderer creation failed");
 		}
 		// else _renderer
 
-		 if(!textureManager::instance().load("/Users/carson/dev/chips/res/elephant.png",
-		 									 "asd", _renderer))
+		 if(!textureManager::instance().load(
+                CHIPS_RES_ROOT "/elephant.png", "asd", _renderer))
 		 {
 		 	printf("Load image failed");
 		 	return false;
