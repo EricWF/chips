@@ -3,14 +3,14 @@
 
 namespace chips
 {
-    enum class direction
+    enum class direction : unsigned
     {
         N, W, S, E
     };
     
     struct position
     {
-        int x, int y;
+        int x, y;
     };
     
     constexpr bool 
@@ -56,8 +56,8 @@ namespace chips
         {
             case direction::N: pos.y += count; break;
             case direction::S: pos.y -= count; break;
-            case E: pos.x += count; break;
-            case W: pos.x -= count; break;
+            case direction::E: pos.x += count; break;
+            case direction::W: pos.x -= count; break;
         }
         return pos;
     }
@@ -66,7 +66,7 @@ namespace chips
     turn_clockwise(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
-            ((static_cast<int>(dir) + times) + 2) % 4
+            ((static_cast<unsigned>(dir) + times) + 2) % 4
           );
     }
     
@@ -74,7 +74,7 @@ namespace chips
     turn_counter_clockwile(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
-            (static_cast<int>(dir) + times) % 4
+            (static_cast<unsigned>(dir) + times) % 4
           );
     }
     
@@ -82,8 +82,9 @@ namespace chips
     turn_around(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
-            (static_cast<int>(dir) + (times * 2)) % 4
+            (static_cast<unsigned>(dir) + (times * 2)) % 4
           );
     }
     
 }                                                           // namespace chips
+#endif /* CHIPS_POSITION_HPP */

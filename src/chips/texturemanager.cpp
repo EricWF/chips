@@ -33,7 +33,6 @@ namespace chips
 		
 		if(texture != 0)
 		{
-			printf("Success");
 			_textureMap[id] = texture;
 			return true;
 		}

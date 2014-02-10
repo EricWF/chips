@@ -1,7 +1,6 @@
 #ifndef CHIPS_GAME_HPP
 #define CHIPS_GAME_HPP
 
-# include "chips/window.hpp"
 # include "chips/texturemanager.hpp"
 # include "chips/gameobject.hpp"
 # include "chips/player.hpp"

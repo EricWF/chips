@@ -5,7 +5,7 @@
 
 namespace chips
 {
-    constexpr const char tile_image_file = CHIPS_RES_ROOT "/tileset.gif";
+    constexpr const char tile_image_file[] = CHIPS_RES_ROOT "/tileset.gif";
     constexpr const int texture_rows = 16;
     constexpr const int texture_cols = 13;
     constexpr const int texture_width = 416;
@@ -45,7 +45,7 @@ namespace chips
         green_button = 35, 
         red_button = 36, 
         toggle_wall = 37, 
-        brown_button 39, 
+        brown_button = 39, 
         blue_button = 40, 
         
         teleport = 41, 
@@ -65,7 +65,7 @@ namespace chips
         teeth = 84, 
         walker = 88, 
         blob = 92, 
-        bug = 96, 
+        germ = 96, 
        
         key = 100, 
         
@@ -110,7 +110,7 @@ namespace chips
         yellow_lock = 25,
         ice_NW = 26, 
         ice_NE = 27, 
-        ice_SE 28, 
+        ice_SE = 28, 
         ice_SW = 29, 
         blue_wall_fake = 30, 
         blue_wall_real = 31, 
@@ -121,7 +121,7 @@ namespace chips
         red_button = 36, 
         toggle_wall_closed = 37, 
         toggle_wall_opened = 38, 
-        brown_button 39, 
+        brown_button = 39, 
         blue_button = 40, 
         teleport = 41, 
         bomb = 42,
@@ -178,10 +178,10 @@ namespace chips
         blob_W = 93, 
         blob_S = 94, 
         blob_E = 95, 
-        bug_N = 96, 
-        bug_W = 97, 
-        bug_S = 98, 
-        bug_E = 99, 
+        germ_N = 96, 
+        germ_W = 97, 
+        germ_S = 98, 
+        germ_E = 99, 
         blue_key = 100, 
         red_key = 101, 
         green_key = 102, 
@@ -296,6 +296,6 @@ namespace chips
     class teeth;
     class walker;
     class blob;
-    class bug;
+    class germ;
 }                                                           // namespace chips
 #endif /* CHIPS_TILES_FWD_HPP */

@@ -1,8 +1,6 @@
 #include "chips/chips_main.hpp"
 #include "chips/error.hpp"
-#include "chips/sdl_system_handler.hpp"
-#include "chips/window.hpp"
-#include "chips/renderer.hpp"
+#include "chips/resource_manager.hpp"
 #include "chips/game.hpp"
 #include <elib/aux.hpp>
 
@@ -27,13 +25,10 @@ namespace chips
           , sdl_flags
         };
         
-        /* WARNING: The order in which this is done is very important.
-         * each of these calls creates a static instance of an object
-         * who's job it is to destroy the resources on exit. If this
-         * order is changed BAD THINGS will happen */
-        sdl_system_handler::init();
-        window::init(info);
-        renderer::init(window::instance());
+        resource_manager & rh = resource_manager::get();
+        rh.init();
+        rh.init_window(info);
+        rh.init_renderer(-1, 0);
 
         game m_game{};
         while(m_game.running())

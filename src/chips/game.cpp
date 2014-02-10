@@ -1,6 +1,6 @@
 #include "chips/game.hpp"
 #include "chips/error.hpp"
-#include "chips/renderer.hpp"
+#include "chips/resource_manager.hpp"
 #include <elib/aux.hpp>
 #include <utility>
 #include <stdio.h>
@@ -10,10 +10,10 @@ namespace chips
 
     game::game()
     {
-        renderer & rend = renderer::instance();
+        auto & rh = resource_manager::get();
             
         if(!textureManager::instance().load(
-                CHIPS_RES_ROOT "/elephant.png", "asd", rend))
+                CHIPS_RES_ROOT "/elephant.png", "asd", rh))
          {
             throw chips_error{"Failed to load resource"};
          }
@@ -21,7 +21,7 @@ namespace chips
          _objs.push_back(new player(new loader(100, 100, 132, 80, "asd")));
          _objs.push_back(new player(new loader(300, 300, 132, 80, "asd")));
 
-        SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(rh, 255, 255, 255, 255);
         _running = true;
     }
 
@@ -29,15 +29,15 @@ namespace chips
 	//
 	void game::render()
 	{
-        renderer & rend = renderer::instance();
-		SDL_RenderClear(rend);
+        auto & rh = resource_manager::get();
+		SDL_RenderClear(rh);
 
 		for(auto & obj : _objs)
 		{
-			obj->draw(rend);
+			obj->draw(rh);
 		}
 
-		SDL_RenderPresent(rend);
+		SDL_RenderPresent(rh);
 	}
     
 	////////////////////////////////////////////////////////////////////////////
