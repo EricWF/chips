@@ -14,12 +14,12 @@ namespace chips
         explicit tile(chips::texture_id);
         tile(chips::texture_id, chips::position pos);
         
-        tile(chips::tile_id, chips::texture_id)
-          : m_tile_id{id1}, m_texture_id{id2}, m_position{}
+        tile(chips::tile_id id1, chips::texture_id id2)
+          : id{id1}, tex_id{id2}, pos{}
         {}
         
-        tile(chips::tile_id id1, chips::texture_id id2, chips::position pos)
-          : m_tile_id{id1}, m_texture_id{id2}, m_position{pos}
+        tile(chips::tile_id id1, chips::texture_id id2, chips::position xpos)
+          : id{id1}, tex_id{id2}, pos{xpos}
         {}
         
         tile(tile const &) = default;
@@ -27,22 +27,13 @@ namespace chips
         tile & operator=(tile const &) = default;
         tile & operator=(tile &&) = default;
         
-        chips::tile_id tile_id() const noexcept { return m_tile_id; }
-        chips::tile_id & tile_id() noexcept { return m_tile_id; }
-        
-        chips::texture_id texture_id() const noexcept { return m_texture_id; }
-        chips::texture_id & texture_id() noexcept { return m_texture_id; }
-        
-        chips::position position() const noexcept { return m_position; }
-        chips::position & position() noexcept { return m_position; }
-        
         virtual void accept_visit(tile_visitor *visitor) = 0;
         
         virtual ~tile() noexcept = default;
-    private:
-        chips::tile_id m_tile_id;
-        chips::texture_id m_texture_id;
-        chips::position m_position;
+
+        chips::tile_id id;
+        chips::texture_id tex_id;
+        chips::position pos;
     };
 }                                                           // namespace chipl
 #endif /* CHIPS_TILES_TILE_HPP */
