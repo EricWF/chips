@@ -22,7 +22,8 @@ namespace chips
 		inputHandler & operator=(inputHandler const &) = delete;
 		inputHandler & operator=(inputHandler &&) = delete;
 		
-		~inputHandler() {}
+		/* The destructor can never be called in this singleton pattern */
+		~inputHandler() = delete;
 
 		uint8_t _keystate;
 	};

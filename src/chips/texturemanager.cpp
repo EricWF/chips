@@ -4,11 +4,18 @@
 namespace chips
 {
 
+#if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wexit-time-destructors"
+#endif
 	textureManager & textureManager::instance()
 	{
         static textureManager tm;		
 		return tm;
 	}
+#if defined(__clang__)
+#   pragma clang diagnostic pop
+#endif
 
 	
 	bool textureManager::load(std::string fileName, const std::string id, SDL_Renderer* renderer)

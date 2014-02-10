@@ -18,7 +18,7 @@ namespace chips
 		
 		virtual void update();
 		
-		virtual void clean() {};
+		virtual void clean() {}
 
 	protected:
 		virtual ~gameObject() {}

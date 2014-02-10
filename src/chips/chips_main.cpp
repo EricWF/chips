@@ -5,7 +5,7 @@ namespace chips
 {
     int chips_main(int, char**, char**)
     {
-        game & m_game = game::instance();
+        game m_game;
         
 		if(m_game.init("chips", 100, 100, 640, 480, false))
 		{

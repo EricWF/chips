@@ -13,7 +13,8 @@ namespace chips
 	class game
 	{
 	public:
-		~game() noexcept {}
+        game() = default;
+		~game() noexcept = default;
         
 		game(game const &) = delete;
 		game & operator=(game const &) = delete;
@@ -26,14 +27,11 @@ namespace chips
 		bool running() const noexcept { return _running; }
 		SDL_Renderer* getRenderer() const { return _renderer; }
 
-		static game & instance();
-
 		gameObject *go;
 		gameObject *p;
 		
 	private:
-		game() noexcept {}
-		bool _running;
+		bool _running{false};
 		// TODO these should be released in the destructor
 		// class should not be copyable (see RAII)
 		SDL_Window* _window{nullptr};

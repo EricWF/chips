@@ -4,9 +4,10 @@
 
 namespace chips
 {	
+    /* WARNING: The destructor is NEVER CALLED */
 	inputHandler & inputHandler::instance()
 	{
-		static inputHandler ins;
-		return ins;
+		static inputHandler* ins = new inputHandler();
+		return *ins;
 	}
 }                                                           // namespace chips

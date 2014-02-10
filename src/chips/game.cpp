@@ -4,11 +4,6 @@
 
 namespace chips
 {
-	game & game::instance()
-	{
-		static game theGame;
-		return theGame;
-	}
 
 	////////////////////////////////////////////////////////////////////////////
 	//

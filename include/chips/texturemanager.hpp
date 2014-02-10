@@ -11,7 +11,7 @@ namespace chips
 	class textureManager
 	{
 	public:
-		~textureManager() noexcept {}
+		
 		
 		bool load(std::string, const std::string, SDL_Renderer*);
 		
@@ -27,11 +27,14 @@ namespace chips
 	private:
 		textureManager() = default;
 		
+		~textureManager() noexcept = default;
+		
 		textureManager(textureManager const &) = delete;
 		textureManager(textureManager &&) = delete;
 		textureManager & operator=(textureManager const &) = delete;
 		textureManager & operator=(textureManager &&) = delete;
 		
+		/* TODO: all the SDL_Texture's are leaked */
 		std::map<std::string, SDL_Texture*> _textureMap;
 	};
 }
