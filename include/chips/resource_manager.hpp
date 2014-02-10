@@ -8,9 +8,6 @@
 
 namespace chips
 {
-
-    using texture_map_type = std::map<texture_id, SDL_Texture*>;
-    
     struct window_info
     {
         std::string name;
@@ -40,9 +37,6 @@ namespace chips
         SDL_Renderer & renderer() { return *m_renderer; }
         operator SDL_Renderer*() { return m_renderer; }
         void release_renderer();
-        
-        texture_map_type & texture_map() noexcept { return m_textures; }
-        void release_texture_map();
     private:
         resource_manager() {}
         
@@ -57,7 +51,6 @@ namespace chips
         bool m_init{false};
         SDL_Window *m_window{nullptr};
         SDL_Renderer *m_renderer{nullptr};
-        texture_map_type m_textures;
     };
 }                                                           // namespace chips
 #endif /* CHIPS_SDL_MANAGER_HPP */

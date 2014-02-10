@@ -272,11 +272,15 @@ namespace chips
     
     class exit;
     class thief;
+    
+    template <unsigned NumChipReq>
     class socket;
+    
     class green_button;
     class red_button;
     class brown_button;
     class blue_button;
+    
     class help;
     class teleport;
     class bomb;

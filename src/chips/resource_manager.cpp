@@ -69,15 +69,8 @@ namespace chips
     void resource_manager::release_renderer()
     {
         if (!has_renderer()) return;
-        release_texture_map();
         SDL_DestroyRenderer(m_renderer);
         m_renderer = nullptr;
     }
     
-    void resource_manager::release_texture_map()
-    {
-        for (auto & kv :  m_textures)
-            SDL_DestroyTexture(kv.second);
-        m_textures.clear();
-    }
 }                                                           // namespace chips
