@@ -41,8 +41,6 @@ namespace chips
 		static game* theGame;
 		std::vector<gameObject*> _objs;
 		// int _currFrame; unused
-		
-		
       
 	};
 }                                                           // namespace chips

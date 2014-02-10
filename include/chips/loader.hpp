@@ -9,20 +9,18 @@ namespace chips
 	{
 
 	public:
-		loader(int, int, int, int, std::string);
-		int getX() const { return _x; }
-		int getY() const { return _y; }
-		int getWidth() const { return _w; }
-		int getHeight() const { return _h; }
-		std::string getID() const { return _id; }
-		
+		loader(int x, int y, int w, int h, std::string id)
+          : _id{id}, _x{x}, _y{y}, _w{w}, _h{h}
+        {}
+        
+		int getX() const noexcept { return _x; }
+		int getY() const noexcept { return _y; }
+		int getWidth() const noexcept { return _w; }
+		int getHeight() const noexcept { return _h; }
+		const std::string & getID() const noexcept { return _id; }
 	private:
 		std::string _id;
-		int _x;
-		int _y;
-		int _w;
-		int _h;
-
+		int _x, _y, _w, _h;
 	};
 }
 #endif

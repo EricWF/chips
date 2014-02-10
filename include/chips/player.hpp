@@ -12,7 +12,9 @@ namespace chips
 		void draw(SDL_Renderer*);
 		void update();
 		void clean();
-			
+		
+        // needs virtual destructor!
+        virtual ~player() = default;
 	};
 }
 

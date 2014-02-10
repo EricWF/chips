@@ -15,8 +15,10 @@ namespace chips
 		gameObject() = default;
 		gameObject(const loader*);
 		virtual void draw(SDL_Renderer*);
+		
 		virtual void update();
-		virtual void clean() {}
+		
+		virtual void clean() {};
 
 	protected:
 		virtual ~gameObject() {}
@@ -30,7 +32,6 @@ namespace chips
 		int _y; 
 
 		boost::numeric::ublas::vector<int> _pos;
-
 	};
 }
 

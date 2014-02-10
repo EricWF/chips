@@ -20,7 +20,6 @@ namespace chips
 		static inputHandler* ins;
 
 		uint8_t _keystate;
-		
 	};
 }
 
