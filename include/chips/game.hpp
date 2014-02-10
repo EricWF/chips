@@ -1,41 +1,40 @@
 #ifndef CHIPS_GAME_HPP
 #define CHIPS_GAME_HPP
 
-#include "chips/texturemanager.hpp"
-#include "chips/gameobject.hpp"
-#include "chips/player.hpp"
+# include "chips/window.hpp"
+# include "chips/texturemanager.hpp"
+# include "chips/gameobject.hpp"
+# include "chips/player.hpp"
 
-#include <vector>
-#include <SDL2/SDL.h>
+# include <string>
+# include <vector>
+# include <SDL2/SDL.h>
 
 namespace chips
 {
+
 	class game
 	{
-	public:
-        game() = default;
-		~game() noexcept = default;
-        
-		game(game const &) = delete;
-		game & operator=(game const &) = delete;
 
-		bool init(const char*, int, int, int, int, Uint32);
+	public:
+        game();
+		game(game const &) = delete;
+		game(game &&) = delete;
+		game & operator=(game const &) = delete;
+		game & operator=(game &&) = delete;
+        ~game();
+		
 		void render();
 		void update();
 		void handleEvents();
 		void clean();
 		bool running() const noexcept { return _running; }
-		SDL_Renderer* getRenderer() const { return _renderer; }
 
 		gameObject *go;
 		gameObject *p;
 		
 	private:
 		bool _running{false};
-		// TODO these should be released in the destructor
-		// class should not be copyable (see RAII)
-		SDL_Window* _window{nullptr};
-		SDL_Renderer* _renderer{nullptr};
 		std::vector<gameObject*> _objs;
 		// int _currFrame; unused
 	};
