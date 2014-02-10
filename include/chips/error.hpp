@@ -1,5 +1,5 @@
-#ifndef CHIPS_CHIPS_ERROR_HPP
-#define CHIPS_CHIPS_ERROR_HPP
+#ifndef CHIPS_ERROR_HPP
+#define CHIPS_ERROR_HPP
 
 # include <elib/aux.hpp>
 # include <string>
@@ -52,4 +52,4 @@ namespace chips
     [[noreturn]] void throw_and_clear_sdl_error(const char *what_arg);
       
 }                                                           // namespace chips
-#endif /* CHIPS_CHIPS_ERROR_HPP */
+#endif /* CHIPS_ERROR_HPP */

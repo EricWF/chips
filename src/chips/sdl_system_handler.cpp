@@ -1,5 +1,5 @@
 #include "chips/sdl_system_handler.hpp"
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 #include <SDL2/SDL.h>
 
 namespace chips

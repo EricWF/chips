@@ -1,5 +1,5 @@
 #include "chips/window.hpp"
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 
 namespace chips
 {
@@ -17,6 +17,10 @@ namespace chips
         return window::m_instance();
     }
     
+# if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wexit-time-destructors"
+# endif
     window & window::m_instance(window_info const* info_ptr)
     {
         static window *m_win_ptr = nullptr;
@@ -32,6 +36,9 @@ namespace chips
         }
         return *m_win_ptr;
     }
+# if defined(__clang__)
+#   pragma clang diagnostic pop
+# endif
     
     window::window(window_info const & info)
       : m_window{nullptr}

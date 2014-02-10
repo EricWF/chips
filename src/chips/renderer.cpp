@@ -1,5 +1,5 @@
 #include "chips/renderer.hpp"
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 
 namespace chips
 {
@@ -13,6 +13,10 @@ namespace chips
         return renderer::m_instance();
     }
     
+# if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wexit-time-destructors"
+# endif
     renderer & renderer::m_instance(window *win_ptr)
     {
         static renderer *rend_ptr = nullptr;
@@ -28,6 +32,9 @@ namespace chips
         }
         return *rend_ptr;
     }
+# if defined(__clang__)
+#   pragma clang diagnostic pop
+# endif
     
     renderer::renderer(window & win)
       : m_renderer{nullptr}

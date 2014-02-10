@@ -1,4 +1,4 @@
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 
 #include <elib/aux.hpp>
 #include <elib/fmt.hpp>

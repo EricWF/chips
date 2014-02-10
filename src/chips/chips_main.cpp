@@ -1,5 +1,5 @@
 #include "chips/chips_main.hpp"
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 #include "chips/sdl_system_handler.hpp"
 #include "chips/window.hpp"
 #include "chips/renderer.hpp"
@@ -15,17 +15,17 @@ namespace chips
     constexpr const int window_height = 480;
     constexpr const Uint32 sdl_flags = 0;
     
-    static const window_info info{
-        window_name
-      , window_xpos, window_ypos
-      , window_width, window_height
-      , sdl_flags
-    };
-    
     int chips_main(int, char**, char**)
     {
         /* Handle uncaught exceptions and unexpected termination */
         set_terminate_handler();
+        
+        const window_info info{
+            window_name
+          , window_xpos, window_ypos
+          , window_width, window_height
+          , sdl_flags
+        };
         
         /* WARNING: The order in which this is done is very important.
          * each of these calls creates a static instance of an object

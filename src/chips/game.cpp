@@ -1,5 +1,5 @@
 #include "chips/game.hpp"
-#include "chips/chips_error.hpp"
+#include "chips/error.hpp"
 #include "chips/renderer.hpp"
 #include <elib/aux.hpp>
 #include <utility>
@@ -18,7 +18,7 @@ namespace chips
             throw chips_error{"Failed to load resource"};
          }
 
-         _objs.push_back(new gameObject(new loader(100, 100, 132, 80, "asd")));
+         _objs.push_back(new player(new loader(100, 100, 132, 80, "asd")));
          _objs.push_back(new player(new loader(300, 300, 132, 80, "asd")));
 
         SDL_SetRenderDrawColor(rend, 255, 255, 255, 255);
@@ -44,7 +44,7 @@ namespace chips
 	//
 	void game::update()
 	{
-		for(auto obj : _objs)
+		for(auto & obj : _objs)
 		{
 			obj->update();
 		}
