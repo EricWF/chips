@@ -1,12 +1,17 @@
-#ifndef CHIPS_GAME_OBJECTS_FWD_HPP
-#define CHIPS_GAME_OBJECTS_FWD_HPP
+#ifndef CHIPS_TILES_FWD_HPP
+#define CHIPS_TILES_FWD_HPP
+
+# include "chips/position.hpp"
 
 namespace chips
 {
-   
-   constexpr const int texture_rows = 16;
-   constexpr const int texture_cols = 13;
-   
+    constexpr const char tile_image_file = CHIPS_RES_ROOT "/tileset.gif";
+    constexpr const int texture_rows = 16;
+    constexpr const int texture_cols = 13;
+    constexpr const int texture_width = 416;
+    constexpr const int texture_height = 512;
+    constexpr const int tile_width = texture_width / texture_cols;
+    constexpr const int tile_height = texture_height / texture_rows;
    
    /* Concepts:
      *    Object: A block that can move
@@ -16,7 +21,6 @@ namespace chips
     {
         floor = 0, 
         wall = 1,
-        
         computer_chip = 2,
         
         water = 3,
@@ -69,7 +73,7 @@ namespace chips
         fire_boots = 105, 
         skates = 106, 
         suction_boots = 107, 
-        
+
         chip = 108
     };
     
@@ -193,39 +197,95 @@ namespace chips
         chip_E = 111, 
     };
     
+    
+    enum class texture_type
+    {
+        tile, 
+        cutout,
+        outline
+    };
+    
+    bool is_directional(tile_id);
+    bool is_monster(tile_id);
+    bool is_key(tile_id);
+    bool is_lock(tile_id);
+    bool is_element(tile_id);
+    bool is_boots(tile_id);
+    bool is_button(tile_id);
+    bool is_collectable(tile_id);
+    
+    tile_id texture_to_tile_id(texture_id) noexcept;
+    
+    texture_id 
+    directional_texture_id(tile_id, direction
+                         , texture_type = texture_type::tile) noexcept;
+                                    
+    position 
+    directional_texture_position(tile_id, direction
+                               , texture_type = texture_type::tile) noexcept;
+                                        
+    
+    // base class for all tiles (except chip?)
     class tile;
     
+    // player
+    class chip;
     
+    class floor;
     class wall;
-    
-    //static walls
-    class static_wall;
-    class blue_wall;
-    class hidden_wall;
     class invisible_wall;
     class thin_wall;
-    class recessed_wall;
+    class block;
+    class dirt;
+    class blue_block;
     
-    // special walls
-    class toggle_wall;
-    class clone_machine;
-    class clone_block;
+    class water;
+    class fire;
+    class ice;
+    class force_floor;
     
-    // acting_walls
-    class wall;
-    class static_wall;
+    class computer_chip;
     
+    template <texture_id BootID>
+    class boot;
     
+    using flippers = boot<texture_id::flippers>;
+    using fire_boots = boot<texture_id::fire_boots>;
+    using skates = boot<texture_id::skates>;
+    using suction_boots = boot<texture_id::suction_boots>;
     
-    template <std::size_t ReqChipCount>
-    class level_lock;
-    
-    template <tile_id KeyID>
-    class lock;
-    
-    template <tile_id KeyID>
+    template <texture_id KeyID>
     class key;
     
+    using blue_key = key<texture_id::blue_key>;
+    using red_key = key<texture_id::red_key>;
+    using green_key = key<texture_id::green_key>;
+    using yellow_key = key<texture_id::yellow_key>;
+    
+    template <texture_id LockID>
+    class lock;
+    
+    using blue_lock = lock<texture_id::blue_lock>;
+    using red_lock = lock<texture_id::red_lock>;
+    using green_lock = lock<texture_id::green_lock>;
+    using yellow_lock = lock<texture_id::yellow_lock>;
+    
+    class exit;
+    class thief;
+    class socket;
+    class green_button;
+    class red_button;
+    class brown_button;
+    class blue_button;
+    class help;
+    class teleport;
+    class bomb;
+    class trap;
+    class gravel;
+    class pop_up_wall;
+    class hint;
+    class clone_machine;
+    class fake_exit;
     
     class monster;
     class bug;
@@ -236,9 +296,6 @@ namespace chips
     class teeth;
     class walker;
     class blob;
-    class organism;
-    
-    
-    
+    class bug;
 }                                                           // namespace chips
-#endif /* CHIPS_GAME_OBJECTS_FWD_HPP */
+#endif /* CHIPS_TILES_FWD_HPP */
