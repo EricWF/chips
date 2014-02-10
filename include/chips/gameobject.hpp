@@ -32,6 +32,13 @@ namespace chips
 		int _y; 
 
 		boost::numeric::ublas::vector<int> _pos;
+
+    private:
+        
+        gameObject(gameObject const &) = delete;
+        gameObject(gameObject &&) = delete;
+        gameObject & operator=(gameObject const &) = delete;
+        gameObject & operator=(gameObject &&) = delete;
 	};
 }
 

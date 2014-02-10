@@ -3,20 +3,10 @@
 #include <SDL2/SDL.h>
 
 namespace chips
-{
-	inputHandler* inputHandler::ins{nullptr};
-	
-	inputHandler* inputHandler::instance()
+{	
+	inputHandler & inputHandler::instance()
 	{
-		if(ins == 0)
-		{
-			ins = new inputHandler();
-		}
-
+		static inputHandler ins;
 		return ins;
 	}
-
-
-	
-
-}
+}                                                           // namespace chips

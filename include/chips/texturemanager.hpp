@@ -13,9 +13,6 @@ namespace chips
 	public:
 		~textureManager() noexcept {}
 		
-		textureManager(textureManager const &) = delete;
-		textureManager & operator=(textureManager &) = delete;
-
 		bool load(std::string, const std::string, SDL_Renderer*);
 		
 		void draw(const std::string, const int, const int, const int, const int,
@@ -25,13 +22,17 @@ namespace chips
 					   const int, const int, const int, SDL_Renderer*,
 					   SDL_RendererFlip flip = SDL_FLIP_NONE);
 
-		static textureManager* instance();		
+		static textureManager & instance();		
 		
 	private:
-		textureManager() noexcept {}
+		textureManager() = default;
+		
+		textureManager(textureManager const &) = delete;
+		textureManager(textureManager &&) = delete;
+		textureManager & operator=(textureManager const &) = delete;
+		textureManager & operator=(textureManager &&) = delete;
+		
 		std::map<std::string, SDL_Texture*> _textureMap;
-		static textureManager* tm;
-
 	};
 }
 

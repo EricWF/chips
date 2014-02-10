@@ -5,17 +5,18 @@ namespace chips
 {
     int chips_main(int, char**, char**)
     {
-
-		if(game::instance()->init("chips", 100, 100, 640, 480, false))
+        game & m_game = game::instance();
+        
+		if(m_game.init("chips", 100, 100, 640, 480, false))
 		{
-			while(game::instance()->running())
+			while(m_game.running())
 			{
-				game::instance()->handleEvents();
-				game::instance()->update();
-				game::instance()->render();
+				m_game.handleEvents();
+				m_game.update();
+				m_game.render();
 				SDL_Delay(10);
 			}
-			game::instance()->clean();
+			m_game.clean();
 		}
 		else
 		{

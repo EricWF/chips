@@ -11,13 +11,18 @@ namespace chips
 		void update() {}
 		void clean() {}
 
-		static inputHandler* instance();
+		static inputHandler & instance();
 		
 	private:
-		inputHandler() {}
-		~inputHandler() {}
+		inputHandler() noexcept = default;
 		
-		static inputHandler* ins;
+		/* Not copy or move-able */
+		inputHandler(inputHandler const &) = delete;
+		inputHandler(inputHandler &&) = delete;
+		inputHandler & operator=(inputHandler const &) = delete;
+		inputHandler & operator=(inputHandler &&) = delete;
+		
+		~inputHandler() {}
 
 		uint8_t _keystate;
 	};

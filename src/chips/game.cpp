@@ -3,15 +3,9 @@
 
 namespace chips
 {
-	game* game::theGame{nullptr};
-
-	game* game::instance()
+	game & game::instance()
 	{
-		if(!theGame)
-		{
-			theGame = new game();
-		}
-		
+		static game theGame;
 		return theGame;
 	}
 
@@ -45,7 +39,7 @@ namespace chips
 		}
 		// else _renderer
 
-		 if(!textureManager::instance()->load("/Users/carson/dev/chips/res/elephant.png",
+		 if(!textureManager::instance().load("/Users/carson/dev/chips/res/elephant.png",
 		 									 "asd", _renderer))
 		 {
 		 	printf("Load image failed");

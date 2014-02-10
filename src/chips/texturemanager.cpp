@@ -4,15 +4,9 @@
 namespace chips
 {
 
-	textureManager* textureManager::tm{nullptr};
-
-	textureManager* textureManager::instance()
+	textureManager & textureManager::instance()
 	{
-		if(!tm)
-		{
-			tm = new textureManager();
-		}
-		
+        static textureManager tm;		
 		return tm;
 	}
 

@@ -26,7 +26,7 @@ namespace chips
 		bool running() const noexcept { return _running; }
 		SDL_Renderer* getRenderer() const { return _renderer; }
 
-		static game* instance();
+		static game & instance();
 
 		gameObject *go;
 		gameObject *p;
@@ -38,10 +38,8 @@ namespace chips
 		// class should not be copyable (see RAII)
 		SDL_Window* _window{nullptr};
 		SDL_Renderer* _renderer{nullptr};
-		static game* theGame;
 		std::vector<gameObject*> _objs;
 		// int _currFrame; unused
-      
 	};
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HPP */
