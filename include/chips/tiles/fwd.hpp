@@ -195,18 +195,19 @@ namespace chips
         chip_E = 111, 
     };
     
+    // used as a strongly typed integral
+    enum class texture_index {};
+    
     // TODO this should probably go elsewhere
     enum class chip_state
     {
-        normal,
-        swimming, 
+        normal       = static_cast<int>(texture_id::chip_N),
+        swimming     = static_cast<int>(texture_id::chip_swimming_N), 
         drowned      = static_cast<int>(texture_id::chip_drowned),
         burned_fire  = static_cast<int>(texture_id::chip_burned_fire), 
         burned_smoke = static_cast<int>(texture_id::chip_burned_smoke), 
         fake_exit    = static_cast<int>(texture_id::chip_fake_exit)
     };
-    
-    tile_id texture_to_tile_id(texture_id) noexcept;
     
     constexpr bool is_monster(tile_id) noexcept;
     constexpr bool is_wall(tile_id) noexcept;
@@ -224,22 +225,30 @@ namespace chips
     constexpr bool is_directional_texture(texture_id) noexcept;
     constexpr bool is_typed_texture(texture_id) noexcept;
     
-    /* Only supports texture_id's with contigious directions */
+    constexpr bool is_tile_texture(texture_index) noexcept;
+    constexpr bool is_cutout_texture(texture_index) noexcept;
+    constexpr bool is_outline_texture(texture_index) noexcept;
+    
+    tile_id texture_to_tile_id(texture_id) noexcept;
+    
     constexpr texture_id directional_texture_id(texture_id, direction);
     
-    constexpr position position_index_to_position(position p) noexcept;
-    constexpr position position_to_position_index(position p) noexcept;
+    /* Only supports texture_id's with contigious directions */
+    constexpr texture_index to_texture_index(texture_id) noexcept;
+    constexpr texture_index to_texture_index(texture_id, direction);
+    constexpr texture_index to_texture_index(texture_id, direction, texture_type);
     
-    constexpr position texture_to_position_index(texture_id) noexcept;
-    constexpr position texture_to_position_index(texture_id, texture_type);
-    constexpr position texture_to_position(texture_id) noexcept;
-    constexpr position texture_to_position(texture_id, texture_type);
+    constexpr int texture_index_row(texture_index) noexcept;
+    constexpr int texture_index_col(texture_index) noexcept;
     
-    position get_chip_texture_position_index(chip_state, direction);
-    position get_chip_texture_position(chip_state, direction);
+    constexpr position to_texture_position(texture_id) noexcept;
+    constexpr position to_texture_position(texture_id, direction);
+    constexpr position to_texture_position(texture_id, direction, texture_type);
+    constexpr position to_texture_position(texture_index) noexcept;
     
-    position get_monster_texture_index(tile_id, direction);
-    position get_monster_texture(tile_id, direction);
+    constexpr texture_index get_chip_texture_index(chip_state, direction);
+    constexpr texture_index get_monster_texture_index(tile_id, direction);
+    
     
     // base class for all tiles (except chip?)
     class tile;

@@ -1,9 +1,11 @@
 #include "chips/tiles/support.hpp"
-#include <elib/assert.hpp>
 
 namespace chips
 {
-    # if defined(__GNUG__) && !defined(__clang__)
+# if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wswitch-enum"
+# elif defined(__GNUG__)
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wswitch-enum"
 # endif
@@ -96,48 +98,10 @@ namespace chips
                 throw chips_error{"Attempted conversion of unused texture_id"};
         }
     }
-# if defined(__GNUG__) && !defined(__clang__)
+# if defined(__clang__)
+#   pragma clang diagnostic pop
+# elif defined(__GNUG__)
 #   pragma GCC diagnostic pop
 # endif
 
-    position get_chip_texture_position_index(chip_state st, direction dir)
-    {
-        if (st == chip_state::normal)
-            return texture_to_position_index(
-                        directional_texture_id(texture_id::chip_N, dir)
-                      , texture_type::cutout
-                    );
-            
-        if (st == chip_state::swimming)
-            return texture_to_position_index(
-                directional_texture_id(texture_id::chip_swimming_N, dir)
-              );
-            
-        return texture_to_position_index(
-            directional_texture_id(static_cast<texture_id>(st), dir)
-          );
-    }
-    
-    position get_chip_texture_position(chip_state st, direction dir)
-    {
-        return position_index_to_position(
-            get_chip_texture_position_index(st, dir)
-          );
-    }
-    
-    position get_monster_texture_position_index(tile_id id, direction dir)
-    {
-        ELIB_ASSERT(is_monster(id));
-        return texture_to_position_index(
-                    directional_texture_id(static_cast<texture_id>(id), dir)
-                  , texture_type::cutout
-                );
-    }
-    
-    position get_monster_texture_position(tile_id id, direction dir)
-    {
-        return position_index_to_position(
-            get_monster_texture_position_index(id, dir)
-          );
-    }
 }                                                           // namespace chips
