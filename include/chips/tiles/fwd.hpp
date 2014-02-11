@@ -249,9 +249,10 @@ namespace chips
     constexpr texture_index get_chip_texture_index(chip_state, direction);
     constexpr texture_index get_monster_texture_index(tile_id, direction);
     
-    
     // base class for all tiles (except chip?)
     class tile;
+    
+    constexpr bool intersect(tile const & lhs, tile const & rhs) noexcept;
     
     // player
     class chip;
@@ -279,26 +280,10 @@ namespace chips
     using skates = boot<texture_id::skates>;
     using suction_boots = boot<texture_id::suction_boots>;
     
-    template <texture_id KeyID>
     class key;
-    
-    using blue_key = key<texture_id::blue_key>;
-    using red_key = key<texture_id::red_key>;
-    using green_key = key<texture_id::green_key>;
-    using yellow_key = key<texture_id::yellow_key>;
-    
-    template <texture_id LockID>
     class lock;
-    
-    using blue_lock = lock<texture_id::blue_lock>;
-    using red_lock = lock<texture_id::red_lock>;
-    using green_lock = lock<texture_id::green_lock>;
-    using yellow_lock = lock<texture_id::yellow_lock>;
-    
     class exit;
     class thief;
-    
-    template <unsigned NumChipReq>
     class socket;
     
     class green_button;
@@ -306,7 +291,6 @@ namespace chips
     class brown_button;
     class blue_button;
     
-    class help;
     class teleport;
     class bomb;
     class trap;
