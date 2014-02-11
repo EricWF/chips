@@ -62,7 +62,7 @@ namespace chips
         ELIB_ASSERT(err_str);
         sdl_error e{what_arg, err_str};
         SDL_ClearError();
-        throw err_str;
+        throw e;
     }
     
     ////////////////////////////////////////////////////////////////////////////

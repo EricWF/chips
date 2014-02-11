@@ -1,4 +1,5 @@
 #include "chips/tiles/support.hpp"
+#include <elib/assert.hpp>
 
 namespace chips
 {
