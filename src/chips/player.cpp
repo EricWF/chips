@@ -9,6 +9,7 @@ namespace chips
 
 	void player::update()
 	{
+		_currFrame = (SDL_GetTicks() / 100) % 4;
 		_x -= 1;
 	}
 	
