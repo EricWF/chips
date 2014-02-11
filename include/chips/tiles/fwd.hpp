@@ -12,42 +12,42 @@ namespace chips
     constexpr const int texture_height = 512;
     constexpr const int tile_width = texture_width / texture_cols;
     constexpr const int tile_height = texture_height / texture_rows;
+    
+    static_assert(texture_width % texture_cols == 0, "Must evenly divide");
+    static_assert(texture_height % texture_rows == 0, "Must evenly divide");
+    
+    enum class texture_type
+    {
+        tile, 
+        cutout,
+        outline
+    };
    
-   /* Concepts:
-     *    Object: A block that can move
-     *      
-     */
+    /* WARNING: ordering and assigned values are VERY IMPORTANT
+     * DO NOT MODIFY */
     enum class tile_id
     {
         floor = 0, 
         wall = 1,
         computer_chip = 2,
-        
         water = 3,
         fire = 4, 
-        
         invisible_wall = 5,
         thin_wall = 6, 
-        
         block = 10,
         dirt = 11, 
         ice = 12, 
-        force_flow = 13,
-        
+        force_floor = 13,
         exit = 21, 
         lock = 22, 
-        
         blue_wall = 30, 
-        
         thief = 33, 
         socket = 34, 
-        
         green_button = 35, 
         red_button = 36, 
         toggle_wall = 37, 
         brown_button = 39, 
         blue_button = 40, 
-        
         teleport = 41, 
         bomb = 42,
         trap = 43, 
@@ -56,7 +56,6 @@ namespace chips
         hint = 47, 
         clone_machine = 49, 
         fake_exit = 57, 
-    
         bug = 64, 
         fireball = 68, 
         pink_ball = 72, 
@@ -66,18 +65,16 @@ namespace chips
         walker = 88, 
         blob = 92, 
         germ = 96, 
-       
         key = 100, 
-        
         flippers = 104, 
         fire_boots = 105, 
         skates = 106, 
         suction_boots = 107, 
-
         chip = 108
     };
     
-    
+    /* WARNING: Order and assigned values are VERY IMPORTANT!
+     * DO NOT MODIFY */
     enum class texture_id
     {
         floor = 0, 
@@ -93,7 +90,7 @@ namespace chips
         block = 10,
         dirt = 11, 
         ice = 12, 
-        force_flow_S = 13,
+        force_floor_S = 13,
         //TODO figure these out
         block_14 = 14, 
         block_15 = 15,
@@ -120,12 +117,13 @@ namespace chips
         green_button = 35, 
         red_button = 36, 
         toggle_wall_closed = 37, 
-        toggle_wall_opened = 38, 
+        toggle_wall_open = 38, 
         brown_button = 39, 
         blue_button = 40, 
         teleport = 41, 
         bomb = 42,
         trap = 43, 
+        // TODO what is this
         UNUSED_44 = 44, 
         gravel = 45, 
         pop_up_wall = 46, 
@@ -136,12 +134,12 @@ namespace chips
         chip_drowned = 51, 
         chip_burned_fire = 52, 
         chip_burned_smoke = 53,
-        not_used_54 = 54, 
-        not_used_55 = 55, 
-        not_used_56 = 56, 
+        unused_54 = 54, 
+        unused_55 = 55, 
+        unused_56 = 56, 
         chip_fake_exit = 57, 
-        dark_fake_exit = 58, 
-        light_fake_exit = 59, 
+        fake_exit_dark = 58, 
+        fake_exit_light = 59, 
         chip_swimming_N = 60, 
         chip_swimming_W = 61, 
         chip_swimming_S = 62, 
@@ -197,33 +195,51 @@ namespace chips
         chip_E = 111, 
     };
     
-    
-    enum class texture_type
+    // TODO this should probably go elsewhere
+    enum class chip_state
     {
-        tile, 
-        cutout,
-        outline
+        normal,
+        swimming, 
+        drowned      = static_cast<int>(texture_id::chip_drowned),
+        burned_fire  = static_cast<int>(texture_id::chip_burned_fire), 
+        burned_smoke = static_cast<int>(texture_id::chip_burned_smoke), 
+        fake_exit    = static_cast<int>(texture_id::chip_fake_exit)
     };
-    
-    bool is_directional(tile_id);
-    bool is_monster(tile_id);
-    bool is_key(tile_id);
-    bool is_lock(tile_id);
-    bool is_element(tile_id);
-    bool is_boots(tile_id);
-    bool is_button(tile_id);
-    bool is_collectable(tile_id);
     
     tile_id texture_to_tile_id(texture_id) noexcept;
     
-    texture_id 
-    directional_texture_id(tile_id, direction
-                         , texture_type = texture_type::tile) noexcept;
-                                    
-    position 
-    directional_texture_position(tile_id, direction
-                               , texture_type = texture_type::tile) noexcept;
-                                        
+    constexpr bool is_monster(tile_id) noexcept;
+    constexpr bool is_wall(tile_id) noexcept;
+    constexpr bool is_floor(tile_id) noexcept;
+    constexpr bool is_special_floor(tile_id) noexcept;
+    constexpr bool is_element_floor(tile_id) noexcept;
+    constexpr bool is_boots(tile_id) noexcept;
+    constexpr bool is_button(tile_id) noexcept;
+    constexpr bool is_collectable(tile_id) noexcept;
+    constexpr bool boots_match_floor(tile_id boots, tile_id floor) noexcept;
+    
+    constexpr bool key_matches_lock(texture_id key, texture_id lock) noexcept;
+    constexpr bool boots_match_floor(texture_id boots, texture_id floor) noexcept;
+    
+    constexpr bool is_directional_texture(texture_id) noexcept;
+    constexpr bool is_typed_texture(texture_id) noexcept;
+    
+    /* Only supports texture_id's with contigious directions */
+    constexpr texture_id directional_texture_id(texture_id, direction);
+    
+    constexpr position position_index_to_position(position p) noexcept;
+    constexpr position position_to_position_index(position p) noexcept;
+    
+    constexpr position texture_to_position_index(texture_id) noexcept;
+    constexpr position texture_to_position_index(texture_id, texture_type);
+    constexpr position texture_to_position(texture_id) noexcept;
+    constexpr position texture_to_position(texture_id, texture_type);
+    
+    position get_chip_texture_position_index(chip_state, direction);
+    position get_chip_texture_position(chip_state, direction);
+    
+    position get_monster_texture_index(tile_id, direction);
+    position get_monster_texture(tile_id, direction);
     
     // base class for all tiles (except chip?)
     class tile;

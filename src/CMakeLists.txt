@@ -55,6 +55,8 @@ set(UNIT_TEST_SRC "")
 
 # compile into objects
 include(chips/build.cmake)
+include(chips/tiles/build.cmake)
+include(chips/visitors/build.cmake)
 
 add_library(ObjLib OBJECT ${LIBRARY_SRC})
 set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")

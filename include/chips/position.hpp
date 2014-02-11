@@ -50,7 +50,11 @@ namespace chips
         return !(lhs < rhs); 
     }
     
-    inline position & move(position & pos, direction dir, unsigned count = 1)
+# if defined(__GNUG__) && !defined(__clang__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wswitch-default"
+# endif
+    inline position move(position pos, direction dir, unsigned count = 1)
     {
         switch (dir)
         {
@@ -61,6 +65,9 @@ namespace chips
         }
         return pos;
     }
+# if defined(__GNUG__) && !defined(__clang__)
+#   pragma GCC diagnostic pop
+# endif
     
     constexpr direction 
     turn_clockwise(direction dir, unsigned times = 1) noexcept

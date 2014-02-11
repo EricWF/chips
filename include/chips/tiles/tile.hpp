@@ -2,24 +2,27 @@
 #define CHIPS_TILES_TILE_HPP
 
 # include "chips/tiles/fwd.hpp"
+# include "chips/visitors/fwd.hpp"
 # include "chips/position.hpp"
 
 namespace chips
-{
-    class tile_visitor;
-    
+{    
+# if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+# endif
     class tile
     {
     public:
-        explicit tile(chips::texture_id);
-        tile(chips::texture_id, chips::position pos);
+        explicit tile(texture_id);
+        tile(texture_id, position pos);
         
-        tile(chips::tile_id id1, chips::texture_id id2)
-          : id{id1}, tex_id{id2}, pos{}
+        tile(tile_id id1, texture_id id2)
+          : id{id1}, tex_id{id2}, pos()
         {}
         
-        tile(chips::tile_id id1, chips::texture_id id2, chips::position xpos)
-          : id{id1}, tex_id{id2}, pos{xpos}
+        tile(tile_id id1, texture_id id2, position xpos)
+          : id{id1}, tex_id{id2}, pos(xpos)
         {}
         
         tile(tile const &) = default;
@@ -27,13 +30,16 @@ namespace chips
         tile & operator=(tile const &) = default;
         tile & operator=(tile &&) = default;
         
-        virtual void accept_visit(tile_visitor *visitor) = 0;
+        virtual void accept_visit(tile_visitor & visitor) = 0;
         
         virtual ~tile() noexcept = default;
 
-        chips::tile_id id;
-        chips::texture_id tex_id;
-        chips::position pos;
+        tile_id id;
+        texture_id tex_id;
+        position pos;
     };
+# if defined(__clang__)
+#   pragma clang diagnostic pop
+# endif
 }                                                           // namespace chipl
 #endif /* CHIPS_TILES_TILE_HPP */
