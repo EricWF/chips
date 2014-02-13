@@ -8,7 +8,12 @@
 
 namespace chips
 {
-    
+    struct window_info
+    {
+        std::string name;
+        int xpos, ypos, width, height;
+        Uint32 flags;
+    };
     
     ////////////////////////////////////////////////////////////////////////////
     //
