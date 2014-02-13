@@ -8,12 +8,7 @@
 
 namespace chips
 {
-    struct window_info
-    {
-        std::string name;
-        int xpos, ypos, width, height;
-        Uint32 flags;
-    };
+    
     
     ////////////////////////////////////////////////////////////////////////////
     //
@@ -21,6 +16,11 @@ namespace chips
     {
     public:
         static resource_manager & get();
+        
+        void init_all(Uint32 flags, window_info const &
+                    , int index, Uint32 rend_flags);
+                    
+        void release_all();
         
         bool is_init() const noexcept { return m_init; }
         void init(Uint32 flags = SDL_INIT_EVERYTHING);
@@ -37,6 +37,15 @@ namespace chips
         SDL_Renderer & renderer() { return *m_renderer; }
         operator SDL_Renderer*() { return m_renderer; }
         void release_renderer();
+        
+        bool has_texture() const noexcept { return m_texture; }
+        SDL_Texture & init_texture();
+        SDL_Texture & texture() { return *m_texture; }
+        operator SDL_Texture*() { return m_texture; }
+        void release_texture();
+        
+        SDL_Rect & operator[](texture_index i) { return m_clip_map[i]; }
+        
     private:
         resource_manager() {}
         
@@ -51,6 +60,8 @@ namespace chips
         bool m_init{false};
         SDL_Window *m_window{nullptr};
         SDL_Renderer *m_renderer{nullptr};
+        SDL_Texture *m_texture{nullptr};
+        std::map<texture_index, SDL_Rect> m_clip_map;
     };
 }                                                           // namespace chips
 #endif /* CHIPS_SDL_MANAGER_HPP */

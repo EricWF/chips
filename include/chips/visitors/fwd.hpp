@@ -11,6 +11,8 @@ namespace chips
     
     // implementation of visitors 
     class draw_visitor;
-    class update_visitor;
+    class monster_update_visitor;
+    class monster_intersect_visitor;
+    class chip_intersect_visitor;
 }                                                           // namespace chips
 #endif /* CHIPS_VISITORS_FWD_HPP */

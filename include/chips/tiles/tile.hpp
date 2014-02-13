@@ -4,6 +4,7 @@
 # include "chips/tiles/fwd.hpp"
 # include "chips/visitors/fwd.hpp"
 # include "chips/position.hpp"
+# include <cstddef>
 
 namespace chips
 {    

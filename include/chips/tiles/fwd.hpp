@@ -1,27 +1,22 @@
 #ifndef CHIPS_TILES_FWD_HPP
 #define CHIPS_TILES_FWD_HPP
 
+# include "chips/fwd.hpp"
 # include "chips/position.hpp"
+
+# define CHIPS_TILE_DEFAULT_CLASS(Name) \
+    using traits::traits;               \
+    virtual ~Name() noexcept = default; \
+    virtual void accept_visitor(tile_visitor & v)
+    
+# define CHIPS_TILE_DEFAULT_CLASS_IMPL(Name)    \
+    void Name::accept_visitor(tile_visitor & v) \
+    {                                           \
+        v.visit(*this);                         \
+    }
 
 namespace chips
 {
-    constexpr const char tile_image_file[] = CHIPS_RES_ROOT "/tileset.gif";
-    constexpr const int texture_rows = 16;
-    constexpr const int texture_cols = 13;
-    constexpr const int texture_width = 416;
-    constexpr const int texture_height = 512;
-    constexpr const int tile_width = texture_width / texture_cols;
-    constexpr const int tile_height = texture_height / texture_rows;
-    
-    static_assert(texture_width % texture_cols == 0, "Must evenly divide");
-    static_assert(texture_height % texture_rows == 0, "Must evenly divide");
-    
-    enum class texture_type
-    {
-        tile, 
-        cutout,
-        outline
-    };
    
     /* WARNING: ordering and assigned values are VERY IMPORTANT
      * DO NOT MODIFY */
@@ -193,6 +188,13 @@ namespace chips
         chip_W = 109, 
         chip_S = 110, 
         chip_E = 111, 
+    };
+    
+    enum class texture_type
+    {
+        tile, 
+        cutout,
+        outline
     };
     
     // used as a strongly typed integral

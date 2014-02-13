@@ -1,5 +1,8 @@
 #include "chips/resource_manager.hpp"
 #include "chips/error.hpp"
+#include "chips/position.hpp"
+#include "chips/tiles/support.hpp"
+#include <SDL2/SDL_image.h>
 
 namespace chips
 {
@@ -15,6 +18,20 @@ namespace chips
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif
+
+    void resource_manager::init_all(Uint32 flags, window_info const & info
+                                  , int index,  Uint32 rend_flags)
+    {
+        init(flags);
+        init_window(info);
+        init_renderer(index, rend_flags);
+        init_texture();
+    }
+    
+    void resource_manager::release_all()
+    {
+        release();
+    }
     
     void resource_manager::init(Uint32 flags)
     {
@@ -69,8 +86,48 @@ namespace chips
     void resource_manager::release_renderer()
     {
         if (!has_renderer()) return;
+        release_texture();
         SDL_DestroyRenderer(m_renderer);
         m_renderer = nullptr;
     }
+    
+    SDL_Texture & resource_manager::init_texture()
+    {
+        if (!has_renderer()) 
+            throw chips_error{"Cannot init texture without renderer"};
+        if (has_texture())
+            throw chips_error{"Tile texture is already init"};
+            
+        SDL_Surface *tmp = IMG_Load(tile_image_file);
+        if (!tmp) throw_sdl_error("Failed to open tile image with error: %s");
+        
+        m_texture = SDL_CreateTextureFromSurface(m_renderer, tmp);
+        SDL_FreeSurface(tmp);
+        
+        if (!m_texture) 
+            throw_sdl_error("Failed to create texture from tiles with error: %s");
+            
+        for (int i=0; i < num_tiles; ++i)
+        {
+            texture_index id = static_cast<texture_index>(i);
+            SDL_Rect & r = m_clip_map[id];
+            auto pos = to_texture_position(id);
+            r.x = pos.x;
+            r.y = pos.y;
+            r.h = tile_height;
+            r.w = tile_width;
+        }
+        
+        return *m_texture;
+    }
+    
+    void resource_manager::release_texture()
+    {
+        if (!has_texture()) return;
+        m_clip_map.clear();
+        SDL_DestroyTexture(m_texture);
+        m_texture = nullptr;
+    }
+    
     
 }                                                           // namespace chips

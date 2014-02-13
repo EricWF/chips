@@ -6,11 +6,6 @@
 
 namespace chips
 {
-    constexpr const char window_name[] = "chips";
-    constexpr const int window_xpos = 100;
-    constexpr const int window_ypos = 100;
-    constexpr const int window_width = 640;
-    constexpr const int window_height = 480;
     constexpr const Uint32 sdl_flags = 0;
     
     int chips_main(int, char**, char**)
@@ -26,9 +21,7 @@ namespace chips
         };
         
         resource_manager & rh = resource_manager::get();
-        rh.init();
-        rh.init_window(info);
-        rh.init_renderer(-1, 0);
+        rh.init_all(SDL_INIT_EVERYTHING, info, -1, 0);
 
         game m_game{};
         while(m_game.running())
