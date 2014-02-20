@@ -15,6 +15,10 @@ namespace chips
 		
         // needs virtual destructor!
         virtual ~player() = default;
+
+	private:
+		void handle_input();
+		
 	};
 }
 

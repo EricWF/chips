@@ -1,9 +1,11 @@
 #include "chips/game.hpp"
 #include "chips/error.hpp"
 #include "chips/resource_manager.hpp"
+#include "chips/inputhandler.hpp"
 #include <elib/aux.hpp>
 #include <utility>
 #include <stdio.h>
+
 
 namespace chips
 {
@@ -18,7 +20,7 @@ namespace chips
             throw chips_error{"Failed to load resource"};
          }
 
-         _objs.push_back(new player(new loader(100, 100, 132, 80, "asd")));
+         _objs.push_back(new gameObject(new loader(100, 100, 132, 80, "asd")));
          _objs.push_back(new player(new loader(300, 300, 132, 80, "asd")));
 
         SDL_SetRenderDrawColor(rh, 255, 255, 255, 255);
@@ -54,19 +56,7 @@ namespace chips
 	//
 	void game::handleEvents()
 	{
-		SDL_Event event;
-
-		if(SDL_PollEvent(&event))
-		{
-			switch(event.type)
-			{
-			case SDL_QUIT:
-				_running = false;
-				break;
-			default:
-				break;
-			}
-		}
+		inputHandler::instance().update();
 	}
     
 	////////////////////////////////////////////////////////////////////////////

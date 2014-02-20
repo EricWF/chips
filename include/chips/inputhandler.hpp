@@ -1,6 +1,7 @@
 #ifndef CHIPS_INPUTHANDLER_HPP
 #define CHIPS_INPUTHANDLER_HPP
 
+#include <SDL2/SDL.h>
 #include <stdint.h>
 
 namespace chips
@@ -8,9 +9,10 @@ namespace chips
 	class inputHandler
 	{
 	public:
-		void update() {}
+		void update();
 		void clean() {}
-
+		bool isKeyDown(SDL_Scancode);
+		
 		static inputHandler & instance();
 		
 	private:
@@ -25,7 +27,7 @@ namespace chips
 		/* The destructor can never be called in this singleton pattern */
 		~inputHandler() = delete;
 
-		uint8_t _keystate;
+		const uint8_t *_keystates;
 	};
 }
 

@@ -2,6 +2,7 @@
 #define CHIPS_GAMEOBJECT_HPP
 
 #include "chips/texturemanager.hpp"
+#include "chips/inputhandler.hpp"
 #include "chips/loader.hpp"
 #include <boost/numeric/ublas/vector.hpp>
 #include <SDL2/SDL.h>
@@ -28,10 +29,9 @@ namespace chips
 		int _h;
 		int _w;
 		
-		int _x; // TODO: _pos replaces these
-		int _y; 
-
 		boost::numeric::ublas::vector<int> _pos;
+		boost::numeric::ublas::vector<int> _velocity;
+		
 
     private:
         
