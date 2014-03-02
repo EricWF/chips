@@ -14,12 +14,10 @@ namespace chips
 	{
 	public:
 		gameObject() = default;
-		gameObject(const loader*);
 		virtual void draw(SDL_Renderer*);
-		
 		virtual void update();
-		
 		virtual void clean() {}
+		virtual void load(const loader* params);
 
 	protected:
 		virtual ~gameObject() {}

@@ -1,56 +1,43 @@
 #include <string>
 #include <map>
+#include <iostream>
 #include "chips/gameobject.hpp"
 
 namespace chips
 {
-	class baseCreator
-	{
+  class baseCreator
+  {
 
-	public:
-		virtual gameObject * create_game_object() const = 0;
-		virtual ~baseCreator() {}
+  public:
+    virtual gameObject * create_game_object() const = 0;
+    virtual ~baseCreator() {}
 		
-	};
+  };
 
-	class gameObjectFactory
-	{
+  class gameObjectFactory
+  {
 
-	public:
-		bool registerType(std::string typeID, baseCreator *creator)
-		{
-			std::map<std::string, baseCreator*>::iterator it = _creators.find(typeID);
+  public:
 
-			if(it != _creators.end())
-			{
-				delete creator;
-				return false;
-			}
+    static gameObjectFactory & instance();
 
-			_creators[typeID] = creator;
+    bool registerType(std::string, baseCreator*);
 
-			return true;
-		}
+    gameObject* create(std::string);
 
-		gameObject* create(std::string typeID)
-		{
-			std::map<std::string, baseCreator*>::iterator it = _creators.find(typeID);
-
-			if(it == _creators.end())
-			{
-				printf("Could not find find: %s \n", typeID);
-				return nullptr;
-			}
-
-			baseCreator *creator = (*it).second;
+  private:
+    gameObjectFactory() = default;
 		
-			return creator->create_game_object();
-		}
-
-	private:
-		std::map<std::string, baseCreator*> _creators;
+    ~gameObjectFactory() noexcept = default;
 		
-	};
+    gameObjectFactory(gameObjectFactory const &) = delete;
+    gameObjectFactory(gameObjectFactory &&) = delete;
+    gameObjectFactory & operator=(gameObjectFactory const &) = delete;
+    gameObjectFactory & operator=(gameObjectFactory &&) = delete;
+	
+    std::map<std::string, baseCreator*> _creators;
+		
+  };
 }
 
 
