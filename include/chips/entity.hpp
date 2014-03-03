@@ -168,7 +168,7 @@ namespace chips
         template <class Attr>
         Attr & get_attribute()
         {
-            auto ptr = (*this).template get_raw_attribute<Attr>();
+            auto ptr = (*this).get_raw_attribute<Attr>();
             if (!ptr)
             {
                 ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>());
@@ -209,25 +209,25 @@ namespace chips
     template <class Attr>
     bool remove_attribute(entity & e)
     {
-        return e.template remove_attribute<Attr>();
+        return e.remove_attribute<Attr>();
     }
     
     template <class Attr>
     Attr * get_raw_attribute(entity const & e)
     {
-        return e.template get_raw_attribute<Attr>();
+        return e.get_raw_attribute<Attr>();
     }
     
     template <class Attr>
     Attr const & get_attribute(entity const & e)
     {
-        return e.template get_attribute<Attr>();
+        return e.get_attribute<Attr>();
     }
     
     template <class Attr>
     Attr & get_attribute(entity & e)
     {
-        return e.template get_attribute<Attr>();
+        return e.get_attribute<Attr>();
     }
     
     template <class Attr, class Then>
