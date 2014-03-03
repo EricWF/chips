@@ -8,11 +8,11 @@
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
-# include <elib/functional.hpp> /* for assignment operator */
+# include <elib/functional.hpp> /* for functional::assign */
 # include <elib/tuple.hpp>
-# include <unordered_map>
 # include <typeindex>
 # include <typeinfo>
+# include <unordered_map>
 # include <utility> /* for std::make_pair */
 # include <cstddef> /* for std::size_t */
 
