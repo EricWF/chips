@@ -1,22 +1,19 @@
-#include <iostream>
-#include <vector>
+
 #include "tinyxml/tinyxml.h"
+#include <memory>
+#include <vector>
 
 namespace chips
 {
     class gameObject;
 
-    class parser
-    {
-    public:
-	bool parseState(const char* stateFile, std::string stateID,
-			std::vector<gameObject*> objects);
-    private:
+    std::vector< std::shared_ptr<gameObject> >
+	bool parseState(std::string const & stateFile, std::string const & stateID);
+    
 	void parseObjects(TiXmlElement* stateRoot,
-			  std::vector<gameObject*> *objects);
+                      std::vector<gameObject*> *objects);
 
 	void parseTextures(TiXmlElement* stateRoot,
-			   std::vector<std::string> *textureIDs);
-    };
+                       std::vector<std::string> *textureIDs);
 
 }

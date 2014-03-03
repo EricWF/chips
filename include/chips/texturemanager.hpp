@@ -8,6 +8,13 @@
 
 namespace chips
 {
+    struct texture_info
+    {
+        std::string id;
+        int x, y, width, height;
+        
+    };
+    
 	class textureManager
 	{
 	public:

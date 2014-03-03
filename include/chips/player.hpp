@@ -9,10 +9,18 @@ namespace chips
     class player : public gameObject
     {
     public:
+		player() 
+          : gameObject()
+		{}
+		
+		player(std::string id, int x, int y, int w, int h)
+          : gameObject(id, x, y, w, h)
+        {}
+		
 		void draw(SDL_Renderer*);
 		void update();
 		void clean();
-		void load(const loader* param) { gameObject::load(param); }
+		
 				
 		// needs virtual destructor!
 		virtual ~player() = default;

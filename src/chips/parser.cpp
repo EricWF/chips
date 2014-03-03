@@ -7,41 +7,38 @@
 
 namespace chips
 {
-  bool parser::parseState(const char* stateFile, std::string stateID,
-			  std::vector<gameObject*> objects)
-  {
-    TiXmlDocument doc;
+    parseState(const char* stateFile, std::string stateID)
+    {
+        TiXmlDocument doc;
 
-    if(!doc.LoadFile(stateFile))
-      {
-	std::cerr << doc.ErrorDesc() << std::endl;
-	return false;
-      }
-		
-		
-    TiXmlElement *root = doc.RootElement(); /* root of xml doc */
-    TiXmlElement *stateRoot = nullptr; /* root of curr state */
+        if(!doc.LoadFile(stateFile))
+        {
+            std::cerr << doc.ErrorDesc() << std::endl;
+            return false;
+        }
+            
+        TiXmlElement *root = doc.RootElement(); /* root of xml doc */
+        TiXmlElement *stateRoot = nullptr; /* root of curr state */
 
-    /* Find root of state we're searching for */
-    for(auto e = root->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
-      if(e->Value() == stateID) stateRoot = e;
-		
-    TiXmlElement *texRoot = nullptr; /* root of textures */
-		
-    /* Find root of textures inside state */
-    for(auto e = stateRoot->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
-      if(e->Value() == std::string("TEXTURES")) texRoot = e;
+        /* Find root of state we're searching for */
+        for(auto e = root->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
+        if(e->Value() == stateID) stateRoot = e;
+            
+        TiXmlElement *texRoot = nullptr; /* root of textures */
+            
+        /* Find root of textures inside state */
+        for(auto e = stateRoot->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
+        if(e->Value() == std::string("TEXTURES")) texRoot = e;
 
-    TiXmlElement *objRoot = nullptr; /* root of objects */
-		
-    /* Find root of objects inside state */
-    for(auto e = stateRoot->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
-      if(e->Value() == std::string("OBJECTS")) objRoot = e;
-		
-    parseObjects(objRoot, &objects);
-		
-    return true;
-
+        TiXmlElement *objRoot = nullptr; /* root of objects */
+            
+        /* Find root of objects inside state */
+        for(auto e = stateRoot->FirstChildElement(); e != nullptr; e = e->NextSiblingElement())
+        if(e->Value() == std::string("OBJECTS")) objRoot = e;
+            
+        parseObjects(objRoot, &objects);
+            
+        return true;
   }
 
 

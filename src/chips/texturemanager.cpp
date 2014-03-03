@@ -18,7 +18,7 @@ namespace chips
 #endif
 
 	
-	bool textureManager::load(std::string fileName, const std::string id, SDL_Renderer* renderer)
+	bool textureManager::load(std::string fileName, const std::string & id, SDL_Renderer* renderer)
 	{
 		SDL_Surface *tempSurface = IMG_Load(fileName.c_str());
 
