@@ -4,21 +4,17 @@
 # include "chips/attribute.hpp"
 # include "chips/entity_id.hpp"
 # include "chips/error.hpp"
-# include "chips/log.hpp"
-# include "chips/position.hpp"
-# include <elib/aux.hpp>
 # include <elib/any.hpp>
+# include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
+# include <elib/fmt.hpp>
 # include <elib/functional.hpp> /* for assignment operator */
 # include <elib/tuple.hpp>
-# include <SFML/Graphics.hpp>
-# include <map>
-# include <string>
 # include <unordered_map>
 # include <typeindex>
 # include <typeinfo>
-# include <utility>
-# include <cstddef>
+# include <utility> /* for std::make_pair */
+# include <cstddef> /* for std::size_t */
 
 # define CHIPS_ASSERT_ATTRIBUTE_TYPE(T) \
     static_assert(                      \
