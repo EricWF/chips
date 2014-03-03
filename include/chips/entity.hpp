@@ -151,7 +151,6 @@ namespace chips
         Attr * get_raw_attribute() const
         {
             CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
-            
             auto pos = m_attributes.find(std::type_index(typeid(Attr)));
             if (pos == m_attributes.end()) return nullptr;
             return elib::addressof(
