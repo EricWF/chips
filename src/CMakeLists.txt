@@ -49,17 +49,15 @@ if (CONFIG_ALL_WARNINGS)
   
 endif()
 
-
-find_package(SDL2 REQUIRED)
-find_package(SDL2_image REQUIRED)
+find_package(SFML 2 REQUIRED system window graphics audio)
+include_directories(${SFML_INCLUDE_DIR})
 
 set(LIBRARY_SRC "")
 set(UNIT_TEST_SRC "")
 
 # compile into objects
 include(chips/build.cmake)
-include(chips/tiles/build.cmake)
-include(chips/visitors/build.cmake)
+include(chips/menu/build.cmake)
 include(tinyxml/build.cmake)
 
 add_library(ObjLib OBJECT ${LIBRARY_SRC})
@@ -72,7 +70,7 @@ find_package( Threads REQUIRED )
 
 add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
-target_link_libraries(chips ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}
+target_link_libraries(chips ${SFML_LIBRARIES}
                             ${CMAKE_THREAD_LIBS_INIT} ${STDLIB_LINK}
                             ${ELIB_LIBRARIES})
   
@@ -91,7 +89,7 @@ if(CONFIG_UNIT_TESTS)
     add_executable(chips_test $<TARGET_OBJECTS:TestObj> $<TARGET_OBJECTS:ObjLib>)
 
 
-    target_link_libraries(chips_test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}
+    target_link_libraries(chips_test ${SFML_LIBRARIES}
                                      ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} 
                                      ${ELIB_LIBRARIES} ${Boost_LIBRARIES})
    

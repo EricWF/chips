@@ -1,5 +1,10 @@
 #ifndef CHIPS_POSITION_HPP
-#define CHIPS_POSITION_HPP
+# define CHIPS_POSITION_HPP
+
+# include "chips/attribute.hpp"
+# include <elib/aux.hpp>
+# include <elib/lexical_cast.hpp>
+# include <string>
 
 namespace chips
 {
@@ -8,10 +13,42 @@ namespace chips
         N, W, S, E
     };
     
+    inline std::string to_string(direction d)
+    {
+        std::string s = "direction: ";
+        switch (d)
+        {
+            case direction::N:
+                s += "N"; break;
+            case direction::W:
+                s += "W"; break;
+            case direction::S:
+                s += "S"; break;
+            case direction::E:
+                s += "E"; break;
+        }
+        return s;
+    }
+    
     struct position
     {
         int x, y;
     };
+    
+   
+    inline std::string to_string(position p)
+    {
+        return elib::fmt("position: x=%i y=%i", p.x, p.y);
+    }
+    
+    namespace extension
+    {
+        template <>
+        struct is_attribute_impl<direction> : elib::true_ {};
+        
+        template <>
+        struct is_attribute_impl<position>  : elib::true_ {};
+    }
     
     constexpr bool 
     operator==(position const & lhs, position const & rhs) noexcept
@@ -92,6 +129,5 @@ namespace chips
             (static_cast<unsigned>(dir) + (times * 2)) % 4
           );
     }
-    
 }                                                           // namespace chips
 #endif /* CHIPS_POSITION_HPP */

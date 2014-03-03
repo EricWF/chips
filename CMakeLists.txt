@@ -38,7 +38,8 @@ endif()
 project(Chips CXX C)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/modules")
-add_definitions( "-DCHIPS_RES_ROOT=\"${CMAKE_CURRENT_LIST_DIR}/res/\"" )
+add_definitions( "-DCHIPS_RESOURCE_ROOT=\"${CMAKE_CURRENT_LIST_DIR}/res/\"" )
+add_definitions( "-DCHIPS_SFML_WORKAROUNDS")
 
 ################################################################################
 #                       Toolchain config (Post-project)
@@ -148,7 +149,7 @@ set(headerDir ${CMAKE_CURRENT_LIST_DIR}/include)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/include)
 include_directories(${CMAKE_CURRENT_LIST_DIR}/elib)
 set(ELIB_LIBRARIES_DIR "${CMAKE_CURRENT_LIST_DIR}/elib/bin")
-set(ELIB_LIBRARIES "-L${ELIB_LIBRARIES_DIR} -Wl,-rpath -Wl,${ELIB_LIBRARIES_DIR}")
+set(ELIB_LIBRARIES "-L${ELIB_LIBRARIES_DIR} -Wl,-rpath -Wl,${ELIB_LIBRARIES_DIR} -lelib")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin) 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/bin)

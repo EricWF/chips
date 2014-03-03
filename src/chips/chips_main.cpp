@@ -1,37 +1,53 @@
 #include "chips/chips_main.hpp"
+#include "chips/config.hpp"
+#include "chips/entity.hpp"
+#include "chips/log.hpp"
 #include "chips/error.hpp"
-#include "chips/resource_manager.hpp"
-#include "chips/game.hpp"
+#include "chips/texture_manager.hpp"
+#include "chips/menu/core.hpp"
+#include "chips/menu/parse.hpp"
+#include "chips/menu/menu_handler.hpp"
 #include <elib/aux.hpp>
+#include <elib/enumeration.hpp>
+#include <elib/eprintf.hpp>
+
+#include <SFML/Graphics.hpp>
+
+#include <string>
 
 namespace chips
 {
-    constexpr const Uint32 sdl_flags = 0;
     
     int chips_main(int, char**, char**)
     {
         /* Handle uncaught exceptions and unexpected termination */
         set_terminate_handler();
         
-        const window_info info{
-            window_name
-          , window_xpos, window_ypos
-          , window_width, window_height
-          , sdl_flags
-        };
+        log::level(level_e::debug);
         
-        resource_manager & rh = resource_manager::get();
-        rh.init_all(SDL_INIT_EVERYTHING, info, -1, 0);
-
-        game m_game{};
-        while(m_game.running())
+        texture_manager::get();
+        
+        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
+        
+        std::string test = CHIPS_RESOURCE_ROOT "main_menu.xml";
+        auto blist = parse_menu(test);
+        
+        menu_handler mh;
+        
+        mh.set_menu(window, blist);
+        
+        while (window.isOpen())
         {
-            m_game.handleEvents();
-            m_game.update();
-            m_game.render();
-            SDL_Delay(10);
+            window.clear(sf::Color::Black);
+            
+            auto bid = mh.handle_event(window);
+            if (bid == menu_item_id::quit) break;
+                
+            mh.draw(window);
+            window.display();
         }
-
+        
+        window.close();
         return 0;
     }
 }                                                           // namespace chips
