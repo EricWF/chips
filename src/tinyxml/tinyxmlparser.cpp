@@ -25,7 +25,7 @@ distribution.
 #include <ctype.h>
 #include <stddef.h>
 
-#include "tinyxml.h"
+#include "tinyxml/tinyxml.h"
 
 //#define DEBUG_PARSER
 #if defined( DEBUG_PARSER )
@@ -84,7 +84,10 @@ const int TiXmlBase::utf8ByteTable[256] =
 		4,	4,	4,	4,	4,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1,	1	// 0xf0 0xf0 to 0xf4 4 byte, 0xf5 and higher invalid
 };
 
-
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#endif
 void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* length )
 {
 	const unsigned long BYTE_MASK = 0xBF;
@@ -124,7 +127,9 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
 			*output = (char)(input | FIRST_BYTE_MARK[*length]);
 	}
 }
-
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
 
 /*static*/ int TiXmlBase::IsAlpha( unsigned char anyByte, TiXmlEncoding /*encoding*/ )
 {
@@ -427,8 +432,8 @@ const char* TiXmlBase::ReadName( const char* p, TIXML_STRING * name, TiXmlEncodi
 			//(*name) += *p; // expensive
 			++p;
 		}
-		if ( p-start > 0 ) {
-			name->assign( start, p-start );
+		if ( p-start > 0l ) {
+			name->assign( start, static_cast<unsigned long>(p-start) );
 		}
 		return p;
 	}
@@ -458,17 +463,17 @@ const char* TiXmlBase::GetEntity( const char* p, char* value, int* length, TiXml
 
 			if ( !q || !*q ) return 0;
 
-			delta = q-p;
+			delta = q - p;
 			--q;
 
 			while ( *q != 'x' )
 			{
 				if ( *q >= '0' && *q <= '9' )
-					ucs += mult * (*q - '0');
+					ucs += mult * static_cast<unsigned>(*q - '0');
 				else if ( *q >= 'a' && *q <= 'f' )
-					ucs += mult * (*q - 'a' + 10);
+					ucs += mult * static_cast<unsigned>(*q - 'a' + 10);
 				else if ( *q >= 'A' && *q <= 'F' )
-					ucs += mult * (*q - 'A' + 10 );
+					ucs += mult * static_cast<unsigned>(*q - 'A' + 10 );
 				else 
 					return 0;
 				mult *= 16;
@@ -491,7 +496,7 @@ const char* TiXmlBase::GetEntity( const char* p, char* value, int* length, TiXml
 			while ( *q != '#' )
 			{
 				if ( *q >= '0' && *q <= '9' )
-					ucs += mult * (*q - '0');
+					ucs += mult * static_cast<unsigned>(*q - '0');
 				else 
 					return 0;
 				mult *= 10;
@@ -590,7 +595,7 @@ const char* TiXmlBase::ReadText(	const char* p,
 			int len;
 			char cArr[4] = { 0, 0, 0, 0 };
 			p = GetChar( p, cArr, &len, encoding );
-			text->append( cArr, len );
+			text->append( cArr, static_cast<unsigned long>(len) );
 		}
 	}
 	else
@@ -627,7 +632,7 @@ const char* TiXmlBase::ReadText(	const char* p,
 				if ( len == 1 )
 					(*text) += cArr[0];	// more efficient
 				else
-					text->append( cArr, len );
+					text->append( cArr, static_cast<unsigned long>(len) );
 			}
 		}
 	}
@@ -874,7 +879,7 @@ TiXmlNode* TiXmlNode::Identify( const char* p, TiXmlEncoding encoding )
 		#endif
 		returnNode = new TiXmlUnknown();
 	}
-	else if (    IsAlpha( *(p+1), encoding )
+	else if (    IsAlpha( static_cast<unsigned char>(*(p+1)), encoding )
 			  || *(p+1) == '_' )
 	{
 		#ifdef DEBUG_PARSER

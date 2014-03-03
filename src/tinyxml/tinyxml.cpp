@@ -29,7 +29,7 @@ distribution.
 #include <iostream>
 #endif
 
-#include "tinyxml.h"
+#include "tinyxml/tinyxml.h"
 
 FILE* TiXmlFOpen( const char* filename, const char* mode );
 
@@ -55,12 +55,12 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 
 	while( i<(int)str.length() )
 	{
-		unsigned char c = (unsigned char) str[i];
+		unsigned char c = (unsigned char) str[static_cast<unsigned>(i)];
 
 		if (    c == '&' 
 		     && i < ( (int)str.length() - 2 )
-			 && str[i+1] == '#'
-			 && str[i+2] == 'x' )
+			 && str[static_cast<unsigned>(i+1)] == '#'
+			 && str[static_cast<unsigned>(i+2)] == 'x' )
 		{
 			// Hexadecimal character reference.
 			// Pass through unchanged.
@@ -76,7 +76,7 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 			{
 				outString->append( str.c_str() + i, 1 );
 				++i;
-				if ( str[i] == ';' )
+				if ( str[static_cast<unsigned>(i)] == ';' )
 					break;
 			}
 		}
@@ -119,7 +119,8 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 
 			//*ME:	warning C4267: convert 'size_t' to 'int'
 			//*ME:	Int-Cast to make compiler happy ...
-			outString->append( buf, (int)strlen( buf ) );
+			// C++11 changes this
+			outString->append( buf, strlen( buf ) );
 			++i;
 		}
 		else
@@ -1032,7 +1033,7 @@ bool TiXmlDocument::LoadFile( FILE* file, TiXmlEncoding encoding )
 	char* buf = new char[ length+1 ];
 	buf[0] = 0;
 
-	if ( fread( buf, length, 1, file ) != 1 ) {
+	if ( fread( buf, static_cast<unsigned long>(length), 1, file ) != 1 ) {
 		delete [] buf;
 		SetError( TIXML_ERROR_OPENING_FILE, 0, 0, TIXML_ENCODING_UNKNOWN );
 		return false;

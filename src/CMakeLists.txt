@@ -37,6 +37,9 @@ if (CONFIG_ALL_WARNINGS)
     add_flags( LIBRARY_FLAGS
       -Weverything -Wno-c++98-compat 
       -Wno-c++98-compat-pedantic -Wno-newline-eof
+      -Wno-weak-vtables
+      -Wno-documentation-deprecated-sync
+      -Wno-documentation-unknown-command
     )
   endif()
   
@@ -57,6 +60,7 @@ set(UNIT_TEST_SRC "")
 include(chips/build.cmake)
 include(chips/tiles/build.cmake)
 include(chips/visitors/build.cmake)
+include(tinyxml/build.cmake)
 
 add_library(ObjLib OBJECT ${LIBRARY_SRC})
 set_target_properties(ObjLib PROPERTIES COMPILE_FLAGS "${LIBRARY_FLAGS}")
@@ -69,7 +73,8 @@ find_package( Threads REQUIRED )
 add_executable(chips main.cpp $<TARGET_OBJECTS:ObjLib>)
 
 target_link_libraries(chips ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}
-                            ${CMAKE_THREAD_LIBS_INIT} ${STDLIB_LINK})
+                            ${CMAKE_THREAD_LIBS_INIT} ${STDLIB_LINK}
+                            ${ELIB_LIBRARIES})
   
 ################################################################################
 
@@ -88,7 +93,7 @@ if(CONFIG_UNIT_TESTS)
 
     target_link_libraries(chips_test ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES}
                                      ${STDLIB_LINK} ${CMAKE_THREAD_LIBS_INIT} 
-                                     ${Boost_LIBRARIES})
+                                     ${ELIB_LIBRARIES} ${Boost_LIBRARIES})
    
 endif()
 

@@ -20,8 +20,8 @@ namespace chips
             throw chips_error{"Failed to load resource"};
          }
 
-         _objs.push_back(new gameObject(new loader(100, 100, 132, 80, "asd")));
-         _objs.push_back(new player(new loader(300, 300, 132, 80, "asd")));
+         //_objs.push_back(new gameObject()->load(new loader(100, 100, 132, 80, "asd")));
+         //_objs.push_back(new player()->load(new loader(300, 300, 132, 80, "asd")));
 
         SDL_SetRenderDrawColor(rh, 255, 255, 255, 255);
         _running = true;

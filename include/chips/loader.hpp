@@ -1,4 +1,4 @@
- CHIPS_LOADER_HPP
+#ifndef CHIPS_LOADER_HPP
 #define CHIPS_LOADER_HPP
 
 #include <string>
