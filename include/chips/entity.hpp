@@ -8,7 +8,6 @@
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
-# include <elib/functional.hpp> /* for functional::assign */
 # include <elib/tuple.hpp>
 # include <typeindex>
 # include <typeinfo>
@@ -33,6 +32,23 @@ namespace chips
         e << elib::errinfo_type_info_name(typeid(Attr).name());
         return e;
     }
+    
+    namespace detail
+    {
+        template <class T>
+        struct assign_op
+        {
+            assign_op(T & t) : m_t(t) {}
+            
+            template <class ...Args>
+            void operator()(Args &&... args)
+            {
+                elib::aux::swallow((m_t = elib::forward<Args>(args))...);
+            }
+            
+            T & m_t;
+        };
+    }                                                       // namespace detail
     
     class entity
     {
@@ -87,8 +103,8 @@ namespace chips
         >
         entity & operator=(elib::tuple<Attrs...> const & tp)
         {
-            elib::functional::assign<> assign_fn;
-            apply_tuple(assign_fn, tp);
+            detail::assign_op<entity> op(*this);
+            apply_tuple(op, tp);
             return *this;
         }
         
