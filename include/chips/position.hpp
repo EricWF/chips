@@ -111,7 +111,7 @@ namespace chips
     {
         return static_cast<direction>(
             ((static_cast<unsigned>(dir) + times) + 2) % 4
-          );
+        );
     }
     
     constexpr direction 
@@ -119,7 +119,7 @@ namespace chips
     {
         return static_cast<direction>(
             (static_cast<unsigned>(dir) + times) % 4
-          );
+        );
     }
     
     constexpr direction
@@ -127,7 +127,7 @@ namespace chips
     {
         return static_cast<direction>(
             (static_cast<unsigned>(dir) + (times * 2)) % 4
-          );
+        );
     }
 }                                                           // namespace chips
 #endif /* CHIPS_POSITION_HPP */

@@ -86,7 +86,7 @@ namespace chips
     inline std::string to_string(button_info const & i)
     {
         return elib::fmt(
-            "button_info: id=%s hpos=%d vpos=%d halign=%s valign=%s"
+            "button_info: id=%s hpos=%f vpos=%f halign=%s valign=%s"
           , elib::enumeration::enum_cast<std::string>(i.id)
           , i.hpos, i.vpos
           , elib::enumeration::enum_cast<std::string>(i.halign)
