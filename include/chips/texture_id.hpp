@@ -1,6 +1,8 @@
 #ifndef CHIPS_TEXTURE_ID_HPP
 # define CHIPS_TEXTURE_ID_HPP
 
+# include "chips/attribute.hpp"
+# include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <map>
 # include <string>
@@ -128,6 +130,22 @@ namespace chips
         chip_S = 110, 
         chip_E = 111, 
     };
+    
+    enum class texture_type
+    {
+        tile, 
+        cutout,
+        outline
+    };
+    
+    namespace extension
+    {
+        template <>
+        struct is_attribute_impl<texture_id> : elib::true_ {};
+        
+        template <>
+        struct is_attribute_impl<texture_type> : elib::true_ {};
+    }                                                    // namespace extension
 }                                                           // namespace chips
 
 namespace elib { namespace enumeration
@@ -137,10 +155,26 @@ namespace elib { namespace enumeration
     {
         static const std::map<::chips::texture_id, std::string> name_map;
     };
+    
+    template <>
+    struct basic_enum_traits<::chips::texture_type>
+    {
+        static const std::map<::chips::texture_type, std::string> name_map;
+    };
 }}                                               // namespace elib::enumeration
 
 namespace chips
 {
+    inline std::string to_string(texture_id id)
+    {
+        return elib::enumeration::enum_cast<std::string>(id);
+    }
+
+    inline std::string to_string(texture_type t)
+    {
+        return elib::enumeration::enum_cast<std::string>(t);
+    }
+    
     constexpr bool is_directional_texture(texture_id id) noexcept
     {
         return (id >= texture_id::thin_wall_N && id <= texture_id::thin_wall_E)

@@ -1,4 +1,4 @@
-#include "chips/font_handler.hpp"
+#include "chips/font_manager.hpp"
 #include "chips/error.hpp"
 #include <algorithm>
 #include <utility>
@@ -27,16 +27,16 @@ namespace chips
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
-    font_handler & font_handler::get()
+    font_manager & font_manager::get()
     {
-        static font_handler fh;
+        static font_manager fh;
         return fh;
     }
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif
     
-    const sf::Font & font_handler::operator[](font_id id)
+    const sf::Font & font_manager::operator[](font_id id)
     {
         auto found = m_font_map.find(id);
         if (found != m_font_map.end())
@@ -51,7 +51,7 @@ namespace chips
         return pos.first->second;
     }
     
-    const sf::Font & font_handler::at(font_id id) const
+    const sf::Font & font_manager::at(font_id id) const
     {
         auto found = m_font_map.find(id);
         if (found == m_font_map.end())

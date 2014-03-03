@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<entity entity_id="floor">
+    <attribute type="chips_state" value="normal" />
+    <attribute type="direction" value="N" />
+    <attribute type="position" x="0" y="0" />
+    <attribute type="texture_id" value="floor"/>
+</entity>

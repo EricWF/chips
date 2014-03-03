@@ -1,5 +1,5 @@
 #include "chips/menu/text_button.hpp"
-#include "chips/font_handler.hpp"
+#include "chips/font_manager.hpp"
 #include "chips/error.hpp"
 #include <algorithm>
 #include <cstddef>
@@ -13,7 +13,7 @@ namespace chips
     {
         m_text.setColor(menu_text_color);
         m_text.setCharacterSize(menu_font_size);
-        m_text.setFont(font_handler::get()[menu_font_id]);
+        m_text.setFont(font_manager::get()[menu_font_id]);
         
         m_rect.setFillColor(menu_button_fill_color);
         m_rect.setOutlineColor(m_default_color);

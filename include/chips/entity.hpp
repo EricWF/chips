@@ -25,17 +25,9 @@
         is_attribute<T>::value          \
       , "T must be an attribute type"   \
     )
-
-
     
 namespace chips
 {
-    
-    inline std::string to_string(entity_id e)
-    {
-        return elib::enumeration::enum_cast<std::string>(e);
-    }
-    
     template <class Attr>
     inline chips_error create_entity_access_error()
     {
@@ -141,7 +133,7 @@ namespace chips
         }
         
         template <class Attr>
-        bool set_attribute(Attr && attr)
+        void set_attribute(Attr && attr)
         {
             CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             m_attributes[std::type_index(typeid(Attr))] = 
@@ -214,9 +206,9 @@ namespace chips
     }
     
     template <class Attr>
-    bool set_attribute(entity & e, Attr && a)
+    void set_attribute(entity & e, Attr && a)
     {
-        return e.set_attribute(elib::forward<Attr>(a));
+        e.set_attribute(elib::forward<Attr>(a));
     }
     
     template <class Attr>

@@ -3,6 +3,6 @@
 
 namespace chips
 {
-
+    class game;
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HPP */

@@ -17,6 +17,10 @@ namespace chips
         }
     }
     
+#if defined(__clang__)
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wswitch-enum"
+#endif
     menu_item_id 
     menu_handler::handle_event(sf::RenderWindow & win)
     {
@@ -38,6 +42,9 @@ namespace chips
         }
         return menu_item_id::none;
     }
+#if defined(__clang__)
+# pragma clang diagnostic pop
+#endif
     
     void menu_handler::draw(sf::RenderWindow & to)
     {

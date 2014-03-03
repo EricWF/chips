@@ -2,7 +2,7 @@
 #define CHIPS_MENU_CORE_HPP
 
 # include "chips/config.hpp"
-# include "chips/font_handler.hpp"
+# include "chips/font_manager.hpp"
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
 # include <SFML/Graphics.hpp>

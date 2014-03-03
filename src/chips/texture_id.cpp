@@ -131,6 +131,16 @@ namespace elib { namespace enumeration
         };
 #undef _
 
+# define _(Name) { ::chips::texture_type::Name, #Name }
+    const std::map<::chips::texture_type, std::string>
+    basic_enum_traits<::chips::texture_type>::name_map =
+        {
+            _(tile)
+          , _(cutout)
+          , _(outline)
+        };
+#undef _
+
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif

@@ -1,9 +1,9 @@
-#ifndef CHIPS_FONT_HANDLER_HPP
-#define CHIPS_FONT_HANDLER_HPP
+#ifndef CHIPS_FONT_MANAGER_HPP
+#define CHIPS_FONT_MANAGER_HPP
 
-# include <string>
-# include <map>
 # include <SFML/Graphics.hpp>
+# include <map>
+# include <string>
 
 namespace chips
 {
@@ -15,13 +15,13 @@ namespace chips
     
     const char* get_font_id_path(font_id id);
     
-    class font_handler
+    class font_manager
     {
     public:
-        static font_handler & get();
+        static font_manager & get();
         
-        font_handler(font_handler const &) = delete;
-        font_handler & operator=(font_handler const &) = delete;
+        font_manager(font_manager const &) = delete;
+        font_manager & operator=(font_manager const &) = delete;
         
         // creates font if not found
         const sf::Font & operator[](font_id id);
@@ -29,8 +29,8 @@ namespace chips
         const sf::Font & at(font_id id) const;
         
     private:
-        font_handler() = default;
+        font_manager() = default;
         std::map<font_id, sf::Font> m_font_map;
     };
 }
-#endif /* CHIPS_FONT_HANDLER_HPP */
+#endif /* CHIPS_FONT_MANAGER_HPP */

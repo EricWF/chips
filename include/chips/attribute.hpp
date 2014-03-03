@@ -16,7 +16,8 @@ namespace chips
     }
     
     template <class T>
-    using is_attribute = typename extension::is_attribute_impl<T>::type;
+    using is_attribute = typename 
+        extension::is_attribute_impl<elib::aux::uncvref<T>>::type;
     
 }                                                           // namespace chips
 #endif /* CHIPS_ATTRIBUTE_HPP */

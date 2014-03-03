@@ -1,6 +1,8 @@
 #ifndef CHIPS_ENTITY_ID_HPP
 #define CHIPS_ENTITY_ID_HPP
 
+# include "chips/attribute.hpp"
+# include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <map>
 # include <string>
@@ -61,6 +63,11 @@ namespace chips
         chip = 108
     };
     
+    namespace extension
+    {
+        template <>
+        struct is_attribute_impl<entity_id> : elib::true_ {};
+    }                                                    // namespace extension
 }                                                           // namespace chips
 
 namespace elib { namespace enumeration
@@ -74,6 +81,11 @@ namespace elib { namespace enumeration
 
 namespace chips
 {
+    inline std::string to_string(entity_id id)
+    {
+        return elib::enumeration::enum_cast<std::string>(id);
+    }
+    
     constexpr bool is_monster(entity_id id) noexcept
     {
         return (id >= entity_id::bug && id <= entity_id::germ);
