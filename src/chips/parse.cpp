@@ -87,7 +87,10 @@ namespace chips
     }
     
     //TODO
-    void parse(TiXmlElement &, level & e);
+    void parse(TiXmlElement &, level &)
+    {
+        throw "TODO";
+    }
     
     void parse(TiXmlElement & e, position & p)
     {

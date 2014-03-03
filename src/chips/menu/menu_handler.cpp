@@ -1,6 +1,7 @@
 #include "chips/menu/menu_handler.hpp"
 #include "chips/error.hpp"
 #include "chips/log.hpp"
+#include <elib/config.hpp>
 
 namespace chips
 {
@@ -20,6 +21,9 @@ namespace chips
 #if defined(__clang__)
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wswitch-enum"
+#elif defined(ELIB_CONFIG_GCC)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
     menu_item_id 
     menu_handler::handle_event(sf::RenderWindow & win)
@@ -44,6 +48,8 @@ namespace chips
     }
 #if defined(__clang__)
 # pragma clang diagnostic pop
+#elif defined(ELIB_CONFIG_GCC)
+# pragma GCC diagnostic pop
 #endif
     
     void menu_handler::draw(sf::RenderWindow & to)
@@ -56,7 +62,10 @@ namespace chips
     {
         for (auto & b : m_buttons)
         {
-            if (b.getGlobalBounds().contains(e.mouseButton.x, e.mouseButton.y))
+            if (b.getGlobalBounds().contains(
+                static_cast<float>(e.mouseButton.x)
+              , static_cast<float>(e.mouseButton.y)
+            ))
                 return b.id();
         }
         return menu_item_id::none;
@@ -67,8 +76,10 @@ namespace chips
         for (auto & b : m_buttons)
         {
             b.setHovered(
-                b.getGlobalBounds().contains(e.mouseMove.x, e.mouseMove.y)
-            );
+                b.getGlobalBounds().contains(
+                    static_cast<float>(e.mouseMove.x)
+                  , static_cast<float>(e.mouseMove.y)
+            ));
         }
     }
     

@@ -3,6 +3,7 @@
 
 # include "chips/attribute.hpp"
 # include <elib/aux.hpp>
+# include <elib/config.hpp>
 # include <elib/lexical_cast.hpp>
 # include <string>
 
@@ -12,7 +13,11 @@ namespace chips
     {
         N, W, S, E
     };
-    
+
+# if defined(ELIB_CONFIG_GCC)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wswitch-default"
+# endif
     inline std::string to_string(direction d)
     {
         std::string s = "direction: ";
@@ -29,7 +34,10 @@ namespace chips
         }
         return s;
     }
-    
+# if defined(ELIB_CONFIG_GCC)
+#   pragma GCC diagnostic pop
+# endif
+
     struct position
     {
         int x, y;
@@ -87,7 +95,7 @@ namespace chips
         return !(lhs < rhs); 
     }
     
-# if defined(__GNUG__) && !defined(__clang__)
+# if defined(ELIB_CONFIG_GCC)
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wswitch-default"
 # endif
@@ -102,7 +110,7 @@ namespace chips
         }
         return pos;
     }
-# if defined(__GNUG__) && !defined(__clang__)
+# if defined(ELIB_CONFIG_GCC)
 #   pragma GCC diagnostic pop
 # endif
     

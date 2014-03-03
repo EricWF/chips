@@ -62,7 +62,7 @@ namespace chips
         
         // amount that characters like g, and j hang below the bounds
         // just a good aproximation.
-        float underhanging = m_text.getCharacterSize() / 5.0f;
+        float underhanging = static_cast<float>(m_text.getCharacterSize()) / 5.0f;
         
         m_text.setPosition(
             rect_b.left + ((rect_b.width - text_b.width) / 2.0f)

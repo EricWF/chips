@@ -45,13 +45,12 @@ namespace chips
 
     constexpr texture_id directional_texture_id(texture_id id, direction dir)
     {
-        return (
-            is_directional_texture(id)
-                ? static_cast<texture_id>(
-                    static_cast<int>(id) + static_cast<int>(dir)
-                  )
-                 : throw ELIB_SET_EXCEPTION_THROW_SITE(chips_error{"not a directional texture"})
-          );
+        return (is_directional_texture(id)
+            ? static_cast<texture_id>(
+                static_cast<int>(id) + static_cast<int>(dir)
+              )
+            : throw chips_error{"not a directional texture"}
+        );
     }
     
     constexpr texture_index to_texture_index(texture_id id) noexcept
