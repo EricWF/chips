@@ -1,7 +1,6 @@
 #ifndef CHIPS_PARSE_HPP
 #define CHIPS_PARSE_HPP
 
-# include "chips/attribute.hpp"
 # include "chips/chips_state.hpp"
 # include "chips/entity.hpp"
 # include "chips/entity_id.hpp"
