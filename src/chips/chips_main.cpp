@@ -22,6 +22,15 @@
 
 namespace chips
 {
+    inline void draw_tiles_test(sf::RenderWindow & win)
+    {
+        texture_manager & man = texture_manager::get();
+        sf::Sprite s(man[texture_uid::tiles]);
+        win.clear(sf::Color::Black);
+        win.draw(s);
+        win.display();
+    }
+    
     inline void entity_draw_test(sf::RenderWindow & win)
     {
         entity e(entity_id::bug);
@@ -59,7 +68,7 @@ namespace chips
             if (bid == menu_item_id::quit) break;
                 
             mh.draw(window);
-            entity_draw_test(window);
+            draw_tiles_test(window);
             window.display();
         }
         
