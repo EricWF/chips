@@ -8,7 +8,6 @@
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
-# include <elib/tuple.hpp>
 # include <typeindex>
 # include <typeinfo>
 # include <unordered_map>
@@ -33,22 +32,6 @@ namespace chips
         return e;
     }
     
-    namespace detail
-    {
-        template <class T>
-        struct assign_op
-        {
-            assign_op(T & t) : m_t(t) {}
-            
-            template <class ...Args>
-            void operator()(Args &&... args)
-            {
-                elib::aux::swallow((m_t = elib::forward<Args>(args))...);
-            }
-            
-            T & m_t;
-        };
-    }                                                       // namespace detail
     
     class entity
     {
@@ -75,16 +58,6 @@ namespace chips
             );
         }
         
-        template <
-            class ...Attrs
-          , ELIB_ENABLE_IF(elib::and_<is_attribute<Attrs>...>::value)
-        >
-        entity(entity_id xid, elib::tuple<Attrs...> const & t)
-          : m_id(xid)
-        {
-            *this = t;
-        }
-        
         ELIB_DEFAULT_COPY_MOVE(entity);        
         
         template <
@@ -94,17 +67,6 @@ namespace chips
         entity & operator=(Attr && a)
         {
             m_attributes[std::type_index(typeid(Attr))] = elib::forward<Attr>(a);
-            return *this;
-        }
-        
-        template <
-            class ...Attrs
-          , ELIB_ENABLE_IF(elib::and_<is_attribute<Attrs>...>::value)
-        >
-        entity & operator=(elib::tuple<Attrs...> const & tp)
-        {
-            detail::assign_op<entity> op(*this);
-            apply_tuple(op, tp);
             return *this;
         }
         

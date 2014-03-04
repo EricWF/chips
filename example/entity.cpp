@@ -7,14 +7,10 @@ namespace chips
   entity e(entity_id::chip);
   // construct with id and list of attributes (any number)
   entity e(entity_id::chips, position(0,0), direction::N);
-  // construct from tuple of attributes
-  entity e(entity_id::chips, elib::tuple<position,direction>());
   // assignment like normal
   e = entity();
   // assign a attribute
   e = direction::N;
-  // assign a tuple of attributes
-  e = elib::tuple<position, direction>();
   // get the entity_id
   e.id();
   // get the number of attributes
