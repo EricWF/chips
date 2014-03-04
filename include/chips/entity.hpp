@@ -122,7 +122,13 @@ namespace chips
         }
         
         template <class Attr>
-        Attr * get_raw_attribute() const
+        Attr const * get_raw_attribute() const
+        {
+            return const_cast<entity &>(*this).get_raw_attribute<Attr>();
+        }
+        
+        template <class Attr>
+        Attr * get_raw_attribute()
         {
             CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             auto pos = m_attributes.find(std::type_index(typeid(Attr)));
@@ -135,7 +141,7 @@ namespace chips
         template <class Attr>
         Attr const & get_attribute() const
         {
-            auto ptr = (*this).template get_raw_attribute<Attr>();
+            auto ptr = (*this).get_raw_attribute<Attr>();
             if (!ptr)
             {
                 ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>());
@@ -159,59 +165,10 @@ namespace chips
         std::unordered_map<std::type_index, elib::any> m_attributes;
     };
     
-    
-    template <class Attr>
-    bool has_attribute(entity const & e) 
-    { 
-        return e.template has_attribute<Attr>(); 
-    }
-    
-    template <class Attr, class ...Args>
-    bool emplace_attribute(entity & e, Args &&... args)
-    {
-        return e.template emplace_attribute<Attr>(elib::forward<Args>(args)...);
-    }
-    
-    template <class Attr>
-    bool insert_attribute(entity & e, Attr && a)
-    {
-        return e.insert_attribute(elib::forward<Attr>(a));
-    }
-    
-    template <class Attr>
-    void set_attribute(entity & e, Attr && a)
-    {
-        e.set_attribute(elib::forward<Attr>(a));
-    }
-    
-    template <class Attr>
-    bool remove_attribute(entity & e)
-    {
-        return e.remove_attribute<Attr>();
-    }
-    
-    template <class Attr>
-    Attr * get_raw_attribute(entity const & e)
-    {
-        return e.get_raw_attribute<Attr>();
-    }
-    
-    template <class Attr>
-    Attr const & get_attribute(entity const & e)
-    {
-        return e.get_attribute<Attr>();
-    }
-    
-    template <class Attr>
-    Attr & get_attribute(entity & e)
-    {
-        return e.get_attribute<Attr>();
-    }
-    
     template <class Attr, class Then>
     bool if_has_attribute(entity & e, Then && then_fn)
     {
-        if (!has_attribute<Attr>(e)) return false;
+        if (!e.has_attribute<Attr>()) return false;
         elib::forward<Then>(then_fn)(e);
         return true;
     }
@@ -222,7 +179,7 @@ namespace chips
     >
     entity & operator<<(entity & e, Attr && attr)
     {
-        set_attribute(e, elib::forward<Attr>(attr));
+        e.set_attribute(elib::forward<Attr>(attr));
         return e;
     }
     
@@ -232,7 +189,7 @@ namespace chips
     >
     entity & operator>>(entity & e, Attr & r)
     {
-        r = get_attribute<Attr>(e);
+        r = e.get_attribute<Attr>();
         return e;
     }
     
@@ -242,7 +199,7 @@ namespace chips
     >
     entity const & operator>>(entity const & e, Attr & r)
     {
-        r = get_attribute<Attr>(e);
+        r = e.get_attribute<Attr>();
         return e;
     }
     

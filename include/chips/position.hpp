@@ -4,6 +4,7 @@
 # include "chips/attribute.hpp"
 # include <elib/aux.hpp>
 # include <elib/config.hpp>
+# include <elib/fmt.hpp>
 # include <elib/lexical_cast.hpp>
 # include <string>
 
