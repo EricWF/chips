@@ -1,5 +1,6 @@
 #include "chips/texture_manager.hpp"
 #include "chips/config.hpp"
+#include "chips/log.hpp"
 
 namespace chips
 {
@@ -18,8 +19,14 @@ namespace chips
     
     texture_manager::texture_manager()
     {
-        if (!m_tex_map[texture_uid::tiles].loadFromFile(
-                CHIPS_RESOURCE_ROOT "/tileset.gif"))
+        sf::Image img;
+        if (!img.loadFromFile(CHIPS_RESOURCE_ROOT "/tileset.gif"))
+            throw "TODO";
+        
+        sf::Color mask(255, 255, 255, 255);
+        img.createMaskFromColor(mask);
+       
+        if (!m_tex_map[texture_uid::tiles].loadFromImage(img))
             throw "TODO";
     }
     
@@ -39,5 +46,7 @@ namespace chips
         position p = to_texture_position(index);
         sf::IntRect tex_rect(p.x, p.y, tile_width, tile_height);
         m_sprite_map[index] = sf::Sprite(m_tex_map[texture_uid::tiles], tex_rect);
+        sf::Color b = m_sprite_map[index].getColor();
+        log::debug("color %i, %i, %i, %i", b.r, b.g, b.b, b.a);
     }
 }                                                           // namespace chips

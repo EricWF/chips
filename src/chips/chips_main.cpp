@@ -1,5 +1,6 @@
 #include "chips/chips_main.hpp"
 #include "chips/config.hpp"
+#include "chips/draw.hpp"
 #include "chips/entity_id.hpp"
 #include "chips/entity.hpp"
 #include "chips/log.hpp"
@@ -21,6 +22,16 @@
 
 namespace chips
 {
+    inline void entity_draw_test(sf::RenderWindow & win)
+    {
+        entity e(entity_id::bug);
+        e << texture_id::bug_N << position{0, 0} << direction::N 
+          << texture_type::cutout;
+        win.clear(sf::Color::Black);
+        draw(win, e);
+        win.display();
+        
+    }
     
     int chips_main(int, char**, char**)
     {
@@ -48,10 +59,12 @@ namespace chips
             if (bid == menu_item_id::quit) break;
                 
             mh.draw(window);
+            entity_draw_test(window);
             window.display();
         }
         
         window.close();
         return 0;
     }
+  
 }                                                           // namespace chips

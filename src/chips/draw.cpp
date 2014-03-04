@@ -2,6 +2,7 @@
 #include "chips/attribute.hpp"
 #include "chips/entity_id.hpp"
 #include "chips/error.hpp"
+#include "chips/log.hpp"
 #include "chips/position.hpp"
 #include "chips/texture_id.hpp"
 #include "chips/texture_index.hpp"
@@ -19,16 +20,20 @@ namespace chips
         if (e.has_attribute<direction>())
         {
             if (e.has_attribute<texture_type>())
+            {
                 index = to_texture_index(
                     tex_id
                   , e.get_attribute<direction>()
                   , e.get_attribute<texture_type>()
                   );
+            }
             else
+            {
                 index = to_texture_index(
                     tex_id
                   , e.get_attribute<direction>()
                   );
+            }
         }
         else
         {
