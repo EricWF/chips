@@ -25,8 +25,6 @@ namespace chips
             info.valign = elib::enumeration::enum_cast<align_v>(elem.Attribute("align_y"));
             info.value = elem.GetText();
             
-            log::debug("parsed button_info: %s", to_string(info));
-            
             return info;
         }
     }                                                       // namespace detail

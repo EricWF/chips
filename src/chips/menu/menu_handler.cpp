@@ -37,9 +37,9 @@ namespace chips
                 case sf::Event::Closed:
                     return menu_item_id::quit;
                 case sf::Event::MouseButtonReleased:
-                    return m_handle_mouse_click(e);
+                    return m_handle_mouse_click(win, e);
                 case sf::Event::MouseMoved:
-                    m_handle_mouse_move(e);
+                    m_handle_mouse_move(win, e);
                     break;
                 default: break;
             }
@@ -58,27 +58,33 @@ namespace chips
             to.draw(b);
     }
     
-    menu_item_id menu_handler::m_handle_mouse_click(sf::Event const & e)
+    menu_item_id 
+    menu_handler::m_handle_mouse_click(
+        sf::RenderWindow const & win
+      , sf::Event const & e
+    )
     {
         for (auto & b : m_buttons)
         {
             if (b.getGlobalBounds().contains(
-                static_cast<float>(e.mouseButton.x)
-              , static_cast<float>(e.mouseButton.y)
+               win.mapPixelToCoords(sf::Vector2i(e.mouseButton.x, e.mouseButton.y))
             ))
                 return b.id();
         }
         return menu_item_id::none;
     }
     
-    void menu_handler::m_handle_mouse_move(sf::Event const & e)
+    void 
+    menu_handler::m_handle_mouse_move(
+        sf::RenderWindow const & win
+      , sf::Event const & e
+    )
     {
         for (auto & b : m_buttons)
         {
             b.setHovered(
                 b.getGlobalBounds().contains(
-                    static_cast<float>(e.mouseMove.x)
-                  , static_cast<float>(e.mouseMove.y)
+                    win.mapPixelToCoords(sf::Vector2i(e.mouseMove.x, e.mouseMove.y))
             ));
         }
     }

@@ -68,7 +68,7 @@ namespace chips
             if (bid == menu_item_id::quit) break;
                 
             mh.draw(window);
-            entity_draw_test(window);
+            //entity_draw_test(window);
             window.display();
         }
         

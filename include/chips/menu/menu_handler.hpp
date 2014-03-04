@@ -20,8 +20,15 @@ namespace chips
         void draw(sf::RenderWindow & to);
         
     private:
-        menu_item_id m_handle_mouse_click(sf::Event const &);
-        void m_handle_mouse_move(sf::Event const &);
+        menu_item_id m_handle_mouse_click(
+            sf::RenderWindow const &
+          , sf::Event const &
+        );
+        
+        void m_handle_mouse_move(
+            sf::RenderWindow const &
+          , sf::Event const &
+        );
         
         std::vector<text_button> m_buttons;
     };
