@@ -46,7 +46,5 @@ namespace chips
         position p = to_texture_position(index);
         sf::IntRect tex_rect(p.x, p.y, tile_width, tile_height);
         m_sprite_map[index] = sf::Sprite(m_tex_map[texture_uid::tiles], tex_rect);
-        sf::Color b = m_sprite_map[index].getColor();
-        log::debug("color %i, %i, %i, %i", b.r, b.g, b.b, b.a);
     }
 }                                                           // namespace chips

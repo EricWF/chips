@@ -14,8 +14,13 @@ namespace chips
     bool draw(sf::RenderWindow & to, entity const & e)
     {
         position p = e.get_attribute<position>();
-        texture_id tex_id = e.get_attribute<texture_id>();
         
+        texture_id tex_id;
+        if (e.has_attribute<texture_id>())
+            tex_id = e.get_attribute<texture_id>();
+        else
+            tex_id = static_cast<texture_id>(e.id());
+            
         texture_index index;
         if (e.has_attribute<direction>())
         {
