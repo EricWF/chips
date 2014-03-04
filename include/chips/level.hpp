@@ -6,6 +6,6 @@
 
 namespace chips
 {
-    class level;
+    class level{};
 }                                                           // namespace chips
 #endif /* CHIPS_LEVEL_HPP */

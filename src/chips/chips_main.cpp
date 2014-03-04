@@ -48,6 +48,10 @@ namespace chips
         set_terminate_handler();
         
         log::level(level_e::debug);
+
+
+		std::string level_file = CHIPS_RESOURCE_ROOT "level1.xml";
+		auto l = parse_level(level_file);
         
         texture_manager::get();
         

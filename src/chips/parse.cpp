@@ -1,8 +1,10 @@
 #include "chips/parse.hpp"
 #include "chips/error.hpp"
+#include "chips/log.hpp"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
 #include <string>
+#include <iostream>
 
 namespace chips
 {
@@ -85,25 +87,77 @@ namespace chips
             v.push_back(tmp);
         }
     }
-    
-    //TODO
-    void parse(TiXmlElement &, level &)
+
+	    //TODO
+    void parse(TiXmlElement & e, level & l)
     {
-        throw "TODO";
-    }
+
+		TiXmlElement *first = e.FirstChildElement();
+
+		if(!first){
+			//chips_error e("empty level file!");
+            //ELIB_THROW_EXCEPTION(e);
+			throw "BAD";
+		}
+		
+		for (TiXmlElement *elem = first; elem; elem = elem->NextSiblingElement())
+         {
+             //ELIB_ASSERT(elem->Value() == std::string("entity"));
+			 std::cout << elem->Attribute("gid") << std::endl;
+			 // entity tmp;
+             //parse(*elem, tmp);
+             //v.push_back(tmp);
+			 //
+		 }
+		
+		throw "TODO";
+	}
+
     
-    void parse(TiXmlElement & e, position & p)
-    {
-        int ret = e.QueryIntAttribute("x", &p.x);
-        ELIB_ASSERT(ret == TIXML_SUCCESS);
-        ret = e.QueryIntAttribute("y", &p.y);
-        ELIB_ASSERT(ret == TIXML_SUCCESS);
-    }
-    
-    void parse(TiXmlElement & e, texture_id & id)
-    {
-        const char *cstr = e.Attribute("value");
-        ELIB_ASSERT(cstr);
-        id = elib::enumeration::enum_cast<texture_id>(cstr);
-    }
+	level * parse_level(std::string const & filename)
+	{
+
+		TiXmlDocument doc(filename.c_str());
+        
+        if (!doc.LoadFile())
+        {
+            //log::err("Failed to open level file %s", filename.c_str());
+            chips_error e("Failed to open menu file");
+            ELIB_THROW_EXCEPTION(e);
+        }
+        
+        TiXmlHandle doc_handle(&doc);
+        TiXmlHandle root_handle(nullptr);
+        
+        TiXmlElement *elem = nullptr;
+        
+        // find level root
+        {
+            elem = doc_handle.FirstChildElement().Element();
+            ELIB_ASSERT(elem != nullptr);
+            root_handle = TiXmlHandle(elem);
+        }
+		
+		level l;
+		
+		parse(*elem, l);
+		
+		return &l;
+		
+	}
+
+	void parse(TiXmlElement & e, position & p)
+	{
+		int ret = e.QueryIntAttribute("x", &p.x);
+		ELIB_ASSERT(ret == TIXML_SUCCESS);
+		ret = e.QueryIntAttribute("y", &p.y);
+		ELIB_ASSERT(ret == TIXML_SUCCESS);
+	}
+
+	void parse(TiXmlElement & e, texture_id & id)
+	{
+		const char *cstr = e.Attribute("value");
+		ELIB_ASSERT(cstr);
+		id = elib::enumeration::enum_cast<texture_id>(cstr);
+	}
 }                                                           // namespace chips
