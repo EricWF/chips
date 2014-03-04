@@ -38,6 +38,7 @@ if (CONFIG_ALL_WARNINGS)
       -Weverything -Wno-c++98-compat 
       -Wno-c++98-compat-pedantic -Wno-newline-eof
       -Wno-weak-vtables
+      -Wno-documentation
       -Wno-documentation-deprecated-sync
       -Wno-documentation-unknown-command
     )

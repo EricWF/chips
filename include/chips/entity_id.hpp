@@ -63,11 +63,6 @@ namespace chips
         chip = 108
     };
     
-    namespace extension
-    {
-        template <>
-        struct is_attribute_impl<entity_id> : elib::true_ {};
-    }                                                    // namespace extension
 }                                                           // namespace chips
 
 namespace elib { namespace enumeration

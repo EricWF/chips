@@ -34,8 +34,8 @@ namespace chips
     inline void entity_draw_test(sf::RenderWindow & win)
     {
         entity e(entity_id::bug);
-        e << texture_id::bug_N << position{0, 0} << direction::N 
-          << texture_type::cutout;
+        e << position{0, 0} << direction::N << texture_type::cutout;
+          
         win.clear(sf::Color::Black);
         draw(win, e);
         win.display();
@@ -68,7 +68,7 @@ namespace chips
             if (bid == menu_item_id::quit) break;
                 
             mh.draw(window);
-            draw_tiles_test(window);
+            entity_draw_test(window);
             window.display();
         }
         
