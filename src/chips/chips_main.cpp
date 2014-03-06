@@ -50,7 +50,7 @@ namespace chips
         log::level(level_e::debug);
 
 
-		std::string level_file = CHIPS_RESOURCE_ROOT "level1.xml";
+		std::string level_file = CHIPS_RESOURCE_ROOT "level1.tmx";
 		auto l = parse_level(level_file);
         
         texture_manager::get();

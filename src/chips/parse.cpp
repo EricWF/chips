@@ -88,35 +88,28 @@ namespace chips
         }
     }
 
-	    //TODO
+	//TODO
     void parse(TiXmlElement & e, level & l)
     {
 
 		TiXmlElement *first = e.FirstChildElement();
-
-		if(!first){
-			//chips_error e("empty level file!");
-            //ELIB_THROW_EXCEPTION(e);
-			throw "BAD";
-		}
+		ELIB_ASSERT(first);
 		
 		for (TiXmlElement *elem = first; elem; elem = elem->NextSiblingElement())
-         {
-             //ELIB_ASSERT(elem->Value() == std::string("entity"));
-			 std::cout << elem->Attribute("gid") << std::endl;
-			 // entity tmp;
-             //parse(*elem, tmp);
-             //v.push_back(tmp);
-			 //
-		 }
+		{
+			ELIB_ASSERT(elem->Value() == std::string("tile"));
+			// TODO: Make entities here
+			// std::cout << elem->Attribute("gid") << std::endl;
+			
+		}
 		
-		throw "TODO";
+
 	}
 
     
 	level * parse_level(std::string const & filename)
 	{
-
+		level l;
 		TiXmlDocument doc(filename.c_str());
         
         if (!doc.LoadFile())
@@ -126,19 +119,20 @@ namespace chips
             ELIB_THROW_EXCEPTION(e);
         }
         
-        TiXmlHandle doc_handle(&doc);
-        TiXmlHandle root_handle(nullptr);
-        
+        TiXmlHandle root_handle = TiXmlHandle(doc.RootElement());
         TiXmlElement *elem = nullptr;
-        
-        // find level root
-        {
-            elem = doc_handle.FirstChildElement().Element();
-            ELIB_ASSERT(elem != nullptr);
-            root_handle = TiXmlHandle(elem);
-        }
 		
-		level l;
+		// <map
+		//  <tileset>...</tileset>
+		//  <layer> <-- tag we're looking for
+		//    <data>  
+		//      tiles
+		for(elem = root_handle.FirstChildElement().Element();
+			elem->Value() != std::string("layer");
+			elem = elem->NextSiblingElement());
+			
+		elem = elem->FirstChildElement();
+		ELIB_ASSERT(elem->Value() == std::string("data"));
 		
 		parse(*elem, l);
 		
