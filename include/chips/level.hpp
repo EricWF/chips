@@ -6,6 +6,12 @@
 
 namespace chips
 {
-    class level{};
+    class level{
+	public:
+		level() = default;
+		
+		std::vector<entity> m_tiles;
+		
+	};
 }                                                           // namespace chips
 #endif /* CHIPS_LEVEL_HPP */

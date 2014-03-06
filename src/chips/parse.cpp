@@ -1,6 +1,7 @@
 #include "chips/parse.hpp"
 #include "chips/error.hpp"
 #include "chips/log.hpp"
+#include "chips/entity_id.hpp"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
 #include <string>
@@ -98,9 +99,8 @@ namespace chips
 		for (TiXmlElement *elem = first; elem; elem = elem->NextSiblingElement())
 		{
 			ELIB_ASSERT(elem->Value() == std::string("tile"));
-			// TODO: Make entities here
-			// std::cout << elem->Attribute("gid") << std::endl;
-			
+			entity tmp(entity_id::floor);
+			l.m_tiles.push_back(tmp);
 		}
 		
 
@@ -109,7 +109,7 @@ namespace chips
     
 	level * parse_level(std::string const & filename)
 	{
-		level l;
+		level *l = new level();
 		TiXmlDocument doc(filename.c_str());
         
         if (!doc.LoadFile())
@@ -134,9 +134,9 @@ namespace chips
 		elem = elem->FirstChildElement();
 		ELIB_ASSERT(elem->Value() == std::string("data"));
 		
-		parse(*elem, l);
+		parse(*elem, *l);
 		
-		return &l;
+		return l;
 		
 	}
 
