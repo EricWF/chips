@@ -18,11 +18,20 @@ namespace chips
         {
             button_info info;
             
-            info.id = elib::enumeration::enum_cast<menu_item_id>(elem.Attribute("id"));
+            info.id = elib::enumeration::enum_cast<menu_item_id>(
+                elem.Attribute("id")
+            );
+            
             elem.QueryFloatAttribute("x", &info.hpos);
-            info.halign = elib::enumeration::enum_cast<align_h>(elem.Attribute("align_x"));
+            info.halign = elib::enumeration::enum_cast<align_h>(
+                elem.Attribute("align_x")
+            );
+            
             elem.QueryFloatAttribute("y", &info.vpos);
-            info.valign = elib::enumeration::enum_cast<align_v>(elem.Attribute("align_y"));
+            info.valign = elib::enumeration::enum_cast<align_v>(
+                elem.Attribute("align_y")
+            );
+            
             info.value = elem.GetText();
             
             return info;
