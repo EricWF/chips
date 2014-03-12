@@ -18,11 +18,8 @@ namespace chips
     class level
     {
 	public:
-		level() = default;
-    
-        
-		entity m_chip;
-		level_grid_t grid;
+		
+		
 	};
 }                                                           // namespace chips
 #endif /* CHIPS_LEVEL_HPP */

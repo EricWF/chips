@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
+ <properties>
+  <property name="chip_count" value="4"/>
+  <property name="level" value="3"/>
+ </properties>
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <layer name="Base" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztlcsNgDAIQMsCTtABdABdwNVcowvoHs5lTWxCCPRiodFweBdK8ij0AyEEcJwPMiB6+VdD/8DAxTX9e2apYOHn+nATFfzUUfwjAftbzoLrefGXHOxvPQup59z+NWaB/VsmPdC8GaHlTyjG+aGD/zT0H537X7tXmudvYogIab2VX3rrANUg5b31SzVFguUfbLlXx3Gcv3IB10AfXA==
+  </data>
+ </layer>
+ <layer name="Items" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUDFUgO9AOGAUDBjqBWHqgHTHCQA0euWl0sB9ffA9EWsgfADtHAQSM5v1RMApGwSgYBeQCAClNApQ=
+  </data>
+ </layer>
+ <layer name="Actors" width="32" height="32">
+  <data encoding="base64" compression="zlib">
+   eJztzgEJAAAMA6D17/RujzEGmsAEAFhy7QAAMOkBKo4Avg==
+  </data>
+ </layer>
+</map>
