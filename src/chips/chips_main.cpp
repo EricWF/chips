@@ -43,10 +43,7 @@ namespace chips
     }
     
     int chips_main(int, char**, char**)
-    {
-        /* Handle uncaught exceptions and unexpected termination */
-        set_terminate_handler();
-        
+    {        
         log::level(level_e::debug);
 
 

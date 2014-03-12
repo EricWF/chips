@@ -20,6 +20,6 @@ namespace chips
     void parse(TiXmlElement &, level &);
     void parse(TiXmlElement &, position &);
     void parse(TiXmlElement &, texture_id &);
-	level * parse_level(const std::string &);
+	level parse_level(const std::string &);
 }                                                           // namespace chips
 #endif /* CHIPS_PARSE_HPP */

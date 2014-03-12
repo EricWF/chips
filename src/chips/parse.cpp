@@ -99,17 +99,17 @@ namespace chips
 		for (TiXmlElement *elem = first; elem; elem = elem->NextSiblingElement())
 		{
 			ELIB_ASSERT(elem->Value() == std::string("tile"));
+			const char* gid = elem->Attribute("gid");
+			ELIB_ASSERT(gid);
 			entity tmp(entity_id::floor);
 			l.m_tiles.push_back(tmp);
 		}
-		
-
 	}
 
     
-	level * parse_level(std::string const & filename)
+	level parse_level(std::string const & filename)
 	{
-		level *l = new level();
+		level l;
 		TiXmlDocument doc(filename.c_str());
         
         if (!doc.LoadFile())
@@ -134,10 +134,9 @@ namespace chips
 		elem = elem->FirstChildElement();
 		ELIB_ASSERT(elem->Value() == std::string("data"));
 		
-		parse(*elem, *l);
+		parse(*elem, l);
 		
 		return l;
-		
 	}
 
 	void parse(TiXmlElement & e, position & p)
