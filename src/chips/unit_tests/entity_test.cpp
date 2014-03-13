@@ -1,10 +1,8 @@
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
 
-#include "chips/attribute.hpp"
 #include "chips/chips_state.hpp"
 #include "chips/entity.hpp"
-#include "chips/entity_id.hpp"
 #include "chips/position.hpp"
 
 using namespace chips;

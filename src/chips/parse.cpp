@@ -1,9 +1,9 @@
 #include "chips/parse.hpp"
 #include "chips/error.hpp"
 #include "chips/log.hpp"
-#include "chips/entity_id.hpp"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
+#include <elib/lexical_cast.hpp>
 #include <elib/fmt.hpp>
 #include <string>
 #include <iostream>
@@ -12,17 +12,27 @@ namespace chips
 {
     namespace detail { namespace
     {
-        std::pair<unsigned, tile_property_list> parse_tile(TiXmlElement & elem)
+        template <class T>
+        T query_attr(TiXmlElement const & elem, std::string const & key)
         {
-            std::pair<unsigned, tile_property_list> tp;
+            const char *raw_attr = elem.Attribute(key.c_str());
+            if (!raw_attr)
+            {
+                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                    "failed to query attribute %s", key
+                )));
+            }
+            
+            return elib::lexical_cast<T>(raw_attr);
+        }
+        
+        std::pair<unsigned, tile_properties> parse_tile(TiXmlElement & elem)
+        {
+            std::pair<unsigned, tile_properties> tp;
             
             ELIB_ASSERT(elem.Value() == std::string{"tile"});
-            
-            int tmp;
-            int ret = elem.QueryIntAttribute("id", &tmp);
-            ELIB_ASSERT(ret == TIXML_SUCCESS);
-            
-            tp.first = static_cast<unsigned>(tmp);
+
+            tp.first = query_attr<unsigned>(elem, "id");
             
             TiXmlElement *child = elem.FirstChildElement();
             ELIB_ASSERT(child && child->Value() == std::string{"properties"});
@@ -30,20 +40,30 @@ namespace chips
             child = child->FirstChildElement();
             ELIB_ASSERT(child && child->Value() == std::string{"property"});
             
+            bool has_id = false;
             for (; child ; child = child->NextSiblingElement())
             {
                 ELIB_ASSERT(child->Value() == std::string{"property"});
                 
-                const char *name = child->Attribute("name");
-                const char *value = child->Attribute("value");
-                ELIB_ASSERT(name && value);
+                std::string name = query_attr<std::string>(*child, "name");
+                std::string value = query_attr<std::string>(*child, "value");
                 
-                tp.second.emplace_back(name, value);
+                // special case
+                if (name == "entity_id")
+                {
+                    tp.second.id = 
+                        elib::enumeration::enum_cast<entity_id>(value);
+                    has_id = true;
+                }
+                else
+                {
+                    tp.second.properties.emplace_back(
+                        elib::move(name), elib::move(value)
+                      );
+                }
             }
             
-            if (tp.second.size() < 2)
-                log::warn("id=%u", tp.first);
-            ELIB_ASSERT(tp.second.size() >= 2);
+            ELIB_ASSERT(has_id && tp.second.properties.size() >= 1);
             return tp;
         }
         
@@ -62,11 +82,7 @@ namespace chips
             for (elem = elem->FirstChildElement(); elem; elem = elem->NextSiblingElement())
             {
                 ELIB_ASSERT(elem->Value() == std::string{"tile"});
-                int tmp = 0;
-                int ret = elem->QueryIntAttribute("gid", &tmp);
-                ELIB_ASSERT(ret == TIXML_SUCCESS);
-                
-                tiles.push_back(tmp);
+                tiles.push_back(query_attr<int>(*elem, "gid"));
             }
             
             ELIB_ASSERT(tiles.size() == 32 * 32);
@@ -74,9 +90,10 @@ namespace chips
         }
     }}                                                      // namespace detail
     
-    tile_property_map parse_tileset(std::string const & fname)
+    std::map<unsigned, tile_properties>
+    parse_tileset(std::string const & fname)
     {
-        tile_property_map tile_map;
+        std::map<unsigned, tile_properties> tile_map;
         
         TiXmlDocument doc(fname.c_str());
         if (!doc.LoadFile())
@@ -99,7 +116,7 @@ namespace chips
     
     parsed_level parse_level(std::string const & fname)
     {
-        parsed_level map;
+        parsed_level lv;
         
         TiXmlDocument doc(fname.c_str());
         if (!doc.LoadFile())
@@ -118,27 +135,16 @@ namespace chips
             ; pelem; pelem = pelem->NextSiblingElement())
         {
             ELIB_ASSERT(pelem->Value() == std::string{"property"});
-            
-            const char *cname = pelem->Attribute("name");
-            ELIB_ASSERT(cname);
-            
-            std::string name = cname;
+        
+            std::string name = detail::query_attr<std::string>(*pelem, "name");
         
             if (name == "chip_count")
             {
-                int tmp;
-                int ret = pelem->QueryIntAttribute("value", &tmp);
-                ELIB_ASSERT(ret == TIXML_SUCCESS); ((void)ret);
-                
-                map.chip_count = static_cast<unsigned>(tmp);
+                lv.chip_count = detail::query_attr<unsigned>(*pelem, "value");
             }
             else if (name == "level")
             {
-                int tmp;
-                int ret = pelem->QueryIntAttribute("value", &tmp);
-                ELIB_ASSERT(ret == TIXML_SUCCESS); ((void)ret);
-                
-                map.level = static_cast<unsigned>(tmp);
+                lv.level = detail::query_attr<unsigned>(*pelem, "value");
             }
             else
             {
@@ -151,17 +157,17 @@ namespace chips
         
         elem = elem->NextSiblingElement("layer");
         ELIB_ASSERT(elem && elem->Attribute("name") == std::string{"Base"});
-        map.base = elib::move( detail::parse_layer(*elem) );
+        lv.base = elib::move( detail::parse_layer(*elem) );
         
         elem = elem->NextSiblingElement();
         ELIB_ASSERT(elem && elem->Attribute("name") == std::string{"Items"});
-        map.items = elib::move( detail::parse_layer(*elem) );
+        lv.items = elib::move( detail::parse_layer(*elem) );
         
         elem = elem->NextSiblingElement();
         ELIB_ASSERT(elem && elem->Attribute("name") == std::string{"Actors"});
-        map.actors = elib::move( detail::parse_layer(*elem) );
+        lv.actors = elib::move( detail::parse_layer(*elem) );
         
-        return map;
+        return lv;
     }
     
 }                                                           // namespace chips

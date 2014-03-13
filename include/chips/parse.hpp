@@ -3,8 +3,6 @@
 
 # include "chips/chips_state.hpp"
 # include "chips/entity.hpp"
-# include "chips/entity_id.hpp"
-# include "chips/level.hpp"
 # include "chips/position.hpp"
 # include "chips/texture_id.hpp"
 # include "tinyxml/tinyxml.h"
@@ -15,10 +13,11 @@
 
 namespace chips
 {
-    
-    using tile_property = std::pair<std::string, std::string>;
-    using tile_property_list = std::vector<tile_property>;
-    using tile_property_map = std::map<unsigned, tile_property_list>;
+    struct tile_properties
+    {
+        entity_id id;
+        std::vector< std::pair<std::string, std::string> > properties;
+    };
     
     struct parsed_level
     {
@@ -30,7 +29,8 @@ namespace chips
         std::vector<int> actors;
     };
     
-    tile_property_map parse_tileset(std::string const &);
+    std::map<unsigned, tile_properties>
+    parse_tileset(std::string const &);
     
     parsed_level parse_level(std::string const &);
     

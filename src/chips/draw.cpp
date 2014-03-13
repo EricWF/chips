@@ -1,6 +1,5 @@
 #include "chips/draw.hpp"
-#include "chips/attribute.hpp"
-#include "chips/entity_id.hpp"
+#include "chips/entity.hpp"
 #include "chips/error.hpp"
 #include "chips/log.hpp"
 #include "chips/position.hpp"

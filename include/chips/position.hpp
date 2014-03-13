@@ -1,7 +1,7 @@
 #ifndef CHIPS_POSITION_HPP
 # define CHIPS_POSITION_HPP
 
-# include "chips/attribute.hpp"
+# include "chips/entity.hpp"
 # include <elib/aux.hpp>
 # include <elib/config.hpp>
 # include <elib/fmt.hpp>

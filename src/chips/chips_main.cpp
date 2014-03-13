@@ -1,7 +1,6 @@
 #include "chips/chips_main.hpp"
 #include "chips/config.hpp"
 #include "chips/draw.hpp"
-#include "chips/entity_id.hpp"
 #include "chips/entity.hpp"
 #include "chips/log.hpp"
 #include "chips/error.hpp"

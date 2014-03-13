@@ -1,13 +1,13 @@
 #ifndef CHIPS_ENTITY_HPP
 #define CHIPS_ENTITY_HPP
 
-# include "chips/attribute.hpp"
-# include "chips/entity_id.hpp"
 # include "chips/error.hpp"
 # include <elib/any.hpp>
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
+# include <map>
+# include <string>
 # include <typeindex>
 # include <typeinfo>
 # include <unordered_map>
@@ -22,6 +22,22 @@
     
 namespace chips
 {
+
+    struct attribute_base {};
+    
+    namespace extension
+    {
+        template <class T>
+        struct is_attribute_impl
+          : elib::aux::is_base_of<attribute_base, T>::type
+        {};
+    }
+    
+    template <class T>
+    using is_attribute = typename 
+        extension::is_attribute_impl<elib::aux::uncvref<T>>::type;
+    
+    
     template <class Attr>
     inline chips_error create_entity_access_error()
     {
@@ -31,7 +47,7 @@ namespace chips
         e << elib::errinfo_type_info_name(typeid(Attr).name());
         return e;
     }
-    
+
     
     class entity
     {
