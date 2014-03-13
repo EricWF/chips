@@ -46,9 +46,12 @@ namespace chips
     {        
         log::level(level_e::debug);
 
-
+        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "tileset.tsx" );
+        
+        
 		std::string level_file = CHIPS_RESOURCE_ROOT "level1.tmx";
 		auto l = parse_level(level_file);
+		
         
         texture_manager::get();
         

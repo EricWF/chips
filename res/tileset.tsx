@@ -134,6 +134,7 @@
  </tile>
  <tile id="42">
   <properties>
+   <property name="entity_id" value="chip"/>
    <property name="tile_id" value="chip_drowned"/>
   </properties>
  </tile>
@@ -179,6 +180,7 @@
  </tile>
  <tile id="55">
   <properties>
+   <property name="entity_id" value="chip"/>
    <property name="tile_id" value="chip_burned_fire"/>
   </properties>
  </tile>
@@ -222,6 +224,7 @@
  </tile>
  <tile id="68">
   <properties>
+   <property name="entity_id" value="chip"/>
    <property name="tile_id" value="chip_burned_smoke"/>
   </properties>
  </tile>
@@ -383,6 +386,7 @@
  </tile>
  <tile id="120">
   <properties>
+   <property name="entity_id" value="chip"/>
    <property name="tile_id" value="chip_fake_exit"/>
   </properties>
  </tile>

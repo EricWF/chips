@@ -8,18 +8,32 @@
 # include "chips/position.hpp"
 # include "chips/texture_id.hpp"
 # include "tinyxml/tinyxml.h"
+# include <string>
+# include <map>
 # include <vector>
+# include <utility>
 
 namespace chips
 {
-    void parse(TiXmlElement &, chips_state &);
-    void parse(TiXmlElement &, direction &);
-    void parse(TiXmlElement &, entity &);
-    void parse(TiXmlElement &, entity_id &);
-    void parse(TiXmlElement &, std::vector<entity> &);
-    void parse(TiXmlElement &, level &);
-    void parse(TiXmlElement &, position &);
-    void parse(TiXmlElement &, texture_id &);
-	level parse_level(const std::string &);
+    
+    using tile_property = std::pair<std::string, std::string>;
+    using tile_property_list = std::vector<tile_property>;
+    using tile_property_map = std::map<unsigned, tile_property_list>;
+    
+    struct parsed_level
+    {
+        unsigned level;
+        unsigned chip_count;
+        
+        std::vector<int> base;
+        std::vector<int> items;
+        std::vector<int> actors;
+    };
+    
+    tile_property_map parse_tileset(std::string const &);
+    
+    parsed_level parse_level(std::string const &);
+    
+
 }                                                           // namespace chips
 #endif /* CHIPS_PARSE_HPP */

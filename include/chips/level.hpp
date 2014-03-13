@@ -19,7 +19,9 @@ namespace chips
     {
 	public:
 		
-		
+		std::vector<entity> m_tiles;
+		unsigned id;
+		unsigned chip_count;
 	};
 }                                                           // namespace chips
 #endif /* CHIPS_LEVEL_HPP */
