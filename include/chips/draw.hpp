@@ -1,9 +1,9 @@
 #ifndef CHIPS_DRAW_HPP
 #define CHIPS_DRAW_HPP
 
+# include "chips/core.hpp"
 # include "chips/entity.hpp"
-# include "chips/position.hpp"
-# include "chips/texture_index.hpp"
+
 # include <SFML/Graphics.hpp>
 
 namespace chips

@@ -1,7 +1,7 @@
 #ifndef CHIPS_TEXTURE_MANAGER_HPP
 #define CHIPS_TEXTURE_MANAGER_HPP
 
-# include "chips/texture_index.hpp"
+# include "chips/core.hpp"
 # include <SFML/Graphics.hpp>
 # include <map>
 

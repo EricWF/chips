@@ -1,10 +1,7 @@
 #include "chips/draw.hpp"
+#include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include "chips/error.hpp"
-#include "chips/log.hpp"
-#include "chips/position.hpp"
-#include "chips/texture_id.hpp"
-#include "chips/texture_index.hpp"
 #include "chips/texture_manager.hpp"
 #include <elib/aux.hpp>
 

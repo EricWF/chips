@@ -1,7 +1,7 @@
 #include "chips/entity_factory.hpp"
+#include "chips/core.hpp"
 #include "chips/error.hpp"
 #include "chips/parse.hpp"
-#include "chips/texture_id.hpp"
 #include <elib/fmt.hpp>
 #include <elib/enumeration.hpp>
 #include <elib/lexical_cast.hpp>

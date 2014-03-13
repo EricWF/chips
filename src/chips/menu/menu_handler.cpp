@@ -1,6 +1,6 @@
 #include "chips/menu/menu_handler.hpp"
+#include "chips/core.hpp"
 #include "chips/error.hpp"
-#include "chips/log.hpp"
 #include <elib/config.hpp>
 
 namespace chips

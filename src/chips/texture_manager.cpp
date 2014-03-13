@@ -1,10 +1,9 @@
 #include "chips/texture_manager.hpp"
 #include "chips/config.hpp"
-#include "chips/log.hpp"
+#include "chips/core.hpp"
 
 namespace chips
 {
-    
     namespace detail
     {
         inline void mask_tileset(sf::Image & img)

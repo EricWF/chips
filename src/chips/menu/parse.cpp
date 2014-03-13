@@ -1,7 +1,6 @@
 #include "chips/menu/parse.hpp"
-
+#include "chips/core.hpp"
 #include "chips/error.hpp"
-#include "chips/log.hpp"
 #include "tinyxml/tinyxml.h"
 
 #include <elib/aux.hpp>

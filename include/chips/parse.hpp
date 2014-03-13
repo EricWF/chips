@@ -1,10 +1,8 @@
 #ifndef CHIPS_PARSE_HPP
 #define CHIPS_PARSE_HPP
 
-# include "chips/chips_state.hpp"
+# include "chips/core.hpp"
 # include "chips/entity.hpp"
-# include "chips/position.hpp"
-# include "chips/texture_id.hpp"
 # include "tinyxml/tinyxml.h"
 # include <string>
 # include <map>

@@ -1,6 +1,6 @@
 #include "chips/parse.hpp"
+#include "chips/core.hpp"
 #include "chips/error.hpp"
-#include "chips/log.hpp"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
 #include <elib/lexical_cast.hpp>

@@ -1,6 +1,9 @@
 #ifndef CHIPS_CHIPS_HPP
 #define CHIPS_CHIPS_HPP
 
+# include "chips/attribute.hpp"
+# include "chips/config.hpp"
+# include "chips/error.hpp"
 # include <elib/enumeration.hpp>
 # include <elib/log.hpp>
 # include <map>
@@ -21,7 +24,7 @@ namespace chips
     /// log::debug(const char *msg, ...)
     /// log::step(const char *msg, ...)
     /// NOTE: they have the same signature as printf
-    using log = elib::log::static_log<chips_log_tag>;
+    using log = elib::log::static_log<detail::chips_log_tag>;
     
 ////////////////////////////////////////////////////////////////////////////////
 //                              ENTITY_ID
