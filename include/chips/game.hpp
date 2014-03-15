@@ -4,14 +4,15 @@
 # include "chips/core.hpp"
 # include "chips/entity.hpp"
 # include <map>
-# include <vector>
+# include <string>
 # include <utility>
+# include <vector>
 
 namespace chips
 {
-    // TODO make this better.
-    // only access to id and chip_count are gaurded since
-    // they should not be changed.
+    /// TODO make this better.
+    /// only access to id and chip_count are guarded since
+    /// they should not be changed.
     class level
     {
     public:
@@ -34,20 +35,31 @@ namespace chips
         std::vector<entity> items;
         std::vector<entity> base;
         
+        /// TODO: maybe? It makes iteration easier.
+        std::vector<entity*> all;
     private:
         unsigned m_id;
         unsigned m_chip_count;
     };
     
+////////////////////////////////////////////////////////////////////////////////
+//                              PARSING
+////////////////////////////////////////////////////////////////////////////////
+    
+    /// Parsed from XML. The entity ID is required
+    /// the rest of the properties are left as name value pairs to be parsed
+    /// elsewhere 
     struct tile_properties
     {
         entity_id id;
         std::vector< std::pair<std::string, std::string> > properties;
     };
     
-    std::map<unsigned, tile_properties>
+    /// Parse the tileset information into a [UID -> Properties] map
+    std::map<unsigned, tile_properties> 
     parse_tileset(std::string const &);
     
+    /// The raw level data as parsed from the XML. 
     struct parsed_level
     {
         unsigned level;
@@ -58,15 +70,22 @@ namespace chips
         std::vector<int> actors;
     };
     
+    /// Parse XML output by tiled into an intermediate representation
     parsed_level parse_level(std::string const &);
     
-    /* create a level from its number
-     * and the list of properties to pass to the tile factory
-     */
+////////////////////////////////////////////////////////////////////////////////
+//                           CREATION
+////////////////////////////////////////////////////////////////////////////////
+    /// create a level from its number
+    /// and the list of properties to pass to the tile factory
     level create_level(
         unsigned level_number, std::map<unsigned, tile_properties> const &
     );
     
+    /// Create an entity from its tile gid and a list of entity properties
+    /// NOTE: gid has not been changed, that means that 0 represents empty
+    /// and it must be translated to the coorisponding key for the 
+    /// properties map
     entity create_entity(
         unsigned gid
       , std::map<unsigned, tile_properties> const &

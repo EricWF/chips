@@ -13,7 +13,7 @@ BOOST_AUTO_TEST_CASE(chips_entity_ctor_test)
     // default ctor
     {
         entity e;
-        BOOST_CHECK(e.size() == 0);
+   
     }
     // ctor (entity_id)
     {

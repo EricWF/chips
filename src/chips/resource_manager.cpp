@@ -1,6 +1,5 @@
 #include "chips/resource_manager.hpp"
 #include "chips/core.hpp"
-#include "chips/error.hpp"
 #include <elib/aux.hpp>
 #include <algorithm>
 #include <utility>

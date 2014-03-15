@@ -3,10 +3,8 @@
 
 # include "chips/entity_fwd.hpp"
 # include "chips/core.hpp"
-# include "chips/error.hpp"
 # include <elib/any.hpp>
 # include <elib/aux.hpp>
-# include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
 # include <map>
 # include <string>
@@ -37,6 +35,8 @@ namespace chips
         using can_const_call = typename MethodTag::method_base::template can_const_call<Args...>;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    //
     template <class Attr>
     inline chips_error create_entity_access_error()
     {
@@ -47,16 +47,21 @@ namespace chips
         return e;
     }
 
-    
+    ////////////////////////////////////////////////////////////////////////////
     class entity
     {
     public:
-        entity() = default;
+        ////////////////////////////////////////////////////////////////////////
+        entity()
+          : m_id(entity_id::BAD_ID)
+        {}
         
+        ////////////////////////////////////////////////////////////////////////
         explicit entity(entity_id xid) 
           : m_id(xid)
         {}
         
+        ////////////////////////////////////////////////////////////////////////
         template <
             class ...Attrs
           , ELIB_ENABLE_IF(elib::and_<is_attribute<Attrs>...>::value)
@@ -73,17 +78,29 @@ namespace chips
             );
         }
         
+        ////////////////////////////////////////////////////////////////////////
         ELIB_DEFAULT_COPY_MOVE(entity);        
         
+        ////////////////////////////////////////////////////////////////////////
         entity_id id() const noexcept { return m_id; }
         
-        std::size_t size() const
+        ////////////////////////////////////////////////////////////////////////
+        void kill() noexcept { m_id = entity_id::BAD_ID; }
+        
+        bool alive() const noexcept { return bool(*this); }
+        
+        explicit operator bool() const noexcept
+        {
+            return (m_id != entity_id::BAD_ID);
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        std::size_t size() const 
         {
             return m_attributes.size();
         }
         
         ////////////////////////////////////////////////////////////////////////
-        //
         template <class Attr>
         bool has_attribute() const
         {
@@ -91,6 +108,7 @@ namespace chips
             return m_attributes.count(std::type_index(typeid(Attr)));
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr, class ...Args>
         bool emplace_attribute(Args &&... args)
         {
@@ -102,6 +120,7 @@ namespace chips
             )).second;
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         bool insert_attribute(Attr && attr)
         {
@@ -113,6 +132,7 @@ namespace chips
             )).second;
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         void set_attribute(Attr && attr)
         {
@@ -121,6 +141,7 @@ namespace chips
                 elib::forward<Attr>(attr);
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         bool remove_attribute()
         {
@@ -128,12 +149,14 @@ namespace chips
             return m_attributes.erase(std::type_index(typeid(Attr)));
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         Attr const * get_raw_attribute() const
         {
             return const_cast<entity &>(*this).get_raw_attribute<Attr>();
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         Attr * get_raw_attribute()
         {
@@ -145,6 +168,7 @@ namespace chips
             );
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         Attr const & get_attribute() const
         {
@@ -156,6 +180,7 @@ namespace chips
             return *ptr;
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <class Attr>
         Attr & get_attribute()
         {
@@ -168,7 +193,6 @@ namespace chips
         }
         
         ////////////////////////////////////////////////////////////////////////
-        //
         template <
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
@@ -178,6 +202,7 @@ namespace chips
             return m_methods.count(std::type_index(typeid(MethodTag)));
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
@@ -191,6 +216,7 @@ namespace chips
                 ));
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
@@ -200,6 +226,7 @@ namespace chips
             m_methods.erase(std::type_index(typeid(MethodTag)));
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <
             class MethodTag, class ...Args
           , ELIB_ENABLE_IF(detail::can_const_call<MethodTag, Args...>::value)
@@ -219,6 +246,7 @@ namespace chips
             return fn_ptr(*this, elib::forward<Args>(args)...);
         }
         
+        ////////////////////////////////////////////////////////////////////////
         template <
             class MethodTag, class ...Args
           , ELIB_ENABLE_IF(detail::can_call<MethodTag, Args...>::value)
@@ -238,12 +266,29 @@ namespace chips
             return fn_ptr(*this, elib::forward<Args>(args)...); 
         }
         
+        ////////////////////////////////////////////////////////////////////////
+        void swap(entity & other) noexcept
+        {
+            using std::swap;
+            swap(m_id, other.m_id);
+            swap(m_attributes, other.m_attributes);
+            swap(m_methods, other.m_methods);
+        }
+        
     private:
-        entity_id m_id;
+        entity_id m_id = entity_id::BAD_ID;
         std::unordered_map<std::type_index, elib::any> m_attributes;
         std::unordered_map<std::type_index, elib::any> m_methods;
-    };
+        
+    };                                                      // class entity
     
+    ////////////////////////////////////////////////////////////////////////////
+    inline void swap(entity & lhs, entity & rhs) noexcept
+    {
+        lhs.swap(rhs);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     template <class Attr, class Then>
     bool if_has_attribute(entity & e, Then && then_fn)
     {
@@ -252,6 +297,7 @@ namespace chips
         return true;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     template <
         class Attr
       , ELIB_ENABLE_IF(is_attribute<Attr>::value)
@@ -262,6 +308,7 @@ namespace chips
         return e;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     template <
         class Attr
       , ELIB_ENABLE_IF(is_attribute<Attr>::value)
@@ -272,6 +319,7 @@ namespace chips
         return e;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     template <
         class Attr
       , ELIB_ENABLE_IF(is_attribute<Attr>::value)

@@ -1,9 +1,10 @@
 #include "chips/game.hpp"
-#include "chips/error.hpp"
 #include "chips/entity.hpp"
 #include "tinyxml/tinyxml.h"
 #include <elib/aux.hpp>
+#include <elib/enumeration.hpp>
 #include <elib/fmt.hpp>
+#include <elib/lexical_cast.hpp>
 #include <algorithm>
 #include <iterator>
 #include <string>
@@ -60,7 +61,7 @@ namespace chips
                 {
                     tp.second.properties.emplace_back(
                         elib::move(name), elib::move(value)
-                      );
+                    );
                 }
             }
             

@@ -1,6 +1,5 @@
 #include "chips/menu/text_button.hpp"
 #include "chips/resource_manager.hpp"
-#include "chips/error.hpp"
 #include <algorithm>
 #include <cstddef>
 

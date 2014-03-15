@@ -3,7 +3,6 @@
 
 # include "chips/core.hpp"
 # include "chips/entity.hpp"
-
 # include <SFML/Graphics.hpp>
 
 namespace chips

@@ -2,8 +2,6 @@
 #define CHIPS_ENTITY_FWD_HPP
 
 # include <elib/aux.hpp>
-# include <elib/params.hpp>
-# include <elib/mp/algorithm.hpp>
 
 namespace chips
 {

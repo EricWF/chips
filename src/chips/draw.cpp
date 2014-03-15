@@ -1,7 +1,6 @@
 #include "chips/draw.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
-#include "chips/error.hpp"
 #include "chips/resource_manager.hpp"
 #include <elib/aux.hpp>
 

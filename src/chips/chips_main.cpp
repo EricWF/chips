@@ -2,15 +2,11 @@
 #include "chips/core.hpp"
 #include "chips/draw.hpp"
 #include "chips/entity.hpp"
-#include "chips/error.hpp"
 #include "chips/game.hpp"
 #include "chips/resource_manager.hpp"
-#include "chips/menu/core.hpp"
-#include "chips/menu/parse.hpp"
-#include "chips/menu/menu_handler.hpp"
+#include "chips/menu.hpp"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
-#include <elib/eprintf.hpp>
 
 #include <SFML/Graphics.hpp>
 

@@ -1,8 +1,8 @@
-#ifndef CHIPS_CHIPS_HPP
-#define CHIPS_CHIPS_HPP
+#ifndef CHIPS_CORE_HPP
+#define CHIPS_CORE_HPP
 
 # include "chips/entity_fwd.hpp"
-# include "chips/error.hpp"
+# include <elib/except.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/log.hpp>
 # include <map>
@@ -14,8 +14,10 @@ namespace chips
 //                               CONFIG
 ////////////////////////////////////////////////////////////////////////////////
     
+    /// The directory where all resources are held
     constexpr const char resource_root[] = CHIPS_RESOURCE_ROOT;
     
+    /// Information about the textures/sprites
     constexpr const char tile_image_file[] = CHIPS_RESOURCE_ROOT "/tileset.gif";
     constexpr const int texture_rows = 16;
     constexpr const int texture_cols = 13;
@@ -28,6 +30,7 @@ namespace chips
     static_assert(texture_width % texture_cols == 0, "Must evenly divide");
     static_assert(texture_height % texture_rows == 0, "Must evenly divide");
     
+    /// Information about the levels
     constexpr const char level_file_root[] = CHIPS_RESOURCE_ROOT "/levels";
     constexpr const int level_width = 32;
     constexpr const int level_height = 32;
@@ -35,20 +38,37 @@ namespace chips
     constexpr const int level_view_width = 9;
     constexpr const int level_view_height = 9;
     
+    /// Information about the part of the window the game is displayed in
     constexpr const int level_window_xpos = 10;
     constexpr const int level_window_ypos = 10;
     constexpr const int level_window_width = level_view_width * tile_width;
     constexpr const int level_window_height = level_view_height * tile_height;
     
+    /// Information about the top level window
     constexpr const char window_name[] = "chips";
     constexpr const int window_xpos = 100;
     constexpr const int window_ypos = 100;
     constexpr const int window_width = level_window_width + 300 + 20;
     constexpr const int window_height = level_window_height + 100 + 20;
+
+////////////////////////////////////////////////////////////////////////////////
+//                               ERROR
+////////////////////////////////////////////////////////////////////////////////
+    
+    /// The error used in chips. It should be thrown with
+    /// ELIB_THROW_EXCEPTION to get throwsite information
+    class chips_error : public elib::exception
+    {
+    public:
+        using elib::exception::exception;
+        
+        ELIB_DEFAULT_COPY_MOVE(chips_error);
+    };
     
 ////////////////////////////////////////////////////////////////////////////////
 //                               LOG
 ////////////////////////////////////////////////////////////////////////////////
+    
     namespace detail { struct chips_log_tag {}; }
     
     /// the cutoff logging level. It's defined as
@@ -126,8 +146,17 @@ namespace chips
         fire_boots = 105, 
         skates = 106, 
         suction_boots = 107, 
-        chip = 108
+        chip = 108, 
+        
+        BAD_ID = -1
     };
+    
+    inline void swap(entity_id & lhs, entity_id & rhs) noexcept
+    {
+        entity_id tmp = lhs;
+        lhs = rhs;
+        rhs = tmp;
+    }
     
 }                                                           // namespace chips
 
@@ -700,4 +729,4 @@ namespace chips
         return to_texture_position( to_texture_index(id, dir, t) );
     }    
 }                                                           // namespace chips
-#endif /* CHIPS_CHIPS_HPP */
+#endif /* CHIPS_CORE_HPP */

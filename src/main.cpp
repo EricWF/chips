@@ -1,4 +1,3 @@
-
 #include "chips/chips_main.hpp"
 
 int main(int argc, char * argv[], char * envp[])
