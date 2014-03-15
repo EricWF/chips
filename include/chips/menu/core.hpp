@@ -1,8 +1,8 @@
 #ifndef CHIPS_MENU_CORE_HPP
 #define CHIPS_MENU_CORE_HPP
 
-# include "chips/config.hpp"
-# include "chips/font_manager.hpp"
+# include "chips/core.hpp"
+# include "chips/resource_manager.hpp"
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
 # include <SFML/Graphics.hpp>
@@ -16,7 +16,7 @@ namespace chips
     constexpr const int menu_button_border = 10;
     constexpr const int menu_button_outline_size = 3;
     
-    constexpr const font_id menu_font_id = font_id::arial;
+    constexpr const font_uid menu_font_id = font_uid::arial;
     constexpr const unsigned menu_font_size = 40;
     
 # if defined(__clang__)

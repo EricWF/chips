@@ -1,11 +1,10 @@
 #include "chips/chips_main.hpp"
-#include "chips/config.hpp"
 #include "chips/core.hpp"
 #include "chips/draw.hpp"
 #include "chips/entity.hpp"
 #include "chips/error.hpp"
-#include "chips/parse.hpp"
-#include "chips/texture_manager.hpp"
+#include "chips/game.hpp"
+#include "chips/resource_manager.hpp"
 #include "chips/menu/core.hpp"
 #include "chips/menu/parse.hpp"
 #include "chips/menu/menu_handler.hpp"
@@ -21,7 +20,7 @@ namespace chips
 {
     inline void draw_tiles_test(sf::RenderWindow & win)
     {
-        texture_manager & man = texture_manager::get();
+        resource_manager & man = resource_manager::get();
         sf::Sprite s(man[texture_uid::tiles]);
         win.clear(sf::Color::Black);
         win.draw(s);
@@ -49,8 +48,8 @@ namespace chips
 		std::string level_file = CHIPS_RESOURCE_ROOT "level1.tmx";
 		auto l = parse_level(level_file);
 		
-        
-        texture_manager::get();
+        // initalize resources
+        resource_manager::get();
         
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         

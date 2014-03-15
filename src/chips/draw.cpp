@@ -2,7 +2,7 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include "chips/error.hpp"
-#include "chips/texture_manager.hpp"
+#include "chips/resource_manager.hpp"
 #include <elib/aux.hpp>
 
 namespace chips
@@ -47,8 +47,8 @@ namespace chips
     
     void draw(sf::RenderWindow & to, position p, texture_index index)
     {
-        texture_manager & tex_man = texture_manager::get();
-        sf::Sprite & s = tex_man[index];
+        resource_manager & res_man = resource_manager::get();
+        sf::Sprite & s = res_man[index];
         s.setPosition(
             static_cast<float>(p.x)
           , static_cast<float>(p.y)

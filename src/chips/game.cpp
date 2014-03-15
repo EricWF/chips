@@ -1,16 +1,17 @@
-#include "chips/parse.hpp"
-#include "chips/core.hpp"
+#include "chips/game.hpp"
 #include "chips/error.hpp"
+#include "chips/entity.hpp"
+#include "tinyxml/tinyxml.h"
 #include <elib/aux.hpp>
-#include <elib/enumeration.hpp>
-#include <elib/lexical_cast.hpp>
 #include <elib/fmt.hpp>
+#include <algorithm>
+#include <iterator>
 #include <string>
-#include <iostream>
+
 
 namespace chips
 {
-    namespace detail { namespace
+    namespace detail { namespace 
     {
         template <class T>
         T query_attr(TiXmlElement const & elem, std::string const & key)
@@ -88,6 +89,21 @@ namespace chips
             ELIB_ASSERT(tiles.size() == 32 * 32);
             return tiles;
         }
+        
+        template <class CreateFn>
+        void create_group(
+            std::vector<int> const & raw_group
+          , std::vector<entity> & to
+          , CreateFn Fn
+          )
+        {
+            std::transform(
+                raw_group.begin(), raw_group.end()
+              , std::back_inserter(to)
+              , Fn
+            );
+        }
+        
     }}                                                      // namespace detail
     
     std::map<unsigned, tile_properties>
@@ -170,4 +186,64 @@ namespace chips
         return lv;
     }
     
+    level create_level(
+        unsigned num
+      , std::map<unsigned, tile_properties> const &
+      )
+    {
+        std::string filename = elib::fmt(
+            CHIPS_RESOURCE_ROOT "level%u.tmx"
+          , num
+        );
+        
+        parsed_level raw = parse_level(filename);
+        level l(raw.level, raw.chip_count);
+        
+        
+        //TODO
+        return l;
+    }
+    
+    entity create_entity(
+        unsigned gid
+      , std::map<unsigned, tile_properties> const & pm
+      )
+    {
+        auto props = pm.at(gid);
+        entity e(props.id);
+        
+        for (auto & p : props.properties)
+        {
+            if (p.first == "tile_id")
+            {
+                e.insert_attribute(
+                    elib::enumeration::enum_cast<texture_id>(p.second)
+                );
+            }
+            else if (p.first == "direction")
+            {
+                direction d;
+                if      (p.second == "N") d = direction::N;
+                else if (p.second == "W") d = direction::W;
+                else if (p.second == "S") d = direction::S;
+                else if (p.second == "E") d = direction::E;
+                else
+                {
+                    ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                        "unknown direction %s", p.second
+                    )));
+                }
+                e.insert_attribute(d);
+            }
+            else
+            {
+                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                    "unknown tile property <property name=\"%s\" value=\"%s\" />"
+                  , p.first, p.second
+                )));
+            }
+        }                                                   // end for
+        
+        return e;
+    }
 }                                                           // namespace chips

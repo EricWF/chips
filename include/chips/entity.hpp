@@ -1,7 +1,7 @@
 #ifndef CHIPS_ENTITY_HPP
 #define CHIPS_ENTITY_HPP
 
-# include "chips/attribute.hpp"
+# include "chips/entity_fwd.hpp"
 # include "chips/core.hpp"
 # include "chips/error.hpp"
 # include <elib/any.hpp>
@@ -24,9 +24,18 @@
     
 namespace chips
 {
-
-    
-    
+    namespace detail
+    {
+        template <
+            class MethodTag, class ...Args
+        >
+        using can_call = typename MethodTag::method_base::template can_call<Args...>;
+        
+        template <
+            class MethodTag, class ...Args
+        >
+        using can_const_call = typename MethodTag::method_base::template can_const_call<Args...>;
+    }
     
     template <class Attr>
     inline chips_error create_entity_access_error()
@@ -66,16 +75,6 @@ namespace chips
         
         ELIB_DEFAULT_COPY_MOVE(entity);        
         
-        template <
-            class Attr
-          , ELIB_ENABLE_IF(is_attribute<Attr>::value)
-        >
-        entity & operator=(Attr && a)
-        {
-            m_attributes[std::type_index(typeid(Attr))] = elib::forward<Attr>(a);
-            return *this;
-        }
-        
         entity_id id() const noexcept { return m_id; }
         
         std::size_t size() const
@@ -83,6 +82,8 @@ namespace chips
             return m_attributes.size();
         }
         
+        ////////////////////////////////////////////////////////////////////////
+        //
         template <class Attr>
         bool has_attribute() const
         {
@@ -166,9 +167,81 @@ namespace chips
             return *ptr;
         }
         
+        ////////////////////////////////////////////////////////////////////////
+        //
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        bool has_method() const
+        {
+            return m_methods.count(std::type_index(typeid(MethodTag)));
+        }
+        
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        void add_method(typename MethodTag::function_type* fn)
+        {
+            m_methods.insert(
+                std::make_pair(
+                    std::type_index(typeid(MethodTag))
+                  , elib::any(fn)
+                ));
+        }
+        
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        void remove_method()
+        {
+            m_methods.erase(std::type_index(typeid(MethodTag)));
+        }
+        
+        template <
+            class MethodTag, class ...Args
+          , ELIB_ENABLE_IF(detail::can_const_call<MethodTag, Args...>::value)
+        >
+        typename MethodTag::result_type
+        call(Args &&... args) const
+        {
+            auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
+            if (pos == m_methods.end())
+            {
+                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>());
+            }
+            
+            using FnPtr = typename MethodTag::function_type*;
+            auto fn_ptr = elib::any_cast<FnPtr>(pos->second);
+            
+            return fn_ptr(*this, elib::forward<Args>(args)...);
+        }
+        
+        template <
+            class MethodTag, class ...Args
+          , ELIB_ENABLE_IF(detail::can_call<MethodTag, Args...>::value)
+        >
+        typename MethodTag::result_type
+        call(Args &&... args)
+        {
+            auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
+            if (pos == m_methods.end())
+            {
+                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>());
+            }
+            
+            using FnPtr = typename MethodTag::function_type*;
+            auto fn_ptr = elib::any_cast<FnPtr>(pos->second);
+            
+            return fn_ptr(*this, elib::forward<Args>(args)...); 
+        }
+        
     private:
         entity_id m_id;
         std::unordered_map<std::type_index, elib::any> m_attributes;
+        std::unordered_map<std::type_index, elib::any> m_methods;
     };
     
     template <class Attr, class Then>
