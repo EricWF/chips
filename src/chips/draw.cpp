@@ -8,13 +8,16 @@ namespace chips
 {
     bool draw(sf::RenderWindow & to, entity const & e)
     {
+        // Don't draw if the entity is dead
+        if (!e) return false;
+        
         position p = e.get_attribute<position>();
         
-        texture_id tex_id;
-        if (e.has_attribute<texture_id>())
-            tex_id = e.get_attribute<texture_id>();
+        tile_id tex_id;
+        if (e.has_attribute<tile_id>())
+            tex_id = e.get_attribute<tile_id>();
         else
-            tex_id = static_cast<texture_id>(e.id());
+            tex_id = static_cast<tile_id>(e.id());
             
         texture_index index;
         if (e.has_attribute<direction>())
