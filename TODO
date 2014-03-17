@@ -1,18 +1,24 @@
 - Move socket from items level to base level (on all tiled level)
+  NOTE: this is likely a blocking issue. I don't think files will parse without it.
 
 - Add velocity property to all monster tiles
 
 - Add "help" string property for all levels
 
-- Fix GCC bug regarding implicit conversion to function pointer
+- Add support for binding help string to help tile.
+
+- Fix GCC bug regarding implicit conversion of lambda to function pointer
    I think the bug only affects entity::set_method but I won't change it until
    its reproduced. 
+
+- Remove texture_index.
 
 - Add support for blue-button -> tank binding and green-button -> toggle-wall binding
   (all blue-buttons bind to all tanks and green buttons to all toggle walls,
    so bind actions don't need to be specified for these)
 
-- Create game-handler.
+- Create game-handler. It should have a draw and an update methods. It should
+  Take a level and run it until the level is finished or the window is closed.
 
 - Flesh out init methods for all types (adding update & collide functions for all)
 
