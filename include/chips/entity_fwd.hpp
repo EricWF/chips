@@ -117,7 +117,7 @@ namespace chips
         T &       get() noexcept       { return m_value; }
         
         /// Get T by value.
-        T value() const noexcept { return m_value; }
+        T value() const { return m_value; }
         
         void swap(any_attribute & other) noexcept
         {
@@ -129,52 +129,6 @@ namespace chips
         T m_value;
     };
     
-    /// specialization for bool
-    template <class Dummy>
-    class any_attribute<bool, Dummy> : attribute_base
-    {
-    public:
-        using type = any_attribute;
-        using value_type = bool;
-
-    public:
-        any_attribute() noexcept 
-          : m_value(false)
-        {}
-        
-        any_attribute(bool v) noexcept
-          : m_value(v) 
-        {}
-        
-        ELIB_DEFAULT_COPY_MOVE(any_attribute);
-        
-        any_attribute & operator=(bool v) noexcept
-        {
-            m_value = v;
-            return *this;
-        }
-        
-        explicit operator bool() const noexcept { return m_value; }
-        
-        bool const & operator*() const noexcept { return m_value; }
-        bool &       operator*() noexcept       { return m_value; }
-        
-        void set(bool v)   noexcept { m_value = v; }
-        bool get()   const noexcept { return m_value; }
-        bool value() const noexcept { return m_value; }
-        
-        void swap(any_attribute & other) noexcept
-        {
-            bool tmp = m_value;
-            m_value = other.m_value;
-            other.m_value = tmp;
-        }
-        
-    private:
-        bool m_value;
-    };
-
-
     template <class T, class Dummy>
     void swap(any_attribute<T, Dummy> & lhs, any_attribute<T, Dummy> & rhs) noexcept
     {
@@ -212,6 +166,8 @@ namespace chips
         /// This marks the method as non-const
         static constexpr bool is_const = false;
         
+        /// This is magic that allows me to ensure that
+        /// A given type implements method_base.
         operator method_tag() const;
     };
     

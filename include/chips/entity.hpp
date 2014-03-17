@@ -122,7 +122,7 @@
         /// The attribute is constructed as if by Attribute(ConstructorArguments...)
         /// Return true if the attribute was added
         /// usage: e.emplace_attribute<Attribute>(ConstructorArguments...)
-        template <class Attribute, ...class ConstructorArguments>
+        template <class Attribute, class ...ConstructorArguments>
         bool emplace_attribute(ConstructorArguments...);
         
         /// Set an attribute in the entity. 
