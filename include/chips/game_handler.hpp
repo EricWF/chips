@@ -4,7 +4,7 @@
 # include "chip/core.hpp"
 # include "chips/draw.hpp"
 # include "chips/entity.hpp"
-# include "chips/gome.hpp"
+# include "chips/game.hpp"
 # include "chips/resource_manager.hpp"
 # include <elib/aux.hpp>
 # include <elib/fmt.hpp>

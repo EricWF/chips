@@ -14,8 +14,7 @@ namespace chips
     
     enum class font_uid
     {
-        none, 
-        arial
+        none, arial
     };
     
     class resource_manager
