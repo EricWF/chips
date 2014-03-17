@@ -416,23 +416,6 @@ do {                                                  \
         }
         ELIB_ASSERT(l.chip);
     
-        init_chip(l.chip);
-    
-        std::for_each(
-            std::begin(l.actors), std::end(l.actors)
-          , init_actor
-        );
-        
-        std::for_each(
-            std::begin(l.items), std::end(l.items)
-          , init_item
-        );
-        
-        std::for_each(
-            std::begin(l.base), std::end(l.base)
-          , init_base
-        );
-    
         process_level(l);
     
         return l;
@@ -600,6 +583,23 @@ do {                                                  \
         
     void process_level(level & l)
     {
+        init_chip(l.chip);
+    
+        std::for_each(
+            std::begin(l.actors), std::end(l.actors)
+          , init_actor
+        );
+        
+        std::for_each(
+            std::begin(l.items), std::end(l.items)
+          , init_item
+        );
+        
+        std::for_each(
+            std::begin(l.base), std::end(l.base)
+          , init_base
+        );
+        
         detail::process_actions(l);
     }
         
