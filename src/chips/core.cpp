@@ -81,7 +81,7 @@ namespace elib { namespace enumeration
     const std::map<::chips::tile_id, std::string>
     basic_enum_traits<::chips::tile_id>::name_map =
         {
-            _(floor) 
+              _(floor) 
             , _(wall)
             , _(computer_chip)
             , _(water)
