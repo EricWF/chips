@@ -7,6 +7,7 @@
 # include <string>
 # include <utility>
 # include <vector>
+# include <cstddef>
 
 namespace chips
 {
@@ -25,10 +26,12 @@ namespace chips
         level & operator=(level const &) = default;
         level & operator=(level &&) = default;
         
+        /// The level number
         unsigned id() const noexcept { return m_id; }
-        unsigned chip_count() const noexcept { return m_chip_count; }
-        
         void id(unsigned xid) { m_id = xid; }
+        
+        /// The number of computer chips in the level
+        unsigned chip_count() const noexcept { return m_chip_count; }
         void chip_count(unsigned c) { m_chip_count = c; }
         
         std::vector<entity> actors;
@@ -74,7 +77,7 @@ namespace chips
     parsed_level parse_level(std::string const &);
     
 ////////////////////////////////////////////////////////////////////////////////
-//                           CREATION
+//                              CREATION
 ////////////////////////////////////////////////////////////////////////////////
     /// create a level from its number
     /// and the list of properties to pass to the tile factory
@@ -87,8 +90,32 @@ namespace chips
     /// and it must be translated to the coorisponding key for the 
     /// properties map
     entity create_entity(
-        unsigned gid
+        unsigned gid, unsigned index
       , std::map<unsigned, tile_properties> const &
     );
+    
+////////////////////////////////////////////////////////////////////////////////
+//                            MISC
+////////////////////////////////////////////////////////////////////////////////
+
+    /// Convert a position on the 32x32 grid to an index in an array
+    constexpr std::size_t 
+    to_index(position p) noexcept
+    {
+        return static_cast<std::size_t>(
+            (p.x * level_height) + p.y
+        );
+    }
+    
+    /// Convert an index in an array to a position on the 32x32 grid
+    constexpr position 
+    to_position(std::size_t index) noexcept
+    {
+        return position{
+            static_cast<unsigned>(index / level_height)
+          , static_cast<unsigned>(index % level_height)
+        };
+    }
+
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HPP */

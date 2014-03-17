@@ -14,6 +14,8 @@ namespace chips
 {
     namespace detail { namespace 
     {
+        ////////////////////////////////////////////////////////////////////////
+        /// A guarded access wrapper for XML Element Access
         template <class T>
         T query_attr(TiXmlElement const & elem, std::string const & key)
         {
@@ -28,6 +30,8 @@ namespace chips
             return elib::lexical_cast<T>(raw_attr);
         }
         
+        ////////////////////////////////////////////////////////////////////////
+        /// Parse a tiles properties
         std::pair<unsigned, tile_properties> parse_tile(TiXmlElement & elem)
         {
             std::pair<unsigned, tile_properties> tp;
@@ -69,7 +73,8 @@ namespace chips
             return tp;
         }
         
-        
+        ////////////////////////////////////////////////////////////////////////
+        /// Parse a layer of tiled data
         std::vector<int> parse_layer(TiXmlElement & root)
         {
             std::vector<int> tiles;
@@ -91,22 +96,9 @@ namespace chips
             return tiles;
         }
         
-        template <class CreateFn>
-        void create_group(
-            std::vector<int> const & raw_group
-          , std::vector<entity> & to
-          , CreateFn Fn
-          )
-        {
-            std::transform(
-                raw_group.begin(), raw_group.end()
-              , std::back_inserter(to)
-              , Fn
-            );
-        }
-        
     }}                                                      // namespace detail
     
+    ////////////////////////////////////////////////////////////////////////////
     std::map<unsigned, tile_properties>
     parse_tileset(std::string const & fname)
     {
@@ -131,6 +123,7 @@ namespace chips
         return tile_map;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     parsed_level parse_level(std::string const & fname)
     {
         parsed_level lv;
@@ -187,9 +180,10 @@ namespace chips
         return lv;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     level create_level(
         unsigned num
-      , std::map<unsigned, tile_properties> const &
+      , std::map<unsigned, tile_properties> const & props
       )
     {
         std::string filename = elib::fmt(
@@ -200,25 +194,67 @@ namespace chips
         parsed_level raw = parse_level(filename);
         level l(raw.level, raw.chip_count);
         
+        int pos = 0;
+        auto create_fn = [&](int gid) { return create_entity(gid, pos++, props); };
         
-        //TODO
+        std::transform(
+            std::begin(raw.base), std::end(raw.base)
+          , std::back_inserter(l.base)
+          , create_fn
+        );
+        
+        ELIB_ASSERT(pos == level_width * level_height);
+        pos = 0;
+        
+        std::transform(
+            std::begin(raw.items), std::end(raw.items)
+          , std::back_inserter(l.items)
+          , create_fn
+        );
+        
+        ELIB_ASSERT(pos == level_height * level_width);
+        pos = 0;
+        
+        std::transform(
+            std::begin(raw.actors), std::end(raw.actors)
+          , std::back_inserter(l.actors)
+          , create_fn
+        );
+        
+        ELIB_ASSERT(pos == level_height * level_width);
+        
+        //TODO connect components
         return l;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     entity create_entity(
-        unsigned gid
+        unsigned gid, unsigned index
       , std::map<unsigned, tile_properties> const & pm
       )
     {
+        // get the position of the entity via the index.
+        position pos = to_position(index);
+        
+        // if the gid is zero there is no entity at that location
+        // create a dead entity and return it.
+        if (gid == 0)
+        {
+            entity e;
+            e << pos;
+            return e;
+        }
+        
+        gid -= 1;
         auto props = pm.at(gid);
-        entity e(props.id);
+        entity e(props.id, pos);
         
         for (auto & p : props.properties)
         {
             if (p.first == "tile_id")
             {
                 e.insert_attribute(
-                    elib::enumeration::enum_cast<texture_id>(p.second)
+                    elib::enumeration::enum_cast<tile_id>(p.second)
                 );
             }
             else if (p.first == "direction")
@@ -247,4 +283,5 @@ namespace chips
         
         return e;
     }
+    
 }                                                           // namespace chips
