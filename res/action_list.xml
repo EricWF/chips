@@ -1,0 +1,8 @@
+<actions>
+    <action type="bind">
+        <source entity_id="id" x="x" y="y" />
+        <to     entity_id="id" x="x" y="y" />
+        <to     entity_id="id" x="x" y="y" />
+    </action>
+    <action type="help_string"> This is the Help String </action>
+</actions>

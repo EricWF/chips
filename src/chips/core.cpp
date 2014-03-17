@@ -62,6 +62,18 @@ namespace elib { namespace enumeration
             , _(skates) 
             , _(suction_boots) 
             , _(chip)
+            , _(BAD_ID)
+        };
+#undef _
+
+#define _(Name) { ::chips::entity_type::Name, #Name }
+    const std::map<::chips::entity_type, std::string>
+    basic_enum_traits<::chips::entity_type>::name_map =
+        {
+            _(chip)
+          , _(actor)
+          , _(item)
+          , _(base)
         };
 #undef _
 

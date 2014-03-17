@@ -4,6 +4,7 @@
 # include "chips/entity_fwd.hpp"
 # include <elib/except.hpp>
 # include <elib/enumeration.hpp>
+# include <elib/fmt.hpp>
 # include <elib/log.hpp>
 # include <map>
 # include <string>
@@ -150,6 +151,15 @@ namespace chips
         
         BAD_ID = -1
     };
+    
+    enum class entity_type
+    {
+        none, 
+        chip, 
+        actor, 
+        item, 
+        base
+    };
 }                                                           // namespace chips
 
 namespace elib { namespace enumeration
@@ -162,6 +172,12 @@ namespace elib { namespace enumeration
     {
         static const std::map<::chips::entity_id, std::string> name_map;
     };
+    
+    template <>
+    struct basic_enum_traits<::chips::entity_type>
+    {
+        static const std::map<::chips::entity_type, std::string> name_map;
+    };
 }}                                               // namespace elib::enumeration
 
 namespace chips
@@ -172,13 +188,66 @@ namespace chips
         return elib::enumeration::enum_cast<std::string>(id);
     }
     
+    inline std::string to_string(entity_type t)
+    {
+        return elib::enumeration::enum_cast<std::string>(t);
+    }
+    
+    inline entity_id to_entity_id(std::string const & s) 
+    {
+        return elib::enumeration::enum_cast<entity_id>(s);
+    }
+    
+    inline entity_type to_entity_type(std::string const & s)
+    {
+        return elib::enumeration::enum_cast<entity_type>(s);
+    }
+    
     ////////////////////////////////////////////////////////////////////////////
-    //  Entity ID Queries and Catagories
+    //                           ACTOR QUERIES
     ////////////////////////////////////////////////////////////////////////////
+    
+    constexpr bool is_chip(entity_id id) noexcept
+    {
+        return id == entity_id::chip;
+    }
     
     constexpr bool is_monster(entity_id id) noexcept
     {
         return (id >= entity_id::bug && id <= entity_id::germ);
+    }
+    
+    constexpr bool is_actor(entity_id id) noexcept
+    {
+        return is_chip(id) || is_monster(id) || entity_id::block == id;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //                           BASE QUERIES
+    ////////////////////////////////////////////////////////////////////////////
+    
+    constexpr bool is_lock(entity_id id) noexcept
+    {
+        return id == entity_id::red_lock
+            || id == entity_id::blue_lock
+            || id == entity_id::green_lock
+            || id == entity_id::yellow_lock;
+    }
+    
+    constexpr bool is_button(entity_id id) noexcept
+    {
+        return entity_id::green_button == id
+            || entity_id::red_button   == id
+            || entity_id::brown_button == id
+            || entity_id::blue_button  == id;
+    }
+    
+    constexpr bool is_acting_wall(entity_id id) noexcept
+    {
+        return is_lock(id) 
+          || entity_id::socket      == id
+          || entity_id::pop_up_wall == id
+          || entity_id::toggle_wall == id;
     }
     
     constexpr bool is_wall(entity_id id) noexcept
@@ -187,7 +256,7 @@ namespace chips
             || id == entity_id::invisible_wall
             || id == entity_id::thin_wall
             || id == entity_id::blue_wall
-            || id == entity_id::pop_up_wall;
+            || is_acting_wall(id);
     }
     
     constexpr bool is_element_floor(entity_id id) noexcept
@@ -198,18 +267,40 @@ namespace chips
             || id == entity_id::force_floor;
     }
     
-    constexpr bool is_special_floor(entity_id id) noexcept
+    constexpr bool is_acting_floor(entity_id id) noexcept
     {
-        return id == entity_id::dirt
-            || id == entity_id::gravel
+        return id == entity_id::teleport
+            || id == entity_id::thief
+            || id == entity_id::bomb
+            || id == entity_id::trap
+            || id == entity_id::hint
+            || id == entity_id::clone_machine
+            || id == entity_id::fake_exit
+            || is_button(id)
             || is_element_floor(id);
     }
     
     constexpr bool is_floor(entity_id id) noexcept
     {
         return id == entity_id::floor
-            || is_special_floor(id);
+            || id == entity_id::dirt
+            || id == entity_id::gravel
+            || is_acting_floor(id);
     }
+    
+    constexpr bool is_acting_base(entity_id id) noexcept
+    {
+        return is_acting_floor(id) || is_acting_wall(id);
+    }
+    
+    constexpr bool is_base(entity_id id) noexcept
+    {
+        return is_wall(id) || is_floor(id);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //                            ITEM QUERIES
+    ////////////////////////////////////////////////////////////////////////////
     
     constexpr bool is_boots(entity_id id) noexcept
     {
@@ -217,12 +308,6 @@ namespace chips
             || id == entity_id::fire_boots
             || id == entity_id::skates
             || id == entity_id::suction_boots;
-    }
-    
-    constexpr bool is_button(entity_id id) noexcept
-    {
-        return id >= entity_id::green_button
-            && id <= entity_id::blue_button;
     }
     
     constexpr bool is_key(entity_id id) noexcept
@@ -233,15 +318,7 @@ namespace chips
             || id == entity_id::yellow_key;
     }
     
-    constexpr bool is_lock(entity_id id) noexcept
-    {
-        return id == entity_id::red_lock
-            || id == entity_id::blue_lock
-            || id == entity_id::green_lock
-            || id == entity_id::yellow_lock;
-    }
-    
-    constexpr bool is_collectable(entity_id id) noexcept
+    constexpr bool is_item(entity_id id) noexcept
     {
         return id == entity_id::computer_chip
             || is_key(id)
@@ -258,14 +335,54 @@ namespace chips
     
     constexpr bool key_matches_lock(entity_id key, entity_id lock) noexcept
     {
-        return (key == entity_id::red_key    && lock == entity_id::red_lock)
-            || (key == entity_id::red_key    && lock == entity_id::red_lock)
-            || (key == entity_id::green_key  && lock == entity_id::green_lock)
+        return (key == entity_id::red_key    && lock == entity_id::red_lock   )
+            || (key == entity_id::blue_key   && lock == entity_id::blue_lock  )
+            || (key == entity_id::green_key  && lock == entity_id::green_lock )
             || (key == entity_id::yellow_key && lock == entity_id::yellow_lock);
     }
     
+# if defined(__GNUC__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wswitch-enum"
+# endif
+    inline entity_id key_for_lock(entity_id lock) noexcept
+    {
+        ELIB_ASSERT(is_lock(lock));
+        switch (lock)
+        {
+            case entity_id::red_lock:    return entity_id::red_key;
+            case entity_id::blue_lock:   return entity_id::blue_key;
+            case entity_id::green_lock:  return entity_id::green_key;
+            case entity_id::yellow_lock: return entity_id::yellow_key;
+            default:
+                ELIB_THROW_EXCEPTION(chips_error(
+                    "Bad entity_id passed to key for lock"
+                ));
+        }
+    }
+    
+    inline entity_id boots_for_floor(entity_id floor) noexcept
+    {
+        ELIB_ASSERT(is_element_floor(floor));
+        switch (floor)
+        {
+            case entity_id::force_floor: return entity_id::suction_boots;
+            case entity_id::water:       return entity_id::flippers;
+            case entity_id::fire:        return entity_id::fire_boots;
+            case entity_id::ice:         return entity_id::skates;
+            default:
+                ELIB_THROW_EXCEPTION(chips_error(
+                    "Bad entity_id passed to boots_for_floor"
+                ));
+        }
+    }
+# if defined(__GNUC__)
+#   pragma GCC diagnostic pop
+# endif
+    
+    
 ////////////////////////////////////////////////////////////////////////////////
-//                                TEXTURE_ID
+//                                TILE_ID
 ////////////////////////////////////////////////////////////////////////////////
     
     
@@ -439,10 +556,20 @@ namespace chips
     {
         return elib::enumeration::enum_cast<std::string>(id);
     }
+    
+    inline tile_id to_tile_id(std::string const & s)
+    {
+        return elib::enumeration::enum_cast<tile_id>(s);
+    }
 
     inline std::string to_string(texture_type t)
     {
         return elib::enumeration::enum_cast<std::string>(t);
+    }
+    
+    inline texture_type to_texture_type(std::string const & s)
+    {
+        return elib::enumeration::enum_cast<texture_type>(s);
     }
     
     /// Checks if the texture has a direction component
@@ -496,6 +623,11 @@ namespace chips
         return elib::enumeration::enum_cast<std::string>(s);
     }
     
+    inline chips_state to_chips_state(std::string const & s)
+    {
+        return elib::enumeration::enum_cast<chips_state>(s);
+    }
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                           DIRECTION && POSITION
 ////////////////////////////////////////////////////////////////////////////////
@@ -528,6 +660,20 @@ namespace chips
 # if defined(ELIB_CONFIG_GCC)
 #   pragma GCC diagnostic pop
 # endif
+
+    inline direction to_direction(std::string const & s)
+    {
+        if      ("N" == s) return direction::N;
+        else if ("W" == s) return direction::W;
+        else if ("S" == s) return direction::S;
+        else if ("E" == s) return direction::E;
+        else
+        {
+            ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                "Unknown direction passed to to_direction: \"%s\"", s
+            )));
+        }
+    }
 
     struct position
     {

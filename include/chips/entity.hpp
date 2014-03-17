@@ -62,8 +62,6 @@
  * This check is performed at compile time.
  */
 
-    
-
     ////////////////////////////////////////////////////////////////////////////
     //                              ENTITY
     ////////////////////////////////////////////////////////////////////////////
@@ -79,8 +77,15 @@
         /// Constructs an alive entity with an id, and a given set of attributes
         entity(entity_id, Attributes...);
         
+        ////////////////////////////////////////////////////////////////////////
+        //
+        ////////////////////////////////////////////////////////////////////////
+        
         /// Get the ID of the entity.
         entity_id id() const;
+        
+        /// Allow an entity to be convertible to its ID
+        operator entity_id() const noexcept;
         
         ////////////////////////////////////////////////////////////////////////
         //                              LIFE
@@ -131,6 +136,10 @@
         template <class Attribute>
         bool remove_attribute();
         
+        /// Remove ALL attributes.
+        /// Usage: e.clear_attributes()
+        void clear_attributes();
+        
         /// Get a pointer to an Attribute, or nullptr if the entity does not
         /// have the given attribute
         /// Usage: e.get_raw_attribute<Attribute>()
@@ -171,6 +180,10 @@
         /// Usage: e.remove_method(move_)
         template <class MethodTag>
         void remove_method(MethodTag);
+        
+        /// Remove ALL methods.
+        /// usage: e.clear_methods()
+        void clear_methods();
         
         /// Call a method. If the entity does not have that method call then
         /// throw an exception. NOTE: Methods are either const or non-const. 
@@ -220,6 +233,9 @@
         //                            MISC
         ////////////////////////////////////////////////////////////////////////
         
+        /// Remove all methods and attributes.
+        void clear();
+        
         /// Swap this entity with another entity. This is equivalent to:
         /// entity tmp = *this;
         /// *this = other
@@ -247,7 +263,14 @@
     /// Usage: e >> Attribute1 >> Attribute2 >> ...
     template <class Attribute>
     entity const & operator>>(entity const &, Attribute &);
+    
+    ////////////////////////////////////////////////////////////////////////////
+    //                        METHOD FUNCTIONS
+    ////////////////////////////////////////////////////////////////////////////
 
+    template <class MethodTag>
+    entity & operator <<(entity &, detail::stored_method<MethodTag>);
+    
 # endif /* ENTITY_SUMMARY */
     
     
@@ -265,6 +288,17 @@ namespace chips
         );
         e << elib::errinfo_type_info_name(typeid(Attr).name());
         return e;
+    }
+    
+    template <class Attr>
+    inline chips_error create_entity_access_error(entity_id id)
+    {
+        chips_error err(elib::fmt(
+            "entity access error on entity %s with type: %s"
+          , to_string(id), typeid(Attr).name()
+        ));
+        err << elib::errinfo_type_info_name(typeid(Attr).name());
+        return err;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -309,7 +343,8 @@ namespace chips
         ELIB_DEFAULT_COPY_MOVE(entity);        
         
         ////////////////////////////////////////////////////////////////////////
-        entity_id id() const noexcept { return m_id; }
+        entity_id id()       const noexcept { return m_id; }
+        operator entity_id() const noexcept { return m_id; }
         
         ////////////////////////////////////////////////////////////////////////
         void kill() noexcept { m_alive = false; }
@@ -385,6 +420,8 @@ namespace chips
             return m_attributes.erase(std::type_index(typeid(Attr)));
         }
         
+        void clear_attributes() { m_attributes.clear(); }
+        
         ////////////////////////////////////////////////////////////////////////
         template <
             class Attr
@@ -419,7 +456,7 @@ namespace chips
             auto ptr = (*this).get_raw_attribute<Attr>();
             if (!ptr)
             {
-                ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>());
+                ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>(*this));
             }
             return *ptr;
         }
@@ -434,7 +471,7 @@ namespace chips
             auto ptr = (*this).get_raw_attribute<Attr>();
             if (!ptr)
             {
-                ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>());
+                ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>(*this));
             }
             return *ptr;
         }
@@ -471,6 +508,8 @@ namespace chips
             m_methods.erase(std::type_index(typeid(MethodTag)));
         }
         
+        void clear_methods() { m_methods.clear(); }
+        
         ////////////////////////////////////////////////////////////////////////
         template <
             class MethodTag , class ...MethodArgs
@@ -482,7 +521,7 @@ namespace chips
             auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
             if (pos == m_methods.end())
             {
-                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>());
+                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>(*this));
             }
             
             using FnPtr = typename MethodTag::function_type*;
@@ -508,7 +547,7 @@ namespace chips
             auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
             if (pos == m_methods.end())
             {
-                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>());
+                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>(*this));
             }
             
             using FnPtr = typename MethodTag::function_type*;
@@ -591,6 +630,12 @@ namespace chips
         
         
         ////////////////////////////////////////////////////////////////////////
+        void clear()
+        {
+            clear_attributes();
+            clear_methods();
+        }
+        
         void swap(entity & other) noexcept
         {
             using std::swap;
@@ -634,6 +679,18 @@ namespace chips
         r = e.get_attribute<Attr>();
         return e;
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template<
+        class MethodTag
+      , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+    >
+    entity & operator<<(entity & e, detail::stored_method<MethodTag> m)
+    {
+        e.add_method(m.tag(), m.method());
+        return e;
+    }
+    
     
 }                                                           // namespace chips
 #endif /* CHIPS_ENTITY_HPP */

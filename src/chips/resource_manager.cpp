@@ -116,7 +116,13 @@ namespace chips
     void resource_manager::create_sprite(texture_index index)
     {
         position p = to_texture_position(index);
-        sf::IntRect tex_rect(p.x, p.y, tile_width, tile_height);
+        
+        sf::IntRect tex_rect(
+            static_cast<int>(p.x)
+          , static_cast<int>(p.y)
+          , tile_width, tile_height
+        );
+        
         m_sprite_map[index] = sf::Sprite(m_tex_map[texture_uid::tiles], tex_rect);
     }
 }                                                           // namespace chips

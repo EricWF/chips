@@ -13,36 +13,14 @@
 #include <string>
 
 namespace chips
-{
-    inline void draw_tiles_test(sf::RenderWindow & win)
-    {
-        resource_manager & man = resource_manager::get();
-        sf::Sprite s(man[texture_uid::tiles]);
-        win.clear(sf::Color::Black);
-        win.draw(s);
-        win.display();
-    }
-    
-    inline void entity_draw_test(sf::RenderWindow & win)
-    {
-        entity e(entity_id::bug);
-        e << position{0, 0} << direction::N << texture_type::cutout;
-          
-        win.clear(sf::Color::Black);
-        draw(win, e);
-        win.display();
-        
-    }
-    
+{    
     int chips_main(int, char**, char**)
     {        
         log::level(level_e::debug);
 
         auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "tileset.tsx" );
         
-        
-		std::string level_file = CHIPS_RESOURCE_ROOT "level1.tmx";
-		auto l = parse_level(level_file);
+		auto l = create_level(1, prop_list);
 		
         // initalize resources
         resource_manager::get();
@@ -64,7 +42,6 @@ namespace chips
             if (bid == menu_item_id::quit) break;
                 
             mh.draw(window);
-            //entity_draw_test(window);
             window.display();
         }
         

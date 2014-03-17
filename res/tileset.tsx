@@ -12,6 +12,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="bug"/>
    <property name="tile_id" value="bug_N"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="5">
@@ -19,6 +20,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="glider"/>
    <property name="tile_id" value="glider_N"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="6">
@@ -51,6 +53,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="bug"/>
    <property name="tile_id" value="bug_W"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="18">
@@ -58,6 +61,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="glider"/>
    <property name="tile_id" value="glider_W"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="19">
@@ -97,6 +101,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="bug"/>
    <property name="tile_id" value="bug_S"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="31">
@@ -104,6 +109,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="glider"/>
    <property name="tile_id" value="glider_S"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="32">
@@ -150,6 +156,7 @@
    <property name="direction" value="E"/>
    <property name="entity_id" value="glider"/>
    <property name="tile_id" value="glider_E"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="45">
@@ -189,6 +196,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="fireball"/>
    <property name="tile_id" value="fireball_N"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="57">
@@ -196,6 +204,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="teeth"/>
    <property name="tile_id" value="teeth_N"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="58">
@@ -218,8 +227,10 @@
  </tile>
  <tile id="67">
   <properties>
+   <property name="bindings" value=""/>
    <property name="entity_id" value="toggle_wall"/>
    <property name="tile_id" value="toggle_wall_closed"/>
+   <property name="toggle_state" value="true"/>
   </properties>
  </tile>
  <tile id="68">
@@ -233,6 +244,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="fireball"/>
    <property name="tile_id" value="fireball_W"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="70">
@@ -240,6 +252,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="teeth"/>
    <property name="tile_id" value="teeth_W"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="71">
@@ -265,6 +278,7 @@
   <properties>
    <property name="entity_id" value="toggle_wall"/>
    <property name="tile_id" value="toggle_wall_open"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="82">
@@ -272,6 +286,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="fireball"/>
    <property name="tile_id" value="fireball_S"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="83">
@@ -279,6 +294,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="teeth"/>
    <property name="tile_id" value="teeth_S"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="84">
@@ -302,6 +318,7 @@
  </tile>
  <tile id="93">
   <properties>
+   <property name="bindings" value=""/>
    <property name="entity_id" value="brown_button"/>
    <property name="tile_id" value="brown_button"/>
   </properties>
@@ -311,6 +328,7 @@
    <property name="direction" value="E"/>
    <property name="entity_id" value="fireball"/>
    <property name="tile_id" value="fireball_E"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="96">
@@ -318,6 +336,7 @@
    <property name="direction" value="E"/>
    <property name="entity_id" value="teeth"/>
    <property name="tile_id" value="teeth_E"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="97">
@@ -341,6 +360,7 @@
  </tile>
  <tile id="106">
   <properties>
+   <property name="bindings" value=""/>
    <property name="entity_id" value="blue_button"/>
    <property name="tile_id" value="blue_button"/>
   </properties>
@@ -350,6 +370,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="pink_ball"/>
    <property name="tile_id" value="pink_ball_N"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="109">
@@ -395,6 +416,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="pink_ball"/>
    <property name="tile_id" value="pink_ball_W"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="122">
@@ -439,6 +461,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="pink_ball"/>
    <property name="tile_id" value="pink_ball_S"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="135">
@@ -483,6 +506,7 @@
    <property name="direction" value="E"/>
    <property name="entity_id" value="pink_ball"/>
    <property name="tile_id" value="pink_ball_E"/>
+   <property name="velocity" value="1"/>
   </properties>
  </tile>
  <tile id="148">
@@ -595,6 +619,7 @@
   <properties>
    <property name="entity_id" value="pop_up_wall"/>
    <property name="tile_id" value="pop_up_wall"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="185">
