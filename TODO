@@ -1,0 +1,8 @@
+- Move socket from items level to base level (on all tiled level)
+- Add "help" string property for all levels
+- Fix GCC bug regarding implicit conversion to function pointer
+- Add support for blue-button -> tank binding and green-button -> toggle-wall binding
+  (all blue-buttons bind to all tanks and green buttons to all toggle walls,
+   so bind actions don't need to be specified for these)
+- Create game-handler.
+- Flesh out init methods for all types (adding update & collide functions for all)
