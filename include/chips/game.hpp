@@ -99,14 +99,14 @@ namespace chips
     /// death logic is needed, this method should be used
     struct on_death_m : method_base<on_death_m, void()> {};
     
-    constexpr update_m       update_{};
-    constexpr toggle_m       toggle_{};
-    constexpr notify_m       notify_{};
-    constexpr move_m         move_{};
-    constexpr move_in_m      move_in_{};
-    constexpr collides_m     collides_{};
+    constexpr update_m       update_      {};
+    constexpr toggle_m       toggle_      {};
+    constexpr notify_m       notify_      {};
+    constexpr move_m         move_        {};
+    constexpr move_in_m      move_in_     {};
+    constexpr collides_m     collides_    {};
     constexpr on_collision_m on_collision_{};
-    constexpr on_death_m     on_death_{};
+    constexpr on_death_m     on_death_    {};
     
 # if defined(__clang__)
 #   pragma clang diagnostic push
@@ -131,7 +131,7 @@ namespace chips
             for (entity * other_ptr : *b)
             {
                 auto & other = *other_ptr;
-                if (other && other.has_method(chips::toggle_)) 
+                if (other && other.has(chips::toggle_)) 
                     other.call(chips::toggle_);
             }
         };
@@ -147,8 +147,8 @@ namespace chips
         auto move_in_ =
         [](entity & e, direction d, unsigned n)
         {
-            ELIB_ASSERT(e.has_attribute<position>()
-                     && e.has_attribute<direction>());
+            ELIB_ASSERT(e.has<position>()
+                     && e.has<direction>());
             
             position p;
             e >> p;

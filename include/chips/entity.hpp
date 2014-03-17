@@ -13,7 +13,14 @@
 # include <unordered_map>
 # include <utility> /* for std::make_pair */
 # include <cstddef> /* for std::size_t */
+
+# define CHIPS_ASSERT_ATTRIBUTE_TYPE(Type)                                 \
+    static_assert(is_attribute<Type>::value, "Type must be an attribute"); \
+    static_assert(!is_method<Type>::value, "An attribute cannot also be a method")
     
+# define CHIPS_ASSERT_METHOD_TYPE(Type)                                 \
+    static_assert(is_method<Type>::value, "Type must be a method tag"); \
+    static_assert(!is_attribute<Type>::value, "A Method may not be an attribute")
     
 
 /// The summary of the entity interface
@@ -107,56 +114,47 @@
         ////////////////////////////////////////////////////////////////////////
         
         /// Check if the entity has an attribute
-        /// usage: e.has_attribute<Attribute>()
+        /// usage: e.has<Attribute>()
         template <class Attribute>
-        bool has_attribute();
+        bool has();
         
-        /// Insert an attribute into the entity.
-        /// Return true if the entity was inserted
-        /// usage: e.insert_attribute(Attribute)
+        /// Insert an attribute if it does not already exist
+        /// Return true if the element was inserted, false otherwise
         template <class Attribute>
-        bool insert_attribute(Attribute);
-        
-        /// Constructs an attribute in place. 
-        /// The point of this overload is that NO COPYING of the attribute is done.
-        /// The attribute is constructed as if by Attribute(ConstructorArguments...)
-        /// Return true if the attribute was added
-        /// usage: e.emplace_attribute<Attribute>(ConstructorArguments...)
-        template <class Attribute, class ...ConstructorArguments>
-        bool emplace_attribute(ConstructorArguments...);
+        bool insert(Attribute);
         
         /// Set an attribute in the entity. 
         /// Usage: e.insert_attribute(Attribute)
         template <class Attribute>
-        void insert_attribute(Attribute);
+        void set(Attribute);
         
-        /// Remove an attribute from the entity.
-        /// Return true if the attribute was found and removed.
-        /// Usage: e.remove_attribute<Attribute>()
+        /// Get a pointer to an Attribute, or nullptr if the entity does not
+        /// have the given attribute
+        /// Usage: e.get_raw<Attribute>()
         template <class Attribute>
-        bool remove_attribute();
+        Attribute * get_raw();
+        
+        template <class Attribute>
+        Attribute const * get_raw();
+        
+        /// Get a reference to an Attribute. If the entity does not have that
+        /// attribute an exception is thrown.
+        /// Usage: e.get<Attribute>()
+        template <class Attribute>
+        Attribute & get();
+        
+        template <class Attribute>
+        Attribute const & get() const;
+        
+         /// Remove an attribute from the entity.
+        /// Return true if the attribute was found and removed.
+        /// Usage: e.remove<Attribute>()
+        template <class Attribute>
+        bool remove();
         
         /// Remove ALL attributes.
         /// Usage: e.clear_attributes()
         void clear_attributes();
-        
-        /// Get a pointer to an Attribute, or nullptr if the entity does not
-        /// have the given attribute
-        /// Usage: e.get_raw_attribute<Attribute>()
-        template <class Attribute>
-        Attribute * get_raw_attribute();
-        
-        template <class Attribute>
-        Attribute const * get_raw_attribute();
-        
-        /// Get a reference to an Attribute. If the entity does not have that
-        /// attribute an exception is thrown.
-        /// Usage: e.get_attribute<Attribute>()
-        template <class Attribute>
-        Attribute & get_attribute();
-        
-        template <class Attribute>
-        Attribute const & get_attribute() const;
      
         ////////////////////////////////////////////////////////////////////////
         //                           METHODS
@@ -165,21 +163,39 @@
          *  Any other MethodTag may be used in its place */
       
         /// Checks to see if an entity has a given method.
-        /// Usage: e.has_method(move_)
+        /// Usage: e.has(move_)
         template <class MethodTag>
-        bool has_method(MethodTag) const;
+        bool has(MethodTag) const;
+        
+        /// Inserts a method if it does not already exist.
+        /// Return true if the method was inserted
+        /// Usage: e.insert(move_, move_def);
+        template <class MethodTag>
+        bool insert(MethodTag, MethodDef);
         
         /// Give an entity a method. Or change an existing one.
         /// NOTE: the type of the Method argument is provided by the MethodTag
-        /// Usage: e.add_method(move_, [](entity &, int x, int y) { do stuff...})
+        /// Usage: e.set(move_, [](entity &, int x, int y) { do stuff...})
         /// Usage NOTE: in this case the MethodType is provided as a lambda
         template <class MethodTag>
-        void add_method(MethodTag, MethodType);
+        void set(MethodTag, MethodType);
+        
+        /// Attempts to get the definition for a given MethodTag.
+        /// null is returned if the method is not found.
+        /// Usage: e.get_raw(move_);
+        template <class MethodTag>
+        MethodPointer get_raw(MethodTag);
+        
+        /// Attempts to get the definition for a given MethodTag
+        /// throws if the method is not found.
+        /// Usage: e.get(move_);
+        template <class MethodTag>
+        MethodPointer get(MethodTag);
         
         /// Remove a method if the entity has it, otherwise do nothing.
-        /// Usage: e.remove_method(move_)
+        /// Usage: e.remove(move_)
         template <class MethodTag>
-        void remove_method(MethodTag);
+        void remove(MethodTag);
         
         /// Remove ALL methods.
         /// usage: e.clear_methods()
@@ -281,16 +297,6 @@ namespace chips
     /// This type is thrown when the program attempts to access a attribute/method
     /// that is not found.
     template <class Attr>
-    inline chips_error create_entity_access_error()
-    {
-        chips_error e(
-            elib::fmt("entity access error with type: %s", typeid(Attr).name())
-        );
-        e << elib::errinfo_type_info_name(typeid(Attr).name());
-        return e;
-    }
-    
-    template <class Attr>
     inline chips_error create_entity_access_error(entity_id id)
     {
         chips_error err(elib::fmt(
@@ -366,46 +372,35 @@ namespace chips
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        bool has_attribute() const
+        bool has() const
         {
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             return m_attributes.count(std::type_index(typeid(Attr)));
         }
-        
-        ////////////////////////////////////////////////////////////////////////
-        template <
-            class Attr, class ...Args
-          , ELIB_ENABLE_IF(is_attribute<Attr>::value)
-        >
-        bool emplace_attribute(Args &&... args)
-        {
-            return m_attributes.emplace(
-                std::make_pair(
-                    std::type_index(typeid(Attr))
-                  , elib::any(Attr(elib::forward<Args>(args)...))
-            )).second;
-        }
-        
+    
         ////////////////////////////////////////////////////////////////////////
         template <
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        bool insert_attribute(Attr && attr)
+        bool insert(Attr && attr)
         {
-            return m_attributes.insert(
-                std::make_pair(
-                    std::type_index(typeid(Attr))
-                  , elib::any(elib::forward<Attr>(attr))
-            )).second;
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+            auto ret = m_attributes.insert(std::make_pair(
+                std::type_index(typeid(Attr))
+              , elib::any(elib::forward<Attr>(attr))
+            ));
+            return ret.second;
         }
-        
+    
         ////////////////////////////////////////////////////////////////////////
         template <
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        void set_attribute(Attr && attr)
+        void set(Attr && attr)
         {
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             m_attributes[std::type_index(typeid(Attr))] = 
                 elib::forward<Attr>(attr);
         }
@@ -415,21 +410,10 @@ namespace chips
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        bool remove_attribute()
+        Attr const * get_raw() const
         {
-            return m_attributes.erase(std::type_index(typeid(Attr)));
-        }
-        
-        void clear_attributes() { m_attributes.clear(); }
-        
-        ////////////////////////////////////////////////////////////////////////
-        template <
-            class Attr
-          , ELIB_ENABLE_IF(is_attribute<Attr>::value)
-        >
-        Attr const * get_raw_attribute() const
-        {
-            return const_cast<entity &>(*this).get_raw_attribute<Attr>();
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+            return const_cast<entity &>(*this).get_raw<Attr>();
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -437,8 +421,9 @@ namespace chips
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        Attr * get_raw_attribute()
+        Attr * get_raw()
         {
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             auto pos = m_attributes.find(std::type_index(typeid(Attr)));
             if (pos == m_attributes.end()) return nullptr;
             return elib::addressof(
@@ -451,9 +436,10 @@ namespace chips
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        Attr const & get_attribute() const
+        Attr const & get() const
         {
-            auto ptr = (*this).get_raw_attribute<Attr>();
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+            auto ptr = (*this).get_raw<Attr>();
             if (!ptr)
             {
                 ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>(*this));
@@ -466,15 +452,29 @@ namespace chips
             class Attr
           , ELIB_ENABLE_IF(is_attribute<Attr>::value)
         >
-        Attr & get_attribute()
+        Attr & get()
         {
-            auto ptr = (*this).get_raw_attribute<Attr>();
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+            auto ptr = (*this).get_raw<Attr>();
             if (!ptr)
             {
                 ELIB_THROW_EXCEPTION(create_entity_access_error<Attr>(*this));
             }
             return *ptr;
         }
+        
+        ////////////////////////////////////////////////////////////////////////
+        template <
+            class Attr
+          , ELIB_ENABLE_IF(is_attribute<Attr>::value)
+        >
+        bool remove()
+        {
+            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+            return m_attributes.erase(std::type_index(typeid(Attr)));
+        }
+        
+        void clear_attributes() { m_attributes.clear(); }
         
         //====================================================================//
         //                           METHODS                                  //
@@ -485,8 +485,9 @@ namespace chips
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
         >
-        bool has_method(MethodTag) const
+        bool has(MethodTag) const
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return m_methods.count(std::type_index(typeid(MethodTag)));
         }
         
@@ -494,8 +495,23 @@ namespace chips
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
         >
-        void add_method(MethodTag, typename MethodTag::function_type* fn_ptr)
+        bool insert(MethodTag, typename MethodTag::function_type* fptr)
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag); ELIB_ASSERT(fptr);
+            auto ret = m_methods.insert(std::make_pair(
+                std::type_index(typeid(MethodTag))
+              , elib::any(fptr)
+            ));
+            return ret.second;
+        }
+        
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        void set(MethodTag, typename MethodTag::function_type* fn_ptr)
+        {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             m_methods[std::type_index(typeid(MethodTag))] = elib::any(fn_ptr);
         }
         
@@ -503,8 +519,36 @@ namespace chips
             class MethodTag
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
         >
-        void remove_method(MethodTag)
+        typename MethodTag::function_type*
+        get_raw(MethodTag) const
         {
+            auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
+            if (pos == m_methods.end()) return nullptr;
+            return elib::any_cast<typename MethodTag::function_type*>(pos->second);
+        }
+        
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        typename MethodTag::function_type*
+        get(MethodTag tag) const
+        {
+            typename MethodTag::function_type* fn_ptr = this->get_raw(tag);
+            if (!fn_ptr)
+            {
+                ELIB_THROW_EXCEPTION(create_entity_access_error<MethodTag>(*this));
+            }
+            return fn_ptr;
+        }
+        
+        template <
+            class MethodTag
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+        >
+        void remove(MethodTag)
+        {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             m_methods.erase(std::type_index(typeid(MethodTag)));
         }
         
@@ -665,7 +709,8 @@ namespace chips
     >
     entity & operator<<(entity & e, Attr && attr)
     {
-        e.set_attribute(elib::forward<Attr>(attr));
+        CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+        e.set(elib::forward<Attr>(attr));
         return e;
     }
     
@@ -676,7 +721,8 @@ namespace chips
     >
     entity const & operator>>(entity const & e, Attr & r)
     {
-        r = e.get_attribute<Attr>();
+        CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
+        r = e.get<Attr>();
         return e;
     }
     
@@ -687,7 +733,8 @@ namespace chips
     >
     entity & operator<<(entity & e, detail::stored_method<MethodTag> m)
     {
-        e.add_method(m.tag(), m.method());
+        CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+        e.set(m.tag(), m.method());
         return e;
     }
     

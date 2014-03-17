@@ -28,16 +28,16 @@ BOOST_AUTO_TEST_CASE(chips_entity_ctor_test)
         entity e(entity_id::chip, p, d);
         BOOST_CHECK(e.id() == entity_id::chip);
         BOOST_CHECK(e.size() == 2);
-        BOOST_CHECK(e.has_attribute<position>());
-        BOOST_CHECK(e.has_attribute<direction>());
+        BOOST_CHECK(e.has<position>());
+        BOOST_CHECK(e.has<direction>());
     }
     // ctor (entity_id, Attrs...) rvalues
     {
         entity e(entity_id::chip, position{0, 0}, direction::N);
         BOOST_CHECK(e.id() == entity_id::chip);
         BOOST_CHECK(e.size() == 2);
-        BOOST_CHECK(e.has_attribute<position>());
-        BOOST_CHECK(e.has_attribute<direction>());
+        BOOST_CHECK(e.has<position>());
+        BOOST_CHECK(e.has<direction>());
     }
 }
 

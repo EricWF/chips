@@ -447,15 +447,15 @@ do {                                                  \
         {
             if (p.first == "tile_id")
             {
-                e.insert_attribute( to_tile_id(p.second) );
+                e.set( to_tile_id(p.second) );
             }
             else if (p.first == "direction")
             {
-                e.insert_attribute( to_direction(p.second) );
+                e.set( to_direction(p.second) );
             }
             else if (p.first == "velocity")
             {
-                e.insert_attribute( to_velocity(p.second) );
+                e.set( to_velocity(p.second) );
             }
             else if (p.first == "toggle_state")
             {
@@ -509,11 +509,11 @@ do {                                                  \
         void init_monster(entity & e)
         {
             ELIB_ASSERT(is_monster(e));
-            ELIB_ASSERT(e.has_attribute<direction>() && e.has_attribute<position>());
+            ELIB_ASSERT(e.has<direction>() && e.has<position>());
             
             // TODO remove this
             // add a default velocity if none is present.
-            if (!e.has_attribute<velocity>())
+            if (!e.has<velocity>())
                 e << velocity(1);
                 
             e << method(move_, common::move_);
@@ -540,7 +540,7 @@ do {                                                  \
                 std::find_if(
                     std::begin(el), std::end(el)
                   , [&](entity const & e)
-                    { return bool(e) && e.get_attribute<position>() == p; }
+                    { return bool(e) && e.get<position>() == p; }
                 );
                 
             if (pos == el.end())
@@ -572,7 +572,7 @@ do {                                                  \
             ELIB_ASSERT(act.action == action_type::bind);
             
             entity & actor = find_entity(l, act.actor);
-            bindings & actor_binds = actor.get_attribute<bindings>();
+            bindings & actor_binds = actor.get<bindings>();
             
             for (auto & epos : act.act_on)
             {

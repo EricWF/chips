@@ -11,30 +11,30 @@ namespace chips
         // Don't draw if the entity is dead
         if (!e) return false;
         
-        position p = e.get_attribute<position>();
+        position p = e.get<position>();
         
         tile_id tex_id;
-        if (e.has_attribute<tile_id>())
-            tex_id = e.get_attribute<tile_id>();
+        if (e.has<tile_id>())
+            tex_id = e.get<tile_id>();
         else
             tex_id = static_cast<tile_id>(e.id());
             
         texture_index index;
-        if (e.has_attribute<direction>())
+        if (e.has<direction>())
         {
-            if (e.has_attribute<texture_type>())
+            if (e.has<texture_type>())
             {
                 index = to_texture_index(
                     tex_id
-                  , e.get_attribute<direction>()
-                  , e.get_attribute<texture_type>()
-                  );
+                  , e.get<direction>()
+                  , e.get<texture_type>()
+                );
             }
             else
             {
                 index = to_texture_index(
                     tex_id
-                  , e.get_attribute<direction>()
+                  , e.get<direction>()
                   );
             }
         }
