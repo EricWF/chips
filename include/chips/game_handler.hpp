@@ -24,6 +24,7 @@ namespace chips
         level_passed
     };
 
+    // TODO similar layout to menu/menu_handler
     class game_handler;
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HANDLER_HPP */
