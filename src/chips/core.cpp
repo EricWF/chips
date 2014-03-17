@@ -65,9 +65,9 @@ namespace elib { namespace enumeration
         };
 #undef _
 
-# define _(Name) { ::chips::texture_id::Name, #Name }
-    const std::map<::chips::texture_id, std::string>
-    basic_enum_traits<::chips::texture_id>::name_map =
+# define _(Name) { ::chips::tile_id::Name, #Name }
+    const std::map<::chips::tile_id, std::string>
+    basic_enum_traits<::chips::tile_id>::name_map =
         {
             _(floor) 
             , _(wall)

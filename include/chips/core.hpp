@@ -19,37 +19,37 @@ namespace chips
     
     /// Information about the textures/sprites
     constexpr const char tile_image_file[] = CHIPS_RESOURCE_ROOT "/tileset.gif";
-    constexpr const int texture_rows = 16;
-    constexpr const int texture_cols = 13;
-    constexpr const int texture_width = 416;
-    constexpr const int texture_height = 512;
-    constexpr const int tile_width = texture_width / texture_cols;
-    constexpr const int tile_height = texture_height / texture_rows;
-    constexpr const int num_tiles = texture_rows * texture_cols;
+    constexpr const unsigned texture_rows = 16;
+    constexpr const unsigned texture_cols = 13;
+    constexpr const unsigned texture_width = 416;
+    constexpr const unsigned texture_height = 512;
+    constexpr const unsigned tile_width = texture_width / texture_cols;
+    constexpr const unsigned tile_height = texture_height / texture_rows;
+    constexpr const unsigned num_tiles = texture_rows * texture_cols;
     
     static_assert(texture_width % texture_cols == 0, "Must evenly divide");
     static_assert(texture_height % texture_rows == 0, "Must evenly divide");
     
     /// Information about the levels
     constexpr const char level_file_root[] = CHIPS_RESOURCE_ROOT "/levels";
-    constexpr const int level_width = 32;
-    constexpr const int level_height = 32;
-    constexpr const int level_size = level_width * level_height;
-    constexpr const int level_view_width = 9;
-    constexpr const int level_view_height = 9;
+    constexpr const unsigned level_width = 32;
+    constexpr const unsigned level_height = 32;
+    constexpr const unsigned level_size = level_width * level_height;
+    constexpr const unsigned level_view_width = 9;
+    constexpr const unsigned level_view_height = 9;
     
     /// Information about the part of the window the game is displayed in
-    constexpr const int level_window_xpos = 10;
-    constexpr const int level_window_ypos = 10;
-    constexpr const int level_window_width = level_view_width * tile_width;
-    constexpr const int level_window_height = level_view_height * tile_height;
+    constexpr const unsigned level_window_xpos = 10;
+    constexpr const unsigned level_window_ypos = 10;
+    constexpr const unsigned level_window_width = level_view_width * tile_width;
+    constexpr const unsigned level_window_height = level_view_height * tile_height;
     
     /// Information about the top level window
     constexpr const char window_name[] = "chips";
-    constexpr const int window_xpos = 100;
-    constexpr const int window_ypos = 100;
-    constexpr const int window_width = level_window_width + 300 + 20;
-    constexpr const int window_height = level_window_height + 100 + 20;
+    constexpr const unsigned window_xpos = 100;
+    constexpr const unsigned window_ypos = 100;
+    constexpr const unsigned window_width = level_window_width + 300 + 20;
+    constexpr const unsigned window_height = level_window_height + 100 + 20;
 
 ////////////////////////////////////////////////////////////////////////////////
 //                               ERROR
@@ -93,7 +93,7 @@ namespace chips
      * An entity ID should map directly onto texture ids in most cases.
      * certain entities have "directional" textures. chips has a texture for
      * N, S, E, and W facing sprites. In these cases we can use the entity id
-     * and a direction to map it onto the correct texture_id
+     * and a direction to map it onto the correct tile_id
      */
     enum class entity_id
     {
@@ -150,14 +150,6 @@ namespace chips
         
         BAD_ID = -1
     };
-    
-    inline void swap(entity_id & lhs, entity_id & rhs) noexcept
-    {
-        entity_id tmp = lhs;
-        lhs = rhs;
-        rhs = tmp;
-    }
-    
 }                                                           // namespace chips
 
 namespace elib { namespace enumeration
@@ -278,11 +270,11 @@ namespace chips
     
     
     /**
-     * texture_id's map to an entity's spot in the texture map, 
+     * tile_id's map to an entity's spot in the texture map, 
      * after transforming for direction (and sometimes state)
      *  WARNING: Order and assigned values are VERY IMPORTANT!
      * DO NOT MODIFY */
-    enum class texture_id
+    enum class tile_id
     {
         floor = 0, 
         wall = 1,
@@ -413,12 +405,12 @@ namespace chips
         outline
     };
     
-    /// Allow texture_id and texture_type to be used as
+    /// Allow tile_id and texture_type to be used as
     /// attributes in entity (compile time check)
     namespace extension
     {
         template <>
-        struct is_attribute_impl<texture_id> : elib::true_ {};
+        struct is_attribute_impl<tile_id> : elib::true_ {};
         
         template <>
         struct is_attribute_impl<texture_type> : elib::true_ {};
@@ -429,9 +421,9 @@ namespace elib { namespace enumeration
 {
     /// @see basic_enum_traits<entity_id>
     template <>
-    struct basic_enum_traits<::chips::texture_id>
+    struct basic_enum_traits<::chips::tile_id>
     {
-        static const std::map<::chips::texture_id, std::string> name_map;
+        static const std::map<::chips::tile_id, std::string> name_map;
     };
     
     template <>
@@ -443,7 +435,7 @@ namespace elib { namespace enumeration
 
 namespace chips
 {
-    inline std::string to_string(texture_id id)
+    inline std::string to_string(tile_id id)
     {
         return elib::enumeration::enum_cast<std::string>(id);
     }
@@ -454,31 +446,31 @@ namespace chips
     }
     
     /// Checks if the texture has a direction component
-    constexpr bool is_directional_texture(texture_id id) noexcept
+    constexpr bool is_directional_texture(tile_id id) noexcept
     {
-        return (id >= texture_id::thin_wall_N && id <= texture_id::thin_wall_E)
-            || (id >= texture_id::chip_swimming_N && id <= texture_id::germ_E)
-            || (id >= texture_id::chip_N && id <= texture_id::chip_E);
+        return (id >= tile_id::thin_wall_N && id <= tile_id::thin_wall_E)
+            || (id >= tile_id::chip_swimming_N && id <= tile_id::germ_E)
+            || (id >= tile_id::chip_N && id <= tile_id::chip_E);
     }
     
-    /// check if the texture_id has black outline sprite 
+    /// check if the tile_id has black outline sprite 
     /// and white alpha channel sprite
-    constexpr bool is_typed_texture(texture_id id) noexcept
+    constexpr bool is_typed_texture(tile_id id) noexcept
     {
-        return id >= texture_id::chip_swimming_N;
+        return id >= tile_id::chip_swimming_N;
     }
     
      /// Chip has a number of textures for dying and moving in
-     /// different ways. This enumeration allows you to find the texture_id
+     /// different ways. This enumeration allows you to find the tile_id
      /// of chuck in a given state
     enum class chips_state
     {
-        normal       = static_cast<int>(texture_id::chip_N),
-        swimming     = static_cast<int>(texture_id::chip_swimming_N), 
-        drowned      = static_cast<int>(texture_id::chip_drowned),
-        burned_fire  = static_cast<int>(texture_id::chip_burned_fire), 
-        burned_smoke = static_cast<int>(texture_id::chip_burned_smoke), 
-        fake_exit    = static_cast<int>(texture_id::chip_fake_exit)
+        normal       = static_cast<int>(tile_id::chip_N),
+        swimming     = static_cast<int>(tile_id::chip_swimming_N), 
+        drowned      = static_cast<int>(tile_id::chip_drowned),
+        burned_fire  = static_cast<int>(tile_id::chip_burned_fire), 
+        burned_smoke = static_cast<int>(tile_id::chip_burned_smoke), 
+        fake_exit    = static_cast<int>(tile_id::chip_fake_exit)
     };
     
     namespace extension
@@ -539,7 +531,10 @@ namespace chips
 
     struct position
     {
-        int x, y;
+        constexpr position() : x(0), y(0) {}
+        constexpr position(unsigned x_, unsigned y_) : x(x_), y(y_) {}
+        
+        unsigned x, y;
     };
     
    
@@ -641,7 +636,7 @@ namespace chips
 //                            TEXTURE_INDEX
 ////////////////////////////////////////////////////////////////////////////////
 
-    enum class texture_index {};
+    enum class texture_index : unsigned {};
     
     namespace extension
     {
@@ -649,14 +644,14 @@ namespace chips
         struct is_attribute_impl<texture_index> : elib::true_ {};
     }                                                    // namespace extension
     
-    constexpr int texture_index_row(texture_index i) noexcept
+    constexpr unsigned texture_index_row(texture_index i) noexcept
     {
-        return static_cast<int>(i) % texture_rows;
+        return static_cast<unsigned>(i) % texture_rows;
     }
     
-    constexpr int texture_index_col(texture_index i) noexcept
+    constexpr unsigned texture_index_col(texture_index i) noexcept
     {
-        return static_cast<int>(i) / texture_rows;
+        return static_cast<unsigned>(i) / texture_rows;
     }
     
     constexpr bool is_tile_texture(texture_index i) noexcept
@@ -674,34 +669,34 @@ namespace chips
         return texture_index_col(i) >= 10 && texture_index_col(i) <= 12;
     }
 
-    constexpr texture_id directional_texture_id(texture_id id, direction dir)
+    constexpr tile_id directional_tile_id(tile_id id, direction dir)
     {
         return (is_directional_texture(id)
-            ? static_cast<texture_id>(
-                static_cast<int>(id) + static_cast<int>(dir)
+            ? static_cast<tile_id>(
+                static_cast<unsigned>(id) + static_cast<unsigned>(dir)
               )
             : throw chips_error{"not a directional texture"}
         );
     }
     
-    constexpr texture_index to_texture_index(texture_id id) noexcept
+    constexpr texture_index to_texture_index(tile_id id) noexcept
     {
         return static_cast<texture_index>(id);
     }
     
-    constexpr texture_index to_texture_index(texture_id id, direction dir)
+    constexpr texture_index to_texture_index(tile_id id, direction dir)
     {
         return static_cast<texture_index>(
-            directional_texture_id(id, dir)
+            directional_tile_id(id, dir)
           );
     }
     
     constexpr texture_index 
-    to_texture_index(texture_id id, direction dir, texture_type t)
+    to_texture_index(tile_id id, direction dir, texture_type t)
     {
         return static_cast<texture_index>(
-            static_cast<int>(directional_texture_id(id, dir))
-            + (static_cast<int>(t) * 3 * texture_rows)
+            static_cast<unsigned>(directional_tile_id(id, dir))
+            + (static_cast<unsigned>(t) * 3 * texture_rows)
           );
     }
     
@@ -713,18 +708,18 @@ namespace chips
         };
     }
     
-    constexpr position to_texture_position(texture_id id) noexcept
+    constexpr position to_texture_position(tile_id id) noexcept
     {
         return to_texture_position( to_texture_index(id) );
     }
     
-    constexpr position to_texture_position(texture_id id, direction dir)
+    constexpr position to_texture_position(tile_id id, direction dir)
     {
         return to_texture_position( to_texture_index(id, dir) );
     }
     
     constexpr position 
-    to_texture_position(texture_id id, direction dir, texture_type t)
+    to_texture_position(tile_id id, direction dir, texture_type t)
     {
         return to_texture_position( to_texture_index(id, dir, t) );
     }    
