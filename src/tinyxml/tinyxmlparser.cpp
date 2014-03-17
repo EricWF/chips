@@ -87,6 +87,9 @@ const int TiXmlBase::utf8ByteTable[256] =
 #if defined(__clang__)
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wimplicit-fallthrough"
+#elif defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wswitch-default"
 #endif
 void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* length )
 {
@@ -129,6 +132,8 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
 }
 #if defined(__clang__)
 # pragma clang diagnostic pop
+#elif defined(__GNUC__)
+# pragma GCC diagnostic pop
 #endif
 
 /*static*/ int TiXmlBase::IsAlpha( unsigned char anyByte, TiXmlEncoding /*encoding*/ )
