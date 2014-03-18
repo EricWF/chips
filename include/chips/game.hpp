@@ -8,6 +8,7 @@
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
 # include <elib/lexical_cast.hpp>
+# include <functional> /* for std::reference_wrapper */
 # include <map>
 # include <string>
 # include <vector>
@@ -118,21 +119,17 @@ namespace chips
         auto toggle_ =
         [](entity & e)
         {
-            toggle_state st;
-            e >> st;
+            toggle_state st = e.get<toggle_state>();
             e << (st = !st);
         };
         
         auto notify_ =
         [](entity const & e)
         {
-            bindings b;
-            e >> b;
-            for (entity * other_ptr : *b)
+            for (entity * other_ptr : *e.get<bindings>())
             {
-                auto & other = *other_ptr;
-                if (other && other.has(chips::toggle_)) 
-                    other.call(chips::toggle_);
+                ELIB_ASSERT(other_ptr);
+                other_ptr->call_if(chips::toggle_);
             }
         };
         
@@ -244,6 +241,11 @@ namespace chips
         
         /// put every entity into the all vector
         void update_all();
+        
+    public:
+        entity * find_raw(std::vector<entity> & el, position p);
+        entity * find_raw(entity_id id, position p);
+        
     private:
         unsigned m_id;
         unsigned m_chip_count;
@@ -371,6 +373,8 @@ namespace chips
     
     namespace detail
     {
+        void bind_buttons_to_tank(level & l);
+        void bind_buttons_to_toggle_wall(level & l);
         void process_actions(level & l);
     }
     

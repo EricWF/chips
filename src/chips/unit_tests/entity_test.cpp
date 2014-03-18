@@ -3,6 +3,9 @@
 
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
+#include "chips/game.hpp"
+
+#include <iostream>
 
 using namespace chips;
 
@@ -41,5 +44,58 @@ BOOST_AUTO_TEST_CASE(chips_entity_ctor_test)
     }
 }
 
+
+
+BOOST_AUTO_TEST_CASE(concept_check)
+{
+    entity e(entity_id::chip);
+    e << position() << direction::N;
+    e << toggle_state() << method(toggle_, common::toggle_);
+    
+    BOOST_CHECK(Alive::check(e));
+    BOOST_CHECK(!Dead::check(e));
+    BOOST_CHECK(IsChip::check(e));
+    BOOST_CHECK(!IsTank::check(e));
+    
+    using MetaConcept = Concept<Alive, IsChip
+                             , position, direction
+                             , toggle_state, toggle_m
+                             >;
+    BOOST_CHECK(MetaConcept::check(e));
+}
+
+BOOST_AUTO_TEST_CASE(filter_test)
+{
+    std::vector<entity> v = 
+        {
+            entity(entity_id::chip, position())
+          , entity(entity_id::wall)
+        };
+        
+    auto fv = apply_filter<IsChip>(v.begin(), v.end());
+    
+    BOOST_CHECK(!IsChip::check(v[1]));
+    BOOST_CHECK(fv.size() == 1);
+    BOOST_CHECK(&((entity &)fv[0]) == &v[0]);
+    
+    
+}
+
+BOOST_AUTO_TEST_CASE(filtered_view_test)
+{
+    std::vector<entity> v = 
+        {
+            entity(entity_id::chip, position())
+          , entity(entity_id::wall)
+        };
+        
+    int count = 0;
+    for (auto & e : filter<IsChip>(v))
+    {
+        ++count;
+        std::cout << to_string(e.id()) << std::endl;
+    }
+    BOOST_CHECK(count == 1);
+}
 
 BOOST_AUTO_TEST_SUITE_END()

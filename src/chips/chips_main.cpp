@@ -6,7 +6,8 @@
 #include <SFML/Graphics.hpp>
 
 namespace chips
-{    
+{ 
+    
     int chips_main(int, char**, char**)
     {        
         log::level(level_e::debug);

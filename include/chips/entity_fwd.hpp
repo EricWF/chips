@@ -263,6 +263,9 @@ namespace chips
         class MethodTag
       , class MethodType
       , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+      , ELIB_ENABLE_IF(elib::aux::is_convertible<
+          MethodType, typename MethodTag::function_type*
+        >::value)
     >
     detail::stored_method<MethodTag> 
     method(MethodTag, MethodType m)

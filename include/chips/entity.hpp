@@ -6,14 +6,20 @@
 # include <elib/any.hpp>
 # include <elib/aux.hpp>
 # include <elib/fmt.hpp>
+# include <algorithm>
+# include <functional> /* for reference_wrapper */
+# include <iterator>
 # include <map>
 # include <string>
 # include <typeindex>
 # include <typeinfo>
 # include <unordered_map>
 # include <utility> /* for std::make_pair */
+# include <vector>
 # include <cstddef> /* for std::size_t */
 
+/// The two macros just ensure that a type is either an attribute or a method
+///  but not both
 # define CHIPS_ASSERT_ATTRIBUTE_TYPE(Type)                                 \
     static_assert(is_attribute<Type>::value, "Type must be an attribute"); \
     static_assert(!is_method<Type>::value, "An attribute cannot also be a method")
@@ -68,6 +74,10 @@
  * e.has_attribute<int> doesn't make any sense, but e.has_attribute<position> does.
  * This check is performed at compile time.
  */
+
+    
+    /// This type is used to reference entities. It should act like entity &
+    using entity_ref = std::reference_wrapper<entity>;
 
     ////////////////////////////////////////////////////////////////////////////
     //                              ENTITY
@@ -292,6 +302,8 @@
     
 namespace chips
 {
+    using entity_ref = std::reference_wrapper<entity>;
+    
     ////////////////////////////////////////////////////////////////////////////
     /// Create an "access error" for a given Attribute or Method.
     /// This type is thrown when the program attempts to access a attribute/method
@@ -492,27 +504,40 @@ namespace chips
         }
         
         template <
-            class MethodTag
+            class MethodTag, class MethodDef
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+          , ELIB_ENABLE_IF(elib::aux::is_convertible<
+              MethodDef, typename MethodTag::function_type*
+            >::value)
         >
-        bool insert(MethodTag, typename MethodTag::function_type* fptr)
+        bool insert(MethodTag, MethodDef def)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag); ELIB_ASSERT(fptr);
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+            
+            using FnPtr = typename MethodTag::function_type*;
+            
             auto ret = m_methods.insert(std::make_pair(
                 std::type_index(typeid(MethodTag))
-              , elib::any(fptr)
+              , elib::any(static_cast<FnPtr>(def))
             ));
             return ret.second;
         }
         
         template <
-            class MethodTag
+            class MethodTag, class MethodDef
           , ELIB_ENABLE_IF(is_method<MethodTag>::value)
+          , ELIB_ENABLE_IF(elib::aux::is_convertible<
+              MethodDef, typename MethodTag::function_type*
+            >::value)
         >
-        void set(MethodTag, typename MethodTag::function_type* fn_ptr)
+        void set(MethodTag, MethodDef def)
         {
             CHIPS_ASSERT_METHOD_TYPE(MethodTag);
-            m_methods[std::type_index(typeid(MethodTag))] = elib::any(fn_ptr);
+            
+            using FnPtr = typename MethodTag::function_type*;
+            
+            m_methods[std::type_index(typeid(MethodTag))] = 
+                elib::any( static_cast<FnPtr>(def) );
         }
         
         template <
@@ -534,6 +559,7 @@ namespace chips
         typename MethodTag::function_type*
         get(MethodTag tag) const
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             typename MethodTag::function_type* fn_ptr = this->get_raw(tag);
             if (!fn_ptr)
             {
@@ -562,6 +588,7 @@ namespace chips
         typename MethodTag::result_type
         operator()(MethodTag, MethodArgs &&... args)
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
             if (pos == m_methods.end())
             {
@@ -583,6 +610,7 @@ namespace chips
         typename MethodTag::result_type
         operator()(MethodTag, MethodArgs &&... args) const
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             static_assert(
                 MethodTag::is_const
               , "Attempting to class a non-const method on a const entity"
@@ -607,6 +635,7 @@ namespace chips
         typename MethodTag::result_type
         call(MethodTag tag, Args &&... args)
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return (*this)(tag, elib::forward<Args>(args)...);
         }
         
@@ -617,6 +646,7 @@ namespace chips
         typename MethodTag::result_type
         call(MethodTag tag, Args &&... args) const
         {
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return (*this)(tag, elib::forward<Args>(args)...);
         }
         
@@ -627,12 +657,11 @@ namespace chips
         >
         bool call_if(MethodTag tag, Args &&... args)
         {
-            if (!has_method(tag)) return false;
-                
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+            if (!alive() || !has(tag)) return false;
             call(tag, elib::forward<Args>(args)...);
             return true;
         }
-        
         
         template <
             class MethodTag, class ...Args
@@ -640,12 +669,11 @@ namespace chips
         >
         bool call_if(MethodTag tag, Args &&... args) const
         {
-            if (!has_method(tag)) return false;
-            
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+            if (!alive() || !has(tag)) return false;
             call(tag, elib::forward<Args>(args)...);
             return true;
         }
-        
         
         template <
             class MethodTag, class ...Args
@@ -654,11 +682,11 @@ namespace chips
         bool call_if(typename MethodTag::result_type & res, MethodTag tag
                    , Args &&... args)
         {
-            if (!has_method(tag)) return false;
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+            if (!alive() || !has(tag)) return false;
             res = call(tag, elib::forward<Args>(args)...);
             return true;
         }
-        
         
         template <
             class MethodTag, class ...Args
@@ -667,12 +695,14 @@ namespace chips
         bool call_if(typename MethodTag::result_type & res, MethodTag tag
                    , Args &&... args) const
         {
-            if (!has_method(tag)) return false;
+            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
+            if (!alive() || !has(tag)) return false;
             res = call(tag, elib::forward<Args>(args)...);
             return true;
         }
         
         
+       
         ////////////////////////////////////////////////////////////////////////
         void clear()
         {
@@ -738,6 +768,328 @@ namespace chips
         return e;
     }
     
+////////////////////////////////////////////////////////////////////////////////
+//                              Concept
+////////////////////////////////////////////////////////////////////////////////
+
+    // forward //
+    template <class ...Requires> class Concept;
+
+    struct concept_base {};
+    
+    template <class T>
+    using is_concept = typename elib::aux::is_base_of<concept_base, T>::type;
+    
+    namespace detail
+    {
+        template <class ...Args>
+        constexpr bool check_and(Args &&...)
+        {
+            static_assert(
+                sizeof...(Args) == 0
+              , "Args list must be empty"
+            );
+            
+            return true;
+        }
+        
+        template <class ...Rest>
+        constexpr bool check_and(bool first, Rest&&... rest)
+        {
+            return first ? check_and(rest...) : false;
+        }
+        
+        template <class ...Args>
+        constexpr bool check_or(Args &&... args)
+        {
+            static_assert(
+                sizeof...(Args) == 0
+              , "Args must be empty"
+            );
+            return false;
+        }
+        
+        template <class ...Rest>
+        constexpr bool check_or(bool first, Rest &&... rest)
+        {
+            return first ? true : check_or(rest...);
+        }
+        
+        template <
+            class T
+          , ELIB_ENABLE_IF(is_attribute<T>::value)
+        >
+        bool check_impl(entity const & e)
+        {
+            return e.has<T>();
+        }
+        
+        template <
+            class T
+          , ELIB_ENABLE_IF(is_method<T>::value)
+        >
+        bool check_impl(entity const & e)
+        {
+            return e.has(T{});
+        }
+        
+        template <
+            class T
+          , ELIB_ENABLE_IF(is_concept<T>::value)
+        >
+        bool check_impl(entity const & e)
+        {
+            return T::check(e);
+        }
+    }                                                       // namespace detail
+    
+    template <class ...Required>
+    struct Concept : concept_base 
+    {
+        static bool 
+        check(entity const & e)
+        {
+            return detail::check_and(
+                detail::check_impl<Required>(e)...
+            );
+        }
+    };
+    
+    struct Alive : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return bool(e);
+        }
+    };
+    
+    struct Dead : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return !bool(e);
+        }
+    };
+    
+    template <entity_id ...Ids>
+    struct EntityIs : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return detail::check_or(
+                (e.id() == Ids)...
+            );
+        }
+    };
+    
+    template <entity_id ...Ids>
+    struct EntityIsNot : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return detail::check_and(
+                (e.id() != Ids)...
+            );
+        }
+    };
+    
+    namespace detail
+    {
+        using query_fn_ptr = bool(*)(entity_id);
+    }
+    
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesAll : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return detail::check_and(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesAny : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return detail::check_or(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesNone : concept_base
+    {
+        static bool check(entity const & e)
+        {
+            return !detail::check_or(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    using IsChip = EntityIs<entity_id::chip>;
+    using IsTank = EntityIs<entity_id::tank>;
+    
+////////////////////////////////////////////////////////////////////////////////
+//                              FILTER
+////////////////////////////////////////////////////////////////////////////////
+
+    template <
+        class ConceptType, class Iter
+      , ELIB_ENABLE_IF(is_concept<ConceptType>::value)
+    >
+    std::vector<entity_ref> apply_filter(Iter begin, Iter end)
+    {
+        std::vector<entity_ref> filtered;
+        
+        std::copy_if(
+            begin, end, std::back_inserter(filtered)
+          , [](entity const & e) { return ConceptType::check(e); }
+        );
+        
+        return filtered;
+    }
+    
+    
+    template<
+        class ConceptType, class Iterator
+      , ELIB_ENABLE_IF(is_concept<ConceptType>::value)
+    >
+    class filter_iterator
+    {
+    private:
+        using self = filter_iterator;
+        using Traits = std::iterator_traits<Iterator>;
+    public:
+        using value_type = typename Traits::value_type;
+        using reference = typename Traits::reference;
+        using pointer = typename Traits::pointer;
+        using difference_type = typename Traits::difference_type;
+        using iterator_category = std::forward_iterator_tag;
+        
+        static_assert(
+            elib::aux::is_same<
+                typename Traits::iterator_category
+              , std::random_access_iterator_tag
+            >::value
+          , "filter_iterator currently only supports random access iterator's"
+        );
+
+    public:
+        filter_iterator() = default;
+        ELIB_DEFAULT_COPY_MOVE(filter_iterator);
+        
+        filter_iterator(Iterator b, Iterator e = Iterator())
+          : m_pos(b), m_end(e)
+        {
+            satify_pred();
+        }
+        
+        bool operator==(self const & other) const
+        {
+            return m_pos == other.m_pos;
+        }
+        
+        bool operator!=(self const & other) const
+        {
+            return m_pos != other.m_pos;
+        }
+        
+        reference operator*() const { return *m_pos; }
+        pointer operator->() const { return m_pos.operator->(); }
+        
+        self & operator++() 
+        { 
+            increment(); return *this;
+        }
+        
+    private:
+        void increment()
+        {
+            ++m_pos;
+            satify_pred();
+        }
+        
+        void satify_pred()
+        {
+            while (m_pos != m_end && !ConceptType::check(*m_pos))
+                ++m_pos;
+        }
+        
+        Iterator m_pos;
+        Iterator m_end;
+    };
+    
+    
+    template <class Sequence, class ConceptT>
+    class filter_view
+    {
+    public:
+        using iterator = 
+            filter_iterator<
+                ConceptT
+              , decltype(elib::declval<Sequence>().begin())
+            >;
+            
+        using const_iterator =
+            filter_iterator<
+                ConceptT
+              , decltype(elib::declval<Sequence>().cbegin())
+            >;
+            
+    public:
+        filter_view(Sequence & s) 
+          : m_seq(elib::addressof(s)) 
+        {}
+        
+        ELIB_DEFAULT_COPY_MOVE(filter_view);
+        
+        filter_view & operator=(Sequence & s)  
+        { 
+            m_seq = elib::addressof(s); 
+        }
+        
+        iterator begin() 
+        { 
+            return iterator(m_seq->begin(), m_seq->end()); 
+        }
+        
+        iterator end() 
+        { 
+            return iterator(m_seq->end()); 
+        }
+        
+        const_iterator begin() const 
+        { 
+            return const_iterator(m_seq->cbegin(), m_seq->cend());
+        }
+        
+        const_iterator end() const
+        {
+            return const_iterator(m_seq->cend());
+        }
+        
+    private:
+        Sequence *m_seq;
+    };
+    
+    template <class ConceptT, class Sequence>
+    filter_view<Sequence, ConceptT>
+    filter(Sequence & s)
+    {
+        return filter_view<Sequence, ConceptT>(s);
+    }
+    
+    template <class ConceptT, class Sequence>
+    filter_view<Sequence const, ConceptT>
+    filter(Sequence const & s) 
+    {
+        return filter_view<Sequence const, ConceptT>(s);
+    }
     
 }                                                           // namespace chips
 #endif /* CHIPS_ENTITY_HPP */

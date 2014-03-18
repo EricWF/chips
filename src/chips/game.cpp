@@ -600,11 +600,47 @@ do {                                                  \
           , init_base
         );
         
+        detail::bind_buttons_to_tank(l);
+        detail::bind_buttons_to_toggle_wall(l);
         detail::process_actions(l);
     }
         
     namespace detail
     {
+        void bind_buttons_to_tank(level & l)
+        {
+            for (auto & base_e : l.base)
+            {
+                if (!base_e || base_e.id() != entity_id::blue_button) continue;
+                ELIB_ASSERT(base_e.has<bindings>());
+                for (auto & actor_e : l.actors)
+                {
+                    if (!actor_e || actor_e.id() != entity_id::tank) continue;
+                    ELIB_ASSERT(actor_e.has<toggle_state>() 
+                            && actor_e.has(toggle_));
+                            
+                    base_e.get<bindings>()->push_back(&actor_e);
+                }
+            }
+        }
+        
+        void bind_buttons_to_toggle_wall(level & l)
+        {
+            for (auto & base_e :  l.base)
+            {
+                if (!base_e || base_e.id() != entity_id::green_button) continue;
+                ELIB_ASSERT(base_e.has<bindings>());
+                for (auto & other_e : l.base)
+                {
+                    if (!other_e || other_e.id() != entity_id::toggle_wall) continue;
+                    ELIB_ASSERT(other_e.has<toggle_state>() 
+                             && other_e.has(toggle_));
+                             
+                    base_e.get<bindings>()->push_back(&other_e);
+                }
+            }
+        }
+        
         void process_actions(level & l)
         {
             std::vector<parsed_action> actions = parse_actions(l.id());

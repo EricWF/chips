@@ -7,10 +7,6 @@
 
 - Add support for binding help string to help tile.
 
-- Fix GCC bug regarding implicit conversion of lambda to function pointer
-   I think the bug only affects entity::set_method but I won't change it until
-   its reproduced. 
-
 - Remove texture_index.
 
 - Add support for blue-button -> tank binding and green-button -> toggle-wall binding
