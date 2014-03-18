@@ -7,12 +7,12 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="Base" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJztlcsNgDAIQMsCTtABdABdwNVcowvoHs5lTWxCCPRiodFweBdK8ij0AyEEcJwPMiB6+VdD/8DAxTX9e2apYOHn+nATFfzUUfwjAftbzoLrefGXHOxvPQup59z+NWaB/VsmPdC8GaHlTyjG+aGD/zT0H537X7tXmudvYogIab2VX3rrANUg5b31SzVFguUfbLlXx3Gcv3IB10AfXA==
+   eJztlcsNgCAMQOkCTIB3HUAXcDXXYAHdw7nERJKGtFykJZoe3qU0eaXlA845MIwP4hG9/Kui3xMMREzSvyeWChp+qg83QcBfOrJ/LMD+lrOgep79OQf7W8+C6zm1f4lZYP+WiA9l3oyQ8kcUo/zQwX8q+o/O/a/dK8nzNxEEBLfeys+9dYBq4PLe+rmaQoHmH6y5V8MwjL9yAS5eH3g=
   </data>
  </layer>
  <layer name="Items" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUDFUgO9AOGAUDBjqBWHqgHTHCQA0euWl0sB9ffA9EWsgfADtHAQSM5v1RMApGwSgYBeQCAClNApQ=
+   eJxjYBgFo2AUjIJRMNRAJxBLD7QjRhiowSM3jQ7244vvgUgL+QNg5yiAgNG8PwpGwSgYBaOAXAAAxe8Cdw==
   </data>
  </layer>
  <layer name="Actors" width="32" height="32">

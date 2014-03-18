@@ -78,6 +78,7 @@
     
     /// This type is used to reference entities. It should act like entity &
     using entity_ref = std::reference_wrapper<entity>;
+    using entity_cref = std::reference_wrapper<entity const>;
 
     ////////////////////////////////////////////////////////////////////////////
     //                              ENTITY
@@ -303,6 +304,7 @@
 namespace chips
 {
     using entity_ref = std::reference_wrapper<entity>;
+    using entity_cref = std::reference_wrapper<entity>;
     
     ////////////////////////////////////////////////////////////////////////////
     /// Create an "access error" for a given Attribute or Method.
@@ -769,192 +771,29 @@ namespace chips
     }
     
 ////////////////////////////////////////////////////////////////////////////////
-//                              Concept
+//                              Concept FWD
 ////////////////////////////////////////////////////////////////////////////////
 
     // forward //
-    template <class ...Requires> class Concept;
+    template <class Derived> struct concept_base;
+    template <class ...Requires> struct Concept;
+    
+   
+    struct concept_tag {};
+ 
 
-    struct concept_base {};
-    
+    ////////////////////////////////////////////////////////////////////////////
     template <class T>
-    using is_concept = typename elib::aux::is_base_of<concept_base, T>::type;
+    using is_concept = typename elib::aux::is_convertible<T, concept_tag>;
     
-    namespace detail
-    {
-        template <class ...Args>
-        constexpr bool check_and(Args &&...)
-        {
-            static_assert(
-                sizeof...(Args) == 0
-              , "Args list must be empty"
-            );
-            
-            return true;
-        }
-        
-        template <class ...Rest>
-        constexpr bool check_and(bool first, Rest&&... rest)
-        {
-            return first ? check_and(rest...) : false;
-        }
-        
-        template <class ...Args>
-        constexpr bool check_or(Args &&... args)
-        {
-            static_assert(
-                sizeof...(Args) == 0
-              , "Args must be empty"
-            );
-            return false;
-        }
-        
-        template <class ...Rest>
-        constexpr bool check_or(bool first, Rest &&... rest)
-        {
-            return first ? true : check_or(rest...);
-        }
-        
-        template <
-            class T
-          , ELIB_ENABLE_IF(is_attribute<T>::value)
-        >
-        bool check_impl(entity const & e)
-        {
-            return e.has<T>();
-        }
-        
-        template <
-            class T
-          , ELIB_ENABLE_IF(is_method<T>::value)
-        >
-        bool check_impl(entity const & e)
-        {
-            return e.has(T{});
-        }
-        
-        template <
-            class T
-          , ELIB_ENABLE_IF(is_concept<T>::value)
-        >
-        bool check_impl(entity const & e)
-        {
-            return T::check(e);
-        }
-    }                                                       // namespace detail
-    
-    template <class ...Required>
-    struct Concept : concept_base 
-    {
-        static bool 
-        check(entity const & e)
-        {
-            return detail::check_and(
-                detail::check_impl<Required>(e)...
-            );
-        }
-    };
-    
-    struct Alive : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return bool(e);
-        }
-    };
-    
-    struct Dead : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return !bool(e);
-        }
-    };
-    
-    template <entity_id ...Ids>
-    struct EntityIs : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return detail::check_or(
-                (e.id() == Ids)...
-            );
-        }
-    };
-    
-    template <entity_id ...Ids>
-    struct EntityIsNot : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return detail::check_and(
-                (e.id() != Ids)...
-            );
-        }
-    };
-    
-    namespace detail
-    {
-        using query_fn_ptr = bool(*)(entity_id);
-    }
-    
-    template <detail::query_fn_ptr ...Querys>
-    struct EntityMatchesAll : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return detail::check_and(
-                Querys(e.id())...
-            );
-        }
-    };
-    
-    template <detail::query_fn_ptr ...Querys>
-    struct EntityMatchesAny : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return detail::check_or(
-                Querys(e.id())...
-            );
-        }
-    };
-    
-    template <detail::query_fn_ptr ...Querys>
-    struct EntityMatchesNone : concept_base
-    {
-        static bool check(entity const & e)
-        {
-            return !detail::check_or(
-                Querys(e.id())...
-            );
-        }
-    };
-    
-    using IsChip = EntityIs<entity_id::chip>;
-    using IsTank = EntityIs<entity_id::tank>;
-    
+
 ////////////////////////////////////////////////////////////////////////////////
 //                              FILTER
 ////////////////////////////////////////////////////////////////////////////////
 
-    template <
-        class ConceptType, class Iter
-      , ELIB_ENABLE_IF(is_concept<ConceptType>::value)
-    >
-    std::vector<entity_ref> apply_filter(Iter begin, Iter end)
-    {
-        std::vector<entity_ref> filtered;
-        
-        std::copy_if(
-            begin, end, std::back_inserter(filtered)
-          , [](entity const & e) { return ConceptType::check(e); }
-        );
-        
-        return filtered;
-    }
-    
-    
+
+    ////////////////////////////////////////////////////////////////////////////
+    //
     template<
         class ConceptType, class Iterator
       , ELIB_ENABLE_IF(is_concept<ConceptType>::value)
@@ -971,14 +810,6 @@ namespace chips
         using difference_type = typename Traits::difference_type;
         using iterator_category = std::forward_iterator_tag;
         
-        static_assert(
-            elib::aux::is_same<
-                typename Traits::iterator_category
-              , std::random_access_iterator_tag
-            >::value
-          , "filter_iterator currently only supports random access iterator's"
-        );
-
     public:
         filter_iterator() = default;
         ELIB_DEFAULT_COPY_MOVE(filter_iterator);
@@ -989,57 +820,53 @@ namespace chips
             satify_pred();
         }
         
-        bool operator==(self const & other) const
-        {
-            return m_pos == other.m_pos;
-        }
+        bool operator==(self const & other) const { return m_pos == other.m_pos; }
+        bool operator!=(self const & other) const{ return m_pos != other.m_pos; }
         
-        bool operator!=(self const & other) const
-        {
-            return m_pos != other.m_pos;
-        }
+        reference operator*()  const { return *m_pos; }
+        pointer   operator->() const { return m_pos.operator->(); }
         
-        reference operator*() const { return *m_pos; }
-        pointer operator->() const { return m_pos.operator->(); }
-        
-        self & operator++() 
-        { 
-            increment(); return *this;
-        }
+        self & operator++() { increment(); return *this; }
         
     private:
-        void increment()
-        {
-            ++m_pos;
-            satify_pred();
+        void increment() { ++m_pos; satify_pred(); }
+        
+        void satify_pred() 
+        { 
+            while (m_pos != m_end && !m_pred(*m_pos))
+                ++m_pos; 
         }
         
-        void satify_pred()
-        {
-            while (m_pos != m_end && !ConceptType::check(*m_pos))
-                ++m_pos;
-        }
-        
+        ConceptType m_pred;
         Iterator m_pos;
         Iterator m_end;
+
+    private:
+        static_assert(
+            elib::aux::is_same<
+                typename Traits::iterator_category
+              , std::random_access_iterator_tag
+            >::value
+          , "filter_iterator currently only supports random access iterator's"
+        );
     };
     
     
+    ////////////////////////////////////////////////////////////////////////////
+    //
     template <class Sequence, class ConceptT>
     class filter_view
     {
+    private:
+        static_assert(
+            is_concept<ConceptT>::value
+          , "Must be a concept type"
+        );
+        using detected_iter  = decltype(elib::declval<Sequence>().begin());
+        using detected_citer = decltype(elib::declval<Sequence>().cbegin());
     public:
-        using iterator = 
-            filter_iterator<
-                ConceptT
-              , decltype(elib::declval<Sequence>().begin())
-            >;
-            
-        using const_iterator =
-            filter_iterator<
-                ConceptT
-              , decltype(elib::declval<Sequence>().cbegin())
-            >;
+        using iterator       = filter_iterator<ConceptT, detected_iter>;
+        using const_iterator = filter_iterator<ConceptT, detected_citer>;
             
     public:
         filter_view(Sequence & s) 
@@ -1048,48 +875,250 @@ namespace chips
         
         ELIB_DEFAULT_COPY_MOVE(filter_view);
         
-        filter_view & operator=(Sequence & s)  
-        { 
-            m_seq = elib::addressof(s); 
-        }
+        filter_view & operator=(Sequence & s)  { m_seq = elib::addressof(s); }
         
-        iterator begin() 
-        { 
-            return iterator(m_seq->begin(), m_seq->end()); 
-        }
+        iterator begin() { return iterator(m_seq->begin(), m_seq->end()); }
+        iterator end()   { return iterator(m_seq->end(), m_seq->end()); }
         
-        iterator end() 
-        { 
-            return iterator(m_seq->end()); 
-        }
-        
-        const_iterator begin() const 
-        { 
-            return const_iterator(m_seq->cbegin(), m_seq->cend());
-        }
-        
-        const_iterator end() const
-        {
-            return const_iterator(m_seq->cend());
-        }
+        const_iterator begin() const { return const_iterator(m_seq->cbegin(), m_seq->cend()); }
+        const_iterator end()   const { return const_iterator(m_seq->cend(), m_seq->cend()); }
         
     private:
         Sequence *m_seq;
     };
     
-    template <class ConceptT, class Sequence>
-    filter_view<Sequence, ConceptT>
-    filter(Sequence & s)
+////////////////////////////////////////////////////////////////////////////////
+//                              Concept
+////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
+    template <class Derived>
+    struct concept_base 
     {
-        return filter_view<Sequence, ConceptT>(s);
+        bool operator()(entity const & e) const
+        {
+            return Derived::test(e);
+        }
+        
+        bool check(entity const & e) const
+        {
+            return Derived::test(e);
+        }
+        
+        void require(entity const & e) const
+        {
+            if (Derived::test(e))
+            {
+                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                    "Entity %s does not meet the concept %s"
+                  , to_string(e.id()), typeid(Derived).name()
+                )));
+            }
+        }
+        
+        template <class Iter>
+        auto apply_filter(Iter b, Iter e) const
+          -> std::vector<decltype(std::ref(*b))> 
+        {
+            using ref_type = decltype(std::ref(*b));
+            std::vector<ref_type> filtered;
+            std::copy_if(b, e, std::back_inserter(filtered), *this);
+            return filtered;
+        }
+        
+        template <class Sequence>
+        std::vector<entity_ref> apply_filter(Sequence & s) const
+        {
+            using std::begin; using std::end;
+            std::vector<entity_ref> filtered;
+            std::copy_if(begin(s), end(s), std::back_inserter(filtered), *this);
+            return filtered;
+        }
+        
+        template <class Sequence>
+        std::vector<entity_cref> apply_filter(Sequence const & s) const
+        {
+            using std::begin; using std::end;
+            std::vector<entity_cref> filtered;
+            std::copy_if(begin(s), end(s), std::back_inserter(filtered), *this);
+            return filtered;
+        }
+        
+        template <class Sequence>
+        filter_view<Sequence, Derived> filter(Sequence & s) const
+        {
+            return filter_view<Sequence, Derived>(s);
+        }
+        
+        template <class Sequence>
+        filter_view<Sequence const, Derived> filter(Sequence const & s) const
+        {
+            return filter_view<Sequence const, Derived>(s);
+        }
+        
+
+        operator concept_tag() const;
+    };
+    
+
+    namespace detail
+    {
+        ////////////////////////////////////////////////////////////////////////
+        template <class ...Args>
+        constexpr bool test_and(Args &&...)
+        {
+            static_assert(sizeof...(Args) == 0, "Args list must be empty");
+            return true;
+        }
+        
+        template <class ...Rest>
+        constexpr bool test_and(bool first, Rest&&... rest)
+        {
+            return first ? test_and(rest...) : false;
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        template <class ...Args>
+        constexpr bool test_or(Args &&...)
+        {
+            static_assert(sizeof...(Args) == 0, "Args must be empty");
+            return false;
+        }
+        
+        template <class ...Rest>
+        constexpr bool test_or(bool first, Rest &&... rest)
+        {
+            return first ? true : test_or(rest...);
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
+        template <class T, ELIB_ENABLE_IF(is_attribute<T>::value)>
+        bool test_impl(entity const & e)
+        {
+            return e.has<T>();
+        }
+        
+        template <class T, ELIB_ENABLE_IF(is_method<T>::value)>
+        bool test_impl(entity const & e)
+        {
+            return e.has(T{});
+        }
+        
+        template <class T, ELIB_ENABLE_IF(is_concept<T>::value)>
+        bool test_impl(entity const & e)
+        {
+            return T::test(e);
+        }
+    }                                                       // namespace detail
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <class ...Required>
+    struct Concept : concept_base<Concept<Required...>> 
+    {
+        static bool test(entity const & e)
+        {
+            return detail::test_and(
+                detail::test_impl<Required>(e)...
+            );
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    struct Alive : public concept_base<Alive>
+    {
+        static bool test(entity const & e)
+        {
+            return bool(e);
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    struct Dead : concept_base<Dead>
+    {
+        static bool test(entity const & e)
+        {
+            return !bool(e);
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <unsigned X, unsigned Y>
+    struct AtPosition : concept_base<AtPosition<X, Y>>
+    {
+        static bool test(entity const & e)
+        {
+            return (bool(e) && e.has<position>() 
+                  && e.get<position>() == position(X, Y));
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <entity_id ...Ids>
+    struct EntityIs : concept_base<EntityIs<Ids...>>
+    {
+        static bool test(entity const & e)
+        {
+            return detail::test_or(
+                (e.id() == Ids)...
+            );
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <entity_id ...Ids>
+    struct EntityIsNot : concept_base<EntityIsNot<Ids...>>
+    {
+        static bool test(entity const & e)
+        {
+            return detail::test_and(
+                (e.id() != Ids)...
+            );
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    namespace detail
+    {
+        using query_fn_ptr = bool(*)(entity_id);
     }
     
-    template <class ConceptT, class Sequence>
-    filter_view<Sequence const, ConceptT>
-    filter(Sequence const & s) 
+    ////////////////////////////////////////////////////////////////////////////
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesAll : concept_base<EntityMatchesAll<Querys...>>
     {
-        return filter_view<Sequence const, ConceptT>(s);
-    }
+        static bool test(entity const & e)
+        {
+            return detail::test_and(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesAny : concept_base<EntityMatchesAny<Querys...>>
+    {
+        static bool test(entity const & e)
+        {
+            return detail::test_or(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <detail::query_fn_ptr ...Querys>
+    struct EntityMatchesNone : concept_base<EntityMatchesNone<Querys...>>
+    {
+        static bool test(entity const & e)
+        {
+            return !detail::test_or(
+                Querys(e.id())...
+            );
+        }
+    };
+    
+    
     
 }                                                           // namespace chips
 #endif /* CHIPS_ENTITY_HPP */

@@ -7,12 +7,12 @@
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer name="Base" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJxjYBhYwDiKR/Eoxov58GB62U+K+HC2H51NDKZGvOPyswYUkxp2xNrvjMNNhOw/RiX7B9L/Ax3/hPwwkvLfQJZ/o3gUj+JRPIpH8XDDAMzmCN4=
+   eJxjYBhYwDiKR/Eoxov58GB62U+K+HC2H51NDKZGvOPyswYUkxp2xNrvDMSyWNxEyP5jVLJ/IP0/0PFPyA8jKf8NZPk3ikfxKB7Fo3gUDzcMAOEFCPo=
   </data>
  </layer>
  <layer name="Items" width="32" height="32">
   <data encoding="base64" compression="zlib">
-   eJzt0sEJADAIA0D3kO6/piv4CC2FuwGCJFYB7PTrA1hLbXVCObf51TydAsD/BkivAIo=
+   eJzt0UcNAAAIBDB84N8nFvgQQmgV3IgA6MntALR9/+p7/wk2BYD7Ciq0AG0=
   </data>
  </layer>
  <layer name="Actors" width="32" height="32">
