@@ -763,14 +763,15 @@ namespace chips
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wswitch-default"
 # endif
-    inline position move(position pos, direction dir, unsigned count = 1)
+    // TODO
+    inline position move(position pos, direction dir, int count = 1)
     {
         switch (dir)
         {
-            case direction::N: pos.y -= count; break;
-            case direction::S: pos.y += count; break;
-            case direction::E: pos.x += count; break;
-            case direction::W: pos.x -= count; break;
+            case direction::N: pos.y -= (unsigned)count; break;
+            case direction::S: pos.y += (unsigned)count; break;
+            case direction::E: pos.x += (unsigned)count; break;
+            case direction::W: pos.x -= (unsigned)count; break;
         }
         return pos;
     }

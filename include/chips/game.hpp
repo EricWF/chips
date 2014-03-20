@@ -16,10 +16,86 @@
 
 namespace chips
 {
-    // forward //
-    class inventory;
-    class level;
- 
+    ////////////////////////////////////////////////////////////////////////////////
+//                               INVENTORY
+////////////////////////////////////////////////////////////////////////////////
+
+    /// an inventory is an attribute that chip has.
+    /// It can hold boots and keys. Keys have an associated count.
+    /// It also holds the number of computer chips that chip has collected
+    class inventory : attribute_base
+    {
+    private:
+        using item_map = std::map<entity_id, unsigned>;
+    public:
+        inventory() = default;
+        
+        ELIB_DEFAULT_COPY_MOVE(inventory);
+        
+        /// insert the item in non-existent, otherwise increase its count
+        void add_item(entity_id item);
+        
+        /// Decrease an items count, throw if it isn't contained
+        void use_item(entity_id item);
+        
+        /// Remove all instances of an item
+        void erase_item(entity_id item);
+        
+        /// Return the number of a certain item that are held
+        unsigned count(entity_id item) const;
+        
+        /// Return if the inventory contains an item
+        bool contains(entity_id item) const;
+        
+        /// clear the entire inventory
+        void clear() { m_items.clear(); }
+        
+        item_map::iterator begin() { return m_items.begin(); }
+        item_map::iterator end()   { return m_items.end();   }
+        
+        item_map::const_iterator begin() const { return m_items.begin(); }
+        item_map::const_iterator end()   const { return m_items.end();   }
+        
+    private:
+        std::map<entity_id, unsigned> m_items;
+    };
+    
+////////////////////////////////////////////////////////////////////////////////
+//                                LEVEL
+////////////////////////////////////////////////////////////////////////////////
+
+    /// TODO make this better.
+    /// only access to id and chip_count are guarded since
+    /// they should not be changed.
+    class level
+    {
+    public:
+        level(unsigned xid, unsigned xchip_count, std::string help_str)
+          : m_id(xid), m_chip_count(xchip_count), m_help(help_str)
+        {}
+        
+        ELIB_DEFAULT_COPY_MOVE(level);
+        
+        /// The level number
+        unsigned id() const noexcept { return m_id; }
+        void id(unsigned xid) { m_id = xid; }
+        
+        /// The number of computer chips in the level
+        unsigned chip_count() const noexcept { return m_chip_count; }
+        void chip_count(unsigned c) { m_chip_count = c; }
+        
+        /// return the help text for the level.
+        std::string const & help() const noexcept { return m_help; }
+        
+        entity chip;
+        std::vector<entity> entity_list;
+        
+    private:
+        unsigned m_id;
+        unsigned m_chip_count;
+        std::string m_help;
+    };
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                               MISC ATTRIBUTES
 ////////////////////////////////////////////////////////////////////////////////
@@ -97,13 +173,13 @@ namespace chips
     
     /// Move an object in a given direction, N times. and turn the entity to
     /// face that direction.
-    struct move_in_m : method_base<move_in_m, void(direction, unsigned)> {};
+    struct move_in_m : method_base<move_in_m, void(direction, int)> {};
     
     /// Check if a given entity colides with you.
     struct collides_m : method_base<collides_m, bool(entity const &) const> {};
     
     /// Apply results of a collision with a given entity.
-    struct on_collision_m : method_base<on_collision_m, void(entity &)> {};
+    struct on_collision_m : method_base<on_collision_m, void(entity &, level & l)> {};
     
     
     constexpr update_m       update_      {};
@@ -168,7 +244,7 @@ namespace chips
         };
         
         auto notify_on_collision_ =
-        [](entity & self, entity &)
+        [](entity & self, entity &, level &)
         {
             REQUIRE_CONCEPT(self, Bindable);
             ELIB_ASSERT(self);
@@ -181,11 +257,11 @@ namespace chips
             REQUIRE_CONCEPT(e, Concept<Directional, Moveable>);
             position p; velocity v; direction d;
             e >> p >> v >> d;
-            e << move(p, d, v);
+            e << move(p, d, (int)v);
         };
         
         auto move_in_ =
-        [](entity & e, direction d, unsigned n)
+        [](entity & e, direction d, int n)
         {
             REQUIRE_CONCEPT(e, Concept<Directional, EntityHas<position>>);
             position p;
@@ -220,90 +296,7 @@ namespace chips
     
 
     
-////////////////////////////////////////////////////////////////////////////////
-//                               INVENTORY
-////////////////////////////////////////////////////////////////////////////////
 
-    /// an inventory is an attribute that chip has.
-    /// It can hold boots and keys. Keys have an associated count.
-    /// It also holds the number of computer chips that chip has collected
-    class inventory : attribute_base
-    {
-    private:
-        using item_map = std::map<entity_id, unsigned>;
-    public:
-        inventory() = default;
-        
-        ELIB_DEFAULT_COPY_MOVE(inventory);
-        
-        /// insert the item in non-existent, otherwise increase its count
-        void add_item(entity_id item);
-        
-        /// Decrease an items count, throw if it isn't contained
-        void use_item(entity_id item);
-        
-        /// Remove all instances of an item
-        void erase_item(entity_id item);
-        
-        /// Return the number of a certain item that are held
-        unsigned count(entity_id item) const;
-        
-        /// Return if the inventory contains an item
-        bool contains(entity_id item) const;
-        
-        /// clear the entire inventory
-        void clear() { m_items.clear(); }
-        
-        item_map::iterator begin() { return m_items.begin(); }
-        item_map::iterator end()   { return m_items.end();   }
-        
-        item_map::const_iterator begin() const { return m_items.begin(); }
-        item_map::const_iterator end()   const { return m_items.end();   }
-        
-    private:
-        std::map<entity_id, unsigned> m_items;
-    };
-    
-////////////////////////////////////////////////////////////////////////////////
-//                                LEVEL
-////////////////////////////////////////////////////////////////////////////////
-
-    /// TODO make this better.
-    /// only access to id and chip_count are guarded since
-    /// they should not be changed.
-    class level
-    {
-    public:
-        level(unsigned xid, unsigned xchip_count, std::string help_str)
-          : m_id(xid), m_chip_count(xchip_count), m_help(help_str)
-        {}
-        
-        ELIB_DEFAULT_COPY_MOVE(level);
-        
-        /// The level number
-        unsigned id() const noexcept { return m_id; }
-        void id(unsigned xid) { m_id = xid; }
-        
-        /// The number of computer chips in the level
-        unsigned chip_count() const noexcept { return m_chip_count; }
-        void chip_count(unsigned c) { m_chip_count = c; }
-        
-        /// return the help text for the level.
-        std::string const & help() const noexcept { return m_help; }
-        
-        entity chip;
-        std::vector<entity> entity_list;
-        
-    public:
-        entity * find_raw(std::vector<entity> & el, position p);
-        entity * find_raw(entity_id id, position p);
-        
-    private:
-        unsigned m_id;
-        unsigned m_chip_count;
-        std::string m_help;
-    };
-    
 
 ////////////////////////////////////////////////////////////////////////////////
 //                              PARSING

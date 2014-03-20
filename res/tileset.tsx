@@ -79,7 +79,6 @@
  </tile>
  <tile id="27">
   <properties>
-   <property name="direction" value="N"/>
    <property name="entity_id" value="force_floor"/>
    <property name="tile_id" value="force_floor_N"/>
   </properties>
@@ -127,7 +126,6 @@
  </tile>
  <tile id="40">
   <properties>
-   <property name="direction" value="E"/>
    <property name="entity_id" value="force_floor"/>
    <property name="tile_id" value="force_floor_E"/>
   </properties>
@@ -174,7 +172,6 @@
  </tile>
  <tile id="53">
   <properties>
-   <property name="direction" value="W"/>
    <property name="entity_id" value="force_floor"/>
    <property name="tile_id" value="force_floor_W"/>
   </properties>
@@ -564,7 +561,6 @@
  </tile>
  <tile id="169">
   <properties>
-   <property name="direction" value="S"/>
    <property name="entity_id" value="force_floor"/>
    <property name="tile_id" value="force_floor_S"/>
   </properties>

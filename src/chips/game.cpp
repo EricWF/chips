@@ -492,7 +492,7 @@ do {                                                  \
        
         
         auto item_on_col =
-        [](entity & self, entity & other)
+        [](entity & self, entity & other, level &)
         {
             if (!is_chip(other)) return;
             REQUIRE_CONCEPT(other, EntityHas<inventory>);
@@ -528,7 +528,7 @@ do {                                                  \
                 e << velocity(1);
                 
             auto kill_chip_on_col =
-            [](entity &, entity & other)
+            [](entity &, entity & other, level &)
             {
                 if (is_chip(other))
                     other.kill();
@@ -545,14 +545,13 @@ do {                                                  \
             ELIB_ASSERT(is_wall(e));
             if (!is_acting_wall(e))
             {
-                e << method(collides_, common::always_collides_)
-                  << method(on_collision_, common::null_on_collision_);
+                e << method(collides_, common::always_collides_);
                 return;
             }
             else if (is_lock(e))
             {
                 auto lock_on_col =
-                [](entity & self, entity & other)
+                [](entity & self, entity & other, level &)
                 {
                     if (!is_chip(other)) return;
                     ELIB_ASSERT(other);
@@ -575,7 +574,7 @@ do {                                                  \
             else if (e.id() == entity_id::socket)
             {
                 auto socket_on_col =
-                [](entity & self, entity & other)
+                [](entity & self, entity & other, level &)
                 {
                     if (!is_chip(other)) return;
                     REQUIRE_CONCEPT(self, EntityHas<sock_chip_count>);
@@ -606,14 +605,13 @@ do {                                                  \
             ELIB_ASSERT(is_floor(e));
             if (!is_acting_floor(e))
             {
-                e << method(collides_, common::never_collides_)
-                  << method(on_collision_, common::null_on_collision_);
+                e << method(collides_, common::never_collides_);
                 return;
             }
             else if (entity_id::exit == e.id())
             {
                 auto exit_on_col =
-                [](entity &, entity & other)
+                [](entity &, entity & other, level &)
                 {
                     if (!is_chip(other)) return;
                     REQUIRE_CONCEPT(other, EntityHas<chip_at_exit>);

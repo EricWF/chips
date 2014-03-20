@@ -208,13 +208,13 @@ namespace chips
         ELIB_ASSERT(chip);
         position old_pos = chip.get<position>();
         
-        chip(move_in_, d, 1u);
+        chip(move_in_, d, 1);
        
         for (auto & e : AtPosition(chip.get<position>()).filter(m_level.entity_list))
         {
             if (!e) continue;
             if (e && e.has(on_collision_))
-                e(on_collision_, chip);
+                e(on_collision_, chip, m_level);
             if (e && e.has(collides_) && e(collides_, chip))
             {
                 chip << old_pos;
