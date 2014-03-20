@@ -454,7 +454,9 @@ do {                                                  \
             else if (p.first == "bindings")
             {
                 ELIB_ASSERT(p.second == "");
-                e << bindings() << method(notify_, common::notify_);
+                e << bindings() 
+                  << method(notify_, common::notify_)
+                  << method(on_collision_, common::notify_on_collision_);
             }
             else
             {
@@ -472,9 +474,10 @@ do {                                                  \
     {
         ELIB_ASSERT(is_chip(e));
         e.remove<tile_id>();
-        e << inventory() << chips_state::normal 
-          << method(move_in_, common::move_in_)
-          << texture_type::cutout;
+        e << texture_type::cutout << chips_state::normal 
+          << inventory() << chip_at_exit(false)
+          << method(move_in_, common::move_in_);
+          
     }
     
     void init_actor(entity & e)
@@ -524,8 +527,17 @@ do {                                                  \
             if (!e.has<velocity>())
                 e << velocity(1);
                 
+            auto kill_chip_on_col =
+            [](entity &, entity & other)
+            {
+                if (is_chip(other))
+                    other.kill();
+            };
+                
             e << method(move_, common::move_)
-              << texture_type::cutout;
+              << texture_type::cutout
+              << method(collides_, common::always_collides_)
+              << method(on_collision_, kill_chip_on_col);
         }
         
         void init_wall(entity & e)
@@ -574,7 +586,7 @@ do {                                                  \
                     
                     if (req <= inv.count(entity_id::computer_chip))
                     {
-                        for (int i=0; i < req; ++i)
+                        for (unsigned i=0; i < req; ++i)
                             inv.use_item(entity_id::computer_chip);
                             
                         self.clear_methods();
@@ -597,6 +609,23 @@ do {                                                  \
                 e << method(collides_, common::never_collides_)
                   << method(on_collision_, common::null_on_collision_);
                 return;
+            }
+            else if (entity_id::exit == e.id())
+            {
+                auto exit_on_col =
+                [](entity &, entity & other)
+                {
+                    if (!is_chip(other)) return;
+                    REQUIRE_CONCEPT(other, EntityHas<chip_at_exit>);
+                    other.get<chip_at_exit>() = true;
+                };
+                
+                e << method(collides_, common::collides_with_monster_)
+                  << method(on_collision_, exit_on_col);
+            }
+            else if (is_button(e.id()))
+            {
+                e << method(collides_, common::never_collides_);
             }
         }
     }                                                       // namespace detail

@@ -65,9 +65,15 @@ namespace chips
     using bindings = any_attribute<std::vector<entity*>, detail::bindings_tag>;
     
     
+    ////////////////////////////////////////////////////////////////////////////
     namespace detail { struct chip_count_tag {}; }
     
     using sock_chip_count = any_attribute<unsigned, detail::chip_count_tag>;
+    
+    ////////////////////////////////////////////////////////////////////////////
+    namespace detail { struct chip_at_exit_tag {}; }
+    
+    using chip_at_exit = any_attribute<bool, detail::chip_at_exit_tag>;
 ////////////////////////////////////////////////////////////////////////////////
 //                                 METHODS
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,9 +105,6 @@ namespace chips
     /// Apply results of a collision with a given entity.
     struct on_collision_m : method_base<on_collision_m, void(entity &)> {};
     
-    /// When an item is picked up, or a lock destroyed, or whenever custom 
-    /// death logic is needed, this method should be used
-    struct on_death_m : method_base<on_death_m, void()> {};
     
     constexpr update_m       update_      {};
     constexpr toggle_m       toggle_      {};
@@ -110,7 +113,7 @@ namespace chips
     constexpr move_in_m      move_in_     {};
     constexpr collides_m     collides_    {};
     constexpr on_collision_m on_collision_{};
-    constexpr on_death_m     on_death_    {};
+
     
 ////////////////////////////////////////////////////////////////////////////////
 //                               CONCEPTS
@@ -162,6 +165,14 @@ namespace chips
                 ELIB_ASSERT(other_ptr);
                 other_ptr->call_if(chips::toggle_);
             }
+        };
+        
+        auto notify_on_collision_ =
+        [](entity & self, entity &)
+        {
+            REQUIRE_CONCEPT(self, Bindable);
+            ELIB_ASSERT(self);
+            self.call(chips::notify_);
         };
         
         auto move_ = 

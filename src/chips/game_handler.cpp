@@ -2,6 +2,7 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include "chips/draw.hpp"
+#include "chips/resource_manager.hpp"
 # include <elib/fmt.hpp>
 # include <string>
 
@@ -44,10 +45,21 @@ namespace chips
     game_event_id game_handler::update(sf::RenderWindow & win)
     {
         game_event_id ev_id = m_handle_event(win);
-        
-        if (ev_id == game_event_id::closed) return ev_id;
-        if (!m_level.chip) return game_event_id::level_failed;
-        
+        if (ev_id == game_event_id::closed) 
+        {
+            log::info("Game: Window closed");
+            return ev_id;
+        }
+        if (!m_level.chip) 
+        {
+            log::info("Game: level failed");
+            return game_event_id::level_failed;
+        }
+        if (m_level.chip.get<chip_at_exit>()) 
+        {
+            log::info("Game: level passed");
+            return game_event_id::level_passed;
+        }
         return game_event_id::none;
     }
     
@@ -73,6 +85,78 @@ namespace chips
             win, m_level.chip
           , detail::entity_window_position(tl_pos, m_level.chip)
         );
+        
+        m_draw_scoreboard(win);
+        
+    }
+    
+    void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
+    {
+        sf::RectangleShape rect{
+            sf::Vector2f((float)scoreboard_width, (float)scoreboard_height)
+        };
+        rect.setPosition((float)scoreboard_xpos, (float)scoreboard_ypos);
+        rect.setFillColor(sf::Color(192, 192, 192));
+        win.draw(rect);
+        
+        m_draw_chip_count(win);
+        m_draw_inventory(win);
+    }
+    
+    void game_handler::m_draw_chip_count(sf::RenderWindow & win) const
+    {
+        
+        auto & res = resource_manager::get();
+        auto & inv = m_level.chip.get<inventory>();
+        
+        unsigned req_chips = m_level.chip_count() 
+                           - inv.count(entity_id::computer_chip);
+        sf::Text txt(
+            "Chips Left:\n       " + std::to_string(req_chips)
+          , res[font_uid::arial]
+          , 25
+        );
+        txt.setPosition((float)chip_count_xpos, (float)chip_count_ypos);
+        txt.setColor(sf::Color::Red);
+        win.draw(txt);
+    }
+    
+    void game_handler::m_draw_inventory(sf::RenderWindow & win) const
+    {
+        auto & res = resource_manager::get();
+        auto & inv = m_level.chip.get<inventory>();
+        position p(inventory_xpos, inventory_ypos);
+        
+        int key_pos = static_cast<int>(entity_id::blue_key);
+        for (int i=0; i < 4; ++i)
+        {
+            entity_id key_id = static_cast<entity_id>(key_pos + i);
+            unsigned count = inv.count(key_id);
+            if (count)
+            {
+                
+                chips::draw(win, entity(key_id), p);
+                sf::Text count_str(std::to_string(count), res[font_uid::arial], 15);
+                count_str.setColor(sf::Color::Red);
+                count_str.setPosition((float)p.x, (float)p.y);
+                win.draw(count_str);
+            }
+            else
+                chips::draw(win, entity(entity_id::floor), p);
+            p.x += tile_width;
+        }
+        
+        p = position(inventory_xpos, inventory_ypos + tile_height);
+        int boot_pos = static_cast<int>(entity_id::flippers);
+        for (int i=0; i < 4; ++i)
+        {
+            entity_id boot_id = static_cast<entity_id>(boot_pos + i);
+            if (inv.contains(boot_id))
+                chips::draw(win, entity(boot_id), p);
+            else
+                chips::draw(win, entity(entity_id::floor), p);
+            p.x += tile_width;
+        }
     }
     
 #if defined(__clang__)
@@ -137,6 +221,5 @@ namespace chips
                 break;
             }
         }
-
     }
 }                                                           // namespace chips

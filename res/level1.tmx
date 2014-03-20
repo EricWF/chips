@@ -1034,7 +1034,7 @@
    <tile gid="1"/>
    <tile gid="1"/>
    <tile gid="14"/>
-   <tile gid="147"/>
+   <tile gid="67"/>
    <tile gid="14"/>
    <tile gid="1"/>
    <tile gid="1"/>
@@ -1725,7 +1725,7 @@
    <tile gid="1"/>
   </data>
  </layer>
- <layer name="Items" width="32" height="32">
+ <layer name="Items" width="32" height="32" visible="0">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2753,7 +2753,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Actors" width="32" height="32">
+ <layer name="Actors" width="32" height="32" visible="0">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

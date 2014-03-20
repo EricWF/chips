@@ -45,6 +45,19 @@ namespace chips
     constexpr const unsigned level_window_width = level_view_width * tile_width;
     constexpr const unsigned level_window_height = level_view_height * tile_height;
     
+    constexpr const unsigned scoreboard_xpos = level_window_width + level_window_xpos + 50;
+    constexpr const unsigned scoreboard_ypos = level_window_ypos;
+    constexpr const unsigned scoreboard_width = (25 * 2) + (4 * tile_width);
+    constexpr const unsigned scoreboard_height = level_window_height;
+    
+    constexpr const unsigned inventory_xpos = scoreboard_xpos + 25;
+    constexpr const unsigned inventory_ypos = 
+        (scoreboard_ypos + scoreboard_height) - (2 * tile_height) - 25;
+        
+    constexpr const unsigned chip_count_xpos = scoreboard_xpos + 25;
+    constexpr const unsigned chip_count_ypos = 
+        scoreboard_ypos + (scoreboard_height / 2) - 25;
+        
     /// Information about the top level window
     constexpr const char window_name[] = "chips";
     constexpr const unsigned window_xpos = 100;
@@ -269,7 +282,8 @@ namespace chips
     
     constexpr bool is_acting_floor(entity_id id) noexcept
     {
-        return id == entity_id::teleport
+        return id == entity_id::exit 
+            || id == entity_id::teleport
             || id == entity_id::thief
             || id == entity_id::bomb
             || id == entity_id::trap
