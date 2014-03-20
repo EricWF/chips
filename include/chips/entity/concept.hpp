@@ -6,6 +6,7 @@
 # include "chips/entity/filter.hpp"
 # include "chips/core.hpp"
 # include <elib/aux.hpp>
+# include <elib/any.hpp>
 # include <elib/fmt.hpp>
 # include <algorithm>
 # include <functional>
@@ -190,6 +191,13 @@ namespace chips
             return *b;
         }
         
+        template <class Seq>
+        bool contains(Seq && s) const
+        {
+            auto v = filter(s);
+            return v.begin() != v.end();
+        }
+        
         operator detail::concept_tag() const;
     };
 
@@ -223,7 +231,10 @@ namespace chips
                 return false;
 
             for (auto & s : m_stored_concepts)
+            {
+                ELIB_ASSERT(s.get());
                 if (!s->test(e)) return false;
+            }
             return true;
         }
         
@@ -238,6 +249,7 @@ namespace chips
         {
         public:
             basic_concept_holder() = default;
+            basic_concept_holder(basic_concept_holder const &) = delete;
             virtual ~basic_concept_holder() {}
             virtual std::type_info const & type() const = 0;
             virtual bool test(entity const &) const = 0;
@@ -249,8 +261,9 @@ namespace chips
         public:
             template <class OtherConcept>
             concept_holder(OtherConcept && o)
-              : m_store(elib::forward<OtherConcept>(o)) {}
+              : m_store(ConceptType(elib::forward<OtherConcept>(o))) {}
            
+            concept_holder(concept_holder const &) = delete;
             concept_holder & operator=(concept_holder const &) = delete;
             concept_holder & operator=(concept_holder &&) = delete;
 
@@ -261,13 +274,18 @@ namespace chips
             
             bool test(entity const & e) const
             {
-                return m_store.test(e);
+               return const_cast<concept_holder *>(this)->test_impl(e);
             }
             
-            virtual ~concept_holder() {}
+            ~concept_holder() {}
             
         private:
-            ConceptType m_store;
+            bool test_impl(entity const & e)
+            {
+                return elib::any_cast<ConceptType &>(m_store)(e);
+            }
+            
+            elib::any  m_store;
         };
         
     private:

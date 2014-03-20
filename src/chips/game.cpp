@@ -1,5 +1,6 @@
 #include "chips/game.hpp"
 #include "chips/entity.hpp"
+#include "chips/logic.hpp"
 #include "tinyxml/tinyxml.h"
 #include <elib/aux.hpp>
 #include <elib/enumeration.hpp>
@@ -32,68 +33,7 @@ namespace elib { namespace enumeration
 namespace chips
 {
     
-    
-////////////////////////////////////////////////////////////////////////////////
-//                              INVENTORY
-////////////////////////////////////////////////////////////////////////////////
-    
-#define CHIPS_THROW_BAD_ITEM(Item)                    \
-do {                                                  \
-    if (!is_item(Item))                               \
-    {                                                 \
-        ELIB_THROW_EXCEPTION(chips_error(elib::fmt(   \
-            "Item %s cannot be added to an inventory" \
-          , to_string(Item)                           \
-        )));                                          \
-    }                                                 \
-} while (false)
-#
-    void inventory::add_item(entity_id item)
-    {
-        CHIPS_THROW_BAD_ITEM(item);
-        m_items[item]++;
-    }
-    
-    void inventory::use_item(entity_id item)
-    {
-        CHIPS_THROW_BAD_ITEM(item);
-        
-        auto pos = m_items.find(item);
-        if (pos == m_items.end())
-        {
-            ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                "Inventory has no instances of item %s"
-              , to_string(item)
-            )));
-        }
-        
-        ELIB_ASSERT(pos->second > 0);
-        
-        pos->second--;
-        if (pos->second == 0) m_items.erase(pos);
-    }
-    
-    void inventory::erase_item(entity_id item)
-    {
-        CHIPS_THROW_BAD_ITEM(item);
-        m_items.erase(item);
-    }
-    
-    unsigned inventory::count(entity_id item) const
-    {
-        CHIPS_THROW_BAD_ITEM(item);
-        auto pos = m_items.find(item);
-        if (pos == m_items.end()) return 0;
-        return pos->second;
-    }
-    
-    bool inventory::contains(entity_id item) const
-    {
-        CHIPS_THROW_BAD_ITEM(item);
-        return count(item);
-    }
-    
-#undef CHIPS_THROW_BAD_ITEM
+  
 ////////////////////////////////////////////////////////////////////////////////
 //                               LEVEL
 ////////////////////////////////////////////////////////////////////////////////
@@ -469,165 +409,8 @@ do {                                                  \
         
         return e;
     }
-    
-    void init_chip(entity & e)
-    {
-        ELIB_ASSERT(is_chip(e));
-        e.remove<tile_id>();
-        e << texture_type::cutout << chips_state::normal 
-          << inventory() << chip_at_exit(false)
-          << method(move_in_, common::move_in_);
-          
-    }
-    
-    void init_actor(entity & e)
-    {
-        ELIB_ASSERT(is_actor(e) && !is_chip(e));
-        if (is_monster(e)) detail::init_monster(e);
-    }
-    
-    void init_item(entity & e)
-    {
-        ELIB_ASSERT(is_item(e)); ((void)e);
-       
-        
-        auto item_on_col =
-        [](entity & self, entity & other, level &)
-        {
-            if (!is_chip(other)) return;
-            REQUIRE_CONCEPT(other, EntityHas<inventory>);
-            
-            other.get<inventory>().add_item(self.id());
-            self.kill();
-        };
-        
-        e.on_death([](entity & self) { self.clear(); });
-        
-        e << method(collides_, common::collides_with_monster_)
-          << method(on_collision_, item_on_col);
-        
-    }
-    
-    void init_base(entity & e)
-    {
-        ELIB_ASSERT(is_base(e));
-        if (is_floor(e)) detail::init_floor(e);
-        if (is_wall(e))  detail::init_wall(e);
-    }
-    
-    namespace detail
-    {
-        void init_monster(entity & e)
-        {
-            ELIB_ASSERT(is_monster(e));
-            REQUIRE_CONCEPT(e, Directional);
-            e.remove<tile_id>();
-            // TODO remove this
-            // add a default velocity if none is present.
-            if (!e.has<velocity>())
-                e << velocity(1);
-                
-            auto kill_chip_on_col =
-            [](entity &, entity & other, level &)
-            {
-                if (is_chip(other))
-                    other.kill();
-            };
-                
-            e << method(move_, common::move_)
-              << texture_type::cutout
-              << method(collides_, common::always_collides_)
-              << method(on_collision_, kill_chip_on_col);
-        }
-        
-        void init_wall(entity & e)
-        {
-            ELIB_ASSERT(is_wall(e));
-            if (!is_acting_wall(e))
-            {
-                e << method(collides_, common::always_collides_);
-                return;
-            }
-            else if (is_lock(e))
-            {
-                auto lock_on_col =
-                [](entity & self, entity & other, level &)
-                {
-                    if (!is_chip(other)) return;
-                    ELIB_ASSERT(other);
-                    auto & inv = other.get<inventory>();
-                    entity_id req_key = key_for_lock(self.id());
-                    if (inv.contains(req_key))
-                    {
-                        inv.use_item(req_key);
-                        self.clear_methods();
-                        self.id(entity_id::floor);
-                        self << tile_id::floor
-                             << method(collides_, common::never_collides_);
-                    }
-                };
-                
-                e.on_death([](entity & self) { self.clear(); });
-                e << method(collides_, common::always_collides_)
-                  << method(on_collision_, lock_on_col);
-            }
-            else if (e.id() == entity_id::socket)
-            {
-                auto socket_on_col =
-                [](entity & self, entity & other, level &)
-                {
-                    if (!is_chip(other)) return;
-                    REQUIRE_CONCEPT(self, EntityHas<sock_chip_count>);
-                    REQUIRE_CONCEPT(other, EntityHas<inventory>);
-                    
-                    auto & inv = other.get<inventory>();
-                    unsigned req = self.get<sock_chip_count>();
-                    
-                    if (req <= inv.count(entity_id::computer_chip))
-                    {
-                        for (unsigned i=0; i < req; ++i)
-                            inv.use_item(entity_id::computer_chip);
-                            
-                        self.clear_methods();
-                        self.id(entity_id::floor);
-                        self << tile_id::floor
-                             << method(collides_, common::never_collides_);
-                    }
-                };
-                
-                e << method(collides_, common::always_collides_)
-                  << method(on_collision_, socket_on_col);
-            }
-        }
-        
-        void init_floor(entity & e)
-        {
-            ELIB_ASSERT(is_floor(e));
-            if (!is_acting_floor(e))
-            {
-                e << method(collides_, common::never_collides_);
-                return;
-            }
-            else if (entity_id::exit == e.id())
-            {
-                auto exit_on_col =
-                [](entity &, entity & other, level &)
-                {
-                    if (!is_chip(other)) return;
-                    REQUIRE_CONCEPT(other, EntityHas<chip_at_exit>);
-                    other.get<chip_at_exit>() = true;
-                };
-                
-                e << method(collides_, common::collides_with_monster_)
-                  << method(on_collision_, exit_on_col);
-            }
-            else if (is_button(e.id()))
-            {
-                e << method(collides_, common::never_collides_);
-            }
-        }
-    }                                                       // namespace detail
-    
+
+
     namespace detail { namespace
     {
         
@@ -676,7 +459,7 @@ do {                                                  \
         
     void process_level(level & l)
     {
-        init_chip(l.chip);
+        logic::init(l.chip, l);
 
         for (auto & e : l.entity_list)
         {
@@ -684,15 +467,15 @@ do {                                                  \
         }
         for (auto & e : EntityMatches<&is_actor>().filter(l.entity_list))
         {
-            init_actor(e);
+            logic::init(e, l);
         }
         for (auto & e : EntityMatches<&is_item>().filter(l.entity_list))
         {
-           init_item(e);
+           logic::init(e, l);
         }
         for (auto & e : EntityMatches<&is_base>().filter(l.entity_list))
         {
-            init_base(e);
+            logic::init(e, l);
         }
        
         for (auto & e : EntityIs<entity_id::socket>().filter(l.entity_list))

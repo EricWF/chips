@@ -788,7 +788,7 @@ namespace chips
     }
     
     constexpr direction 
-    turn_counter_clockwile(direction dir, unsigned times = 1) noexcept
+    turn_counter_clockwise(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
             (static_cast<unsigned>(dir) + times) % 4

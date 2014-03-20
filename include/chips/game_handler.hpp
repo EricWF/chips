@@ -5,6 +5,7 @@
 # include "chips/game.hpp"
 # include <elib/aux.hpp>
 # include <SFML/Graphics.hpp>
+# include <chrono>
 
 namespace chips
 {
@@ -45,6 +46,7 @@ namespace chips
         void m_draw_inventory(sf::RenderWindow &) const;
     private:
         chips::level m_level;
+        std::chrono::high_resolution_clock::time_point m_tick;
     };
     
     

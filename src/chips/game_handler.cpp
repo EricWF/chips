@@ -1,10 +1,11 @@
 #include "chips/game_handler.hpp"
 #include "chips/core.hpp"
-#include "chips/entity.hpp"
 #include "chips/draw.hpp"
+#include "chips/entity.hpp"
+#include "chips/logic.hpp"
 #include "chips/resource_manager.hpp"
-# include <elib/fmt.hpp>
-# include <string>
+#include <elib/fmt.hpp>
+#include <string>
 
 namespace chips
 {
@@ -12,9 +13,9 @@ namespace chips
     {
         unsigned top_left_coord(unsigned c)
         {
-            if (c < level_view_width) 
+            if (c < 4) 
                 return 0;
-            if (c > level_width - level_view_width)
+            if (c > level_width - 4)
                 return level_width - level_view_width;
             return c - 4;
         }
@@ -44,6 +45,21 @@ namespace chips
     
     game_event_id game_handler::update(sf::RenderWindow & win)
     {
+        if (m_tick < std::chrono::high_resolution_clock::now())
+        {
+            for (auto & e : Concept<Alive, EntityHas<update_m>>()
+                           .filter(m_level.entity_list))
+            {
+                e(update_, m_level);
+            }
+            
+            m_level.chip(update_, m_level);
+            
+            m_tick = std::chrono::high_resolution_clock::now() 
+                    + std::chrono::milliseconds(200);
+        }
+        
+        
         game_event_id ev_id = m_handle_event(win);
         if (ev_id == game_event_id::closed) 
         {
@@ -60,6 +76,7 @@ namespace chips
             log::info("Game: level passed");
             return game_event_id::level_passed;
         }
+            
         return game_event_id::none;
     }
     
@@ -134,7 +151,6 @@ namespace chips
             unsigned count = inv.count(key_id);
             if (count)
             {
-                
                 chips::draw(win, entity(key_id), p);
                 sf::Text count_str(std::to_string(count), res[font_uid::arial], 15);
                 count_str.setColor(sf::Color::Red);
@@ -191,35 +207,24 @@ namespace chips
 
     void game_handler::m_move_chip_event(sf::Event const & ev)
     {
+        if (!m_level.chip || (m_level.chip.has<moveable>() 
+            && !m_level.chip.get<moveable>()))
+        {
+            return;
+        }
         if (sf::Keyboard::Up == ev.key.code)
-            m_move_chip(direction::N);
+            m_level.chip(move_, direction::N, m_level);
         else if (sf::Keyboard::Down == ev.key.code)
-            m_move_chip(direction::S);
+            m_level.chip(move_, direction::S, m_level);
         else if (sf::Keyboard::Right == ev.key.code)
-            m_move_chip(direction::E);
+            m_level.chip(move_, direction::E, m_level);
         else if (sf::Keyboard::Left)
-            m_move_chip(direction::W);
+            m_level.chip(move_, direction::W, m_level);
+        else
+            return;
+        if (m_level.chip.has(update_))
+            m_level.chip(update_, m_level);
         
     }
     
-    void game_handler::m_move_chip(direction d)
-    {
-        entity & chip = m_level.chip;
-        ELIB_ASSERT(chip);
-        position old_pos = chip.get<position>();
-        
-        chip(move_in_, d, 1);
-       
-        for (auto & e : AtPosition(chip.get<position>()).filter(m_level.entity_list))
-        {
-            if (!e) continue;
-            if (e && e.has(on_collision_))
-                e(on_collision_, chip, m_level);
-            if (e && e.has(collides_) && e(collides_, chip))
-            {
-                chip << old_pos;
-                break;
-            }
-        }
-    }
 }                                                           // namespace chips

@@ -24,7 +24,7 @@ namespace chips
         using iterator_category = std::forward_iterator_tag;
         
     public:
-        filter_iterator() = default;
+        //filter_iterator() = default;
         ELIB_DEFAULT_COPY_MOVE(filter_iterator);
         
         filter_iterator(ConceptType p, Iterator b, Iterator e = Iterator())
@@ -33,11 +33,6 @@ namespace chips
             satify_pred();
         }
         
-        filter_iterator(Iterator b, Iterator e = Iterator())
-          : m_pos(b), m_end(e)
-        {
-            satify_pred();
-        }
         
         bool operator==(self const & other) const { return m_pos == other.m_pos; }
         bool operator!=(self const & other) const { return m_pos != other.m_pos; }
@@ -46,6 +41,8 @@ namespace chips
         pointer   operator->() const { return m_pos.operator->(); }
         
         self & operator++() { increment(); return *this; }
+        
+        Iterator position();
         
     private:
         void increment() { ++m_pos; satify_pred(); }

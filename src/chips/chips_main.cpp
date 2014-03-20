@@ -6,6 +6,7 @@
 #include "chips/menu.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdlib.h> 
+#include <chrono>
 #include <unistd.h>
 
 namespace chips
@@ -20,14 +21,13 @@ namespace chips
         auto l = create_level(lvl_pick, prop_list);
         
         game_handler gh(l);
-        
+    
         while (gh.update(window) == game_event_id::none)
         {
             window.clear(sf::Color::Black);
             gh.draw(window);
             window.display();
         }
-        
         window.close();
     }
     

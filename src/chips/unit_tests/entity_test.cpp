@@ -4,6 +4,7 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include "chips/game.hpp"
+#include "chips/logic.hpp"
 
 #include <iostream>
 
