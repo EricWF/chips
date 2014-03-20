@@ -8,6 +8,7 @@ namespace chips { namespace logic
 {
     namespace 
     {
+        ////////////////////////////////////////////////////////////////////////
         void init_element_floor(entity & e, level &)
         {
             
@@ -31,11 +32,26 @@ namespace chips { namespace logic
                     }
                     else if (other.id() == entity_id::block)
                     {
+                        
+                        auto dirt_on_collide =
+                        [](entity & sf, entity & o, level &)
+                        {
+                            if (o && is_chip(o))
+                            {
+                                sf.clear_methods();
+                                sf.id(entity_id::floor);
+                                sf << tile_id::floor;
+                            }
+                        };
+                        
                         other.kill();
                         position tmp_pos = self.get<position>();
                         self.clear();
-                        self.id(entity_id::floor);
-                        self << tile_id::floor << tmp_pos;
+                        self.id(entity_id::dirt);
+                        self << tile_id::dirt << tmp_pos
+                             << method(on_collision_, dirt_on_collide)
+                             << method(collides_, common::collides_with_monster_);
+                            
                         return;
                     }
                 };
@@ -65,6 +81,7 @@ namespace chips { namespace logic
             }
         }
         
+        ////////////////////////////////////////////////////////////////////////
         void init_floor(entity & e, level & l)
         {
              ELIB_ASSERT(is_floor(e));
@@ -151,6 +168,7 @@ namespace chips { namespace logic
             }
         }
         
+        ////////////////////////////////////////////////////////////////////////
         void init_wall(entity & e, level &)
         {
             ELIB_ASSERT(is_wall(e));
@@ -269,6 +287,7 @@ namespace chips { namespace logic
         }
     }                                                       // namespace
     
+    ////////////////////////////////////////////////////////////////////////////
     void init_base(entity & e, level & l)
     {
         if (is_floor(e))
