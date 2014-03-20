@@ -15,7 +15,7 @@ namespace chips
                 return 0;
             if (c > level_width - level_view_width)
                 return level_width - level_view_width;
-            return c - (level_view_width / 2) - 1;
+            return c - 4;
         }
 
         position top_left_position(level const & l)
