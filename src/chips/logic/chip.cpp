@@ -180,7 +180,6 @@ namespace chips { namespace logic
                             self(move_, direction::E, l);
                         else if (ff.get<tile_id>() == tile_id::force_floor_W)
                             self(move_, direction::W, l);
-                        self << moveable(false);
                     }
                 }
             }

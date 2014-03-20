@@ -68,12 +68,8 @@ namespace chips { namespace logic
         void init_floor(entity & e, level & l)
         {
              ELIB_ASSERT(is_floor(e));
-            if (!is_acting_floor(e))
-            {
-                e << method(collides_, common::never_collides_);
-                return;
-            }
-            else if (entity_id::exit == e.id())
+            
+            if (entity_id::exit == e.id())
             {
                 auto exit_on_col =
                 [](entity &, entity & other, level &)
@@ -130,17 +126,36 @@ namespace chips { namespace logic
                     e << method(on_collision_, on_col);
                 }
             }
+            else if (e.id() == entity_id::gravel)
+            {
+              auto collides =
+              [](entity const &, entity const & other)
+              {
+                return is_monster(other);
+              };
+              e << method(collides_, collides);
+            }
+            else if (e.id() == entity_id::bomb)
+            {
+              auto on_collide =
+              [](entity & self, entity & other, level &)
+              {
+                ELIB_ASSERT(is_actor(other));
+                other.kill();
+                self.clear_methods();
+                self.remove<tile_id>();
+                self.id(entity_id::floor);
+              };
+              
+               e << method(on_collision_, on_collide);
+            }
         }
         
         void init_wall(entity & e, level &)
         {
             ELIB_ASSERT(is_wall(e));
-            if (!is_acting_wall(e))
-            {
-                e << method(collides_, common::always_collides_);
-                return;
-            }
-            else if (is_lock(e))
+           
+            if (is_lock(e))
             {
                 auto lock_on_col =
                 [](entity & self, entity & other, level &)
@@ -166,7 +181,7 @@ namespace chips { namespace logic
             else if (e.id() == entity_id::socket)
             {
                 auto socket_on_col =
-                [](entity & self, entity & other, level &)
+                [](entity & self, entity & other, level & l)
                 {
                     if (!is_chip(other)) return;
                     REQUIRE_CONCEPT(self, EntityHas<sock_chip_count>);
@@ -177,8 +192,8 @@ namespace chips { namespace logic
                     
                     if (req <= inv.count(entity_id::computer_chip))
                     {
-                        for (unsigned i=0; i < req; ++i)
-                            inv.use_item(entity_id::computer_chip);
+                        l.chip_count(l.chip_count() - req);
+                        inv.use_item(entity_id::computer_chip, req);
                             
                         self.clear_methods();
                         self.id(entity_id::floor);
@@ -208,6 +223,48 @@ namespace chips { namespace logic
                 };
                 
                 e << method(update_, toggle_wall_update);
+            }
+            else if (e.id() == entity_id::blue_wall)
+            {
+              
+                auto real_on_col =
+                [](entity & self, entity & other, level &)
+                {
+                  if (other && is_chip(other))
+                  {
+                    self.clear_methods();
+                    self.remove<tile_id>();
+                    self.id(entity_id::wall);
+                    self << method(collides_, common::always_collides_);
+                  }
+                };
+                
+                auto fake_on_col =
+                [](entity & self, entity & other, level &)
+                {
+                    if (other && is_chip(other))
+                    {
+                      self.clear_methods();
+                      self.remove<tile_id>();
+                      self.id(entity_id::floor);
+                      self << method(collides_, common::never_collides_);
+                    }
+                };
+                
+                if (e.get<tile_id>() == tile_id::blue_wall_fake)
+                {
+                  e << method(on_collision_, fake_on_col)
+                    << method(collides_, common::always_collides_);
+                }
+                else
+                {
+                  e << method(on_collision_, real_on_col)
+                    << method(collides_, common::always_collides_);
+                }
+            }
+            else if (!is_acting_wall(e))
+            {
+              e << method(collides_, common::always_collides_);
             }
         }
     }                                                       // namespace

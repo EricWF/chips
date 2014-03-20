@@ -33,39 +33,33 @@ namespace chips { namespace logic
             if (e.id() == entity_id::bug)
             {
                 auto bug_update_ =
-                [](entity & self, level & lev)
+                [](entity & self, level & lv)
                 {
-                    ELIB_ASSERT(self);
-                    
-                    position old_pos;
-                    direction old_dir;
-                    self >> old_pos >> old_dir;
+                  ELIB_ASSERT(self);
+                  position p; direction d;
+                  self >> p >> d;
+                  self(move_, d, lv);
+                  for (;;)
+                  {
+                    if (self.get<position>() != p) break;
                 
-                    self(move_, old_dir, lev);
-                    
-                    if (self.get<position>() == old_pos)
-                        self(move_, turn_clockwise(old_dir), lev);
-                        
-                    auto AgainstWallLeft = Concept<Alive, EntityMatches<&is_wall>>(
-                        AtPosition(move(
-                            self.get<position>()
-                          , turn_counter_clockwise(self.get<direction>())
-                          , 1
-                          ))
-                      );
-                    
-                    bool has_wall_left = false;
-                    for (auto & fe : AgainstWallLeft.filter(lev.entity_list))
-                    {
-                        ((void)fe);
-                        has_wall_left = true;
-                    }
+                    self(move_, turn_counter_clockwise(d), lv);
+                    if (self.get<position>() != p) break;
+                    self(move_, turn_around(d), lv);
+                    if (self.get<position>() != p) break;
+                    self(move_, turn_clockwise(d), lv);
+                    break;
+                  }
                 
-                    if (!has_wall_left)
-                    {
-                        self << turn_counter_clockwise(self.get<direction>());
-                    }
-                    
+                  auto HasWallLeft = Concept<EntityMatches<&is_wall>>(
+                    AtPosition(move(
+                        self.get<position>()
+                      , turn_counter_clockwise(self.get<direction>())
+                      , 1
+                   )));
+                
+                  if (!HasWallLeft.contains(lv.entity_list))
+                    self << turn_counter_clockwise(self.get<direction>());
                 };
                 
                 e << method(update_, bug_update_);
@@ -85,6 +79,42 @@ namespace chips { namespace logic
                 };
                 
                 e << method(update_, tank_update);
+            }
+            else if (e.id() == entity_id::fireball)
+            {
+                auto fireball_update =
+                [](entity & self, level & l)
+                {
+                    position p;
+                    direction d;
+                    self >> p >> d;
+                    self(move_, d, l);
+                    if (self.get<position>() == p)
+                    {
+                      self(move_, turn_clockwise(d), l);
+                    }
+                };
+                
+                e << method(update_, fireball_update);
+            }
+            else if (e.id() == entity_id::glider)
+            {
+              auto glider_update =
+              [](entity & self, level & l)
+              {
+                ELIB_ASSERT(self);
+                position p; direction d;
+                self >> p >> d;
+                self(move_, d, l);
+                if (self.get<position>() != p) return;
+                self(move_, turn_counter_clockwise(d), l);
+                if (self.get<position>() != p) return;
+                self(move_, turn_clockwise(d), l);
+                if (self.get<position>() != p) return;
+                self(move_, turn_around(d), l);
+              };
+              
+              e << method(update_, glider_update);
             }
             
         }

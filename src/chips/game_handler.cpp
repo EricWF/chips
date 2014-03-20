@@ -15,7 +15,7 @@ namespace chips
         {
             if (c < 4) 
                 return 0;
-            if (c > level_width - 4)
+            if (c > level_width - 5)
                 return level_width - level_view_width;
             return c - 4;
         }
@@ -53,10 +53,22 @@ namespace chips
                 e(update_, m_level);
             }
             
+            auto CollidedMonsters =
+              Concept<Alive, EntityMatches<&is_monster>>(
+                 AtPosition(m_level.chip.get<position>())
+                );
+                  
+            for (auto & e : CollidedMonsters.filter(m_level.entity_list))
+            {
+              if (e.has(on_collision_))
+                e(on_collision_, m_level.chip, m_level);
+              if (!m_level.chip) return game_event_id::level_failed;
+            }
+              
             m_level.chip(update_, m_level);
             
             m_tick = std::chrono::high_resolution_clock::now() 
-                    + std::chrono::milliseconds(200);
+                    + std::chrono::milliseconds(100);
         }
         
         
