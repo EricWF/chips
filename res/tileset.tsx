@@ -132,6 +132,7 @@
  </tile>
  <tile id="41">
   <properties>
+   <property name="bindings" value=""/>
    <property name="entity_id" value="green_button"/>
    <property name="tile_id" value="green_button"/>
   </properties>
@@ -543,6 +544,7 @@
    <property name="direction" value="N"/>
    <property name="entity_id" value="tank"/>
    <property name="tile_id" value="tank_N"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="161">
@@ -589,6 +591,7 @@
    <property name="direction" value="W"/>
    <property name="entity_id" value="tank"/>
    <property name="tile_id" value="tank_W"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="174">
@@ -630,6 +633,7 @@
    <property name="direction" value="S"/>
    <property name="entity_id" value="tank"/>
    <property name="tile_id" value="tank_S"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="187">
@@ -670,6 +674,7 @@
    <property name="direction" value="E"/>
    <property name="entity_id" value="tank"/>
    <property name="tile_id" value="tank_E"/>
+   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="200">

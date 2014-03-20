@@ -93,6 +93,42 @@ namespace chips { namespace logic
             else if (is_button(e.id()))
             {
                 e << method(collides_, common::never_collides_);
+                if (e.id() == entity_id::green_button)
+                {
+                    auto on_col =
+                    [](entity & self, entity & other, level & lev)
+                    {
+                        if (!self || !other || !is_actor(other))
+                            return;
+                            
+                        auto ToggleWalls = Concept<EntityIs<entity_id::toggle_wall>>();
+                        
+                        for (auto & wall : ToggleWalls.filter(lev.entity_list))
+                        {
+                            wall << toggle_state(!wall.get<toggle_state>());
+                            wall(update_, lev);
+                        }
+                    };
+                    
+                    e << method(on_collision_, on_col);
+                }
+                else if (e.id() == entity_id::blue_button)
+                {
+                    auto on_col =
+                    [](entity & self, entity & other, level & lev)
+                    {
+                        if (!self || !other || !is_actor(other))
+                            return;
+                        
+                        auto Tanks = Concept<EntityIs<entity_id::tank>>();
+                        for (auto & t :  Tanks.filter(lev.entity_list))
+                        {
+                            t << toggle_state(!t.get<toggle_state>());
+                        }
+                    };
+                    
+                    e << method(on_collision_, on_col);
+                }
             }
         }
         
@@ -153,6 +189,25 @@ namespace chips { namespace logic
                 
                 e << method(collides_, common::always_collides_)
                   << method(on_collision_, socket_on_col);
+            }
+            else if (e.id() == entity_id::toggle_wall)
+            {
+                auto toggle_wall_update =
+                [](entity & self, level &)
+                {
+                    if (self.get<toggle_state>())
+                    {
+                        self << tile_id::toggle_wall_open;
+                        self << method(collides_, common::never_collides_);
+                    }
+                    else
+                    {
+                        self << tile_id::toggle_wall_closed;
+                        self << method(collides_, common::always_collides_);
+                    }
+                };
+                
+                e << method(update_, toggle_wall_update);
             }
         }
     }                                                       // namespace

@@ -70,6 +70,23 @@ namespace chips { namespace logic
                 
                 e << method(update_, bug_update_);
             }
+            else if (e.id() == entity_id::tank)
+            {
+                auto tank_update =
+                [](entity & self, level & l)
+                {
+                    if (self.get<toggle_state>())
+                    {
+                        self << turn_around(self.get<direction>());
+                        self << toggle_state(false);
+                    }
+                    
+                    self(move_, self.get<direction>(), l);
+                };
+                
+                e << method(update_, tank_update);
+            }
+            
         }
         
         void init_block(entity & e, level &)
