@@ -753,8 +753,8 @@ namespace chips
     {
         switch (dir)
         {
-            case direction::N: pos.y += count; break;
-            case direction::S: pos.y -= count; break;
+            case direction::N: pos.y -= count; break;
+            case direction::S: pos.y += count; break;
             case direction::E: pos.x += count; break;
             case direction::W: pos.x -= count; break;
         }

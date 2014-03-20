@@ -486,6 +486,23 @@ do {                                                  \
     void init_item(entity & e)
     {
         ELIB_ASSERT(is_item(e)); ((void)e);
+       
+        
+        auto item_on_col =
+        [](entity & self, entity & other)
+        {
+            if (!is_chip(other)) return;
+            REQUIRE_CONCEPT(other, EntityHas<inventory>);
+            
+            other.get<inventory>().add_item(self.id());
+            self.kill();
+        };
+        
+        e.on_death([](entity & self) { self.clear(); });
+        
+        e << method(collides_, common::collides_with_monster_)
+          << method(on_collision_, item_on_col);
+        
     }
     
     void init_base(entity & e)
@@ -514,13 +531,73 @@ do {                                                  \
         void init_wall(entity & e)
         {
             ELIB_ASSERT(is_wall(e));
-            if (!is_acting_wall(e)) return;
+            if (!is_acting_wall(e))
+            {
+                e << method(collides_, common::always_collides_)
+                  << method(on_collision_, common::null_on_collision_);
+                return;
+            }
+            else if (is_lock(e))
+            {
+                auto lock_on_col =
+                [](entity & self, entity & other)
+                {
+                    if (!is_chip(other)) return;
+                    ELIB_ASSERT(other);
+                    auto & inv = other.get<inventory>();
+                    entity_id req_key = key_for_lock(self.id());
+                    if (inv.contains(req_key))
+                    {
+                        inv.use_item(req_key);
+                        self.clear_methods();
+                        self.id(entity_id::floor);
+                        self << tile_id::floor
+                             << method(collides_, common::never_collides_);
+                    }
+                };
+                
+                e.on_death([](entity & self) { self.clear(); });
+                e << method(collides_, common::always_collides_)
+                  << method(on_collision_, lock_on_col);
+            }
+            else if (e.id() == entity_id::socket)
+            {
+                auto socket_on_col =
+                [](entity & self, entity & other)
+                {
+                    if (!is_chip(other)) return;
+                    REQUIRE_CONCEPT(self, EntityHas<sock_chip_count>);
+                    REQUIRE_CONCEPT(other, EntityHas<inventory>);
+                    
+                    auto & inv = other.get<inventory>();
+                    unsigned req = self.get<sock_chip_count>();
+                    
+                    if (req <= inv.count(entity_id::computer_chip))
+                    {
+                        for (int i=0; i < req; ++i)
+                            inv.use_item(entity_id::computer_chip);
+                            
+                        self.clear_methods();
+                        self.id(entity_id::floor);
+                        self << tile_id::floor
+                             << method(collides_, common::never_collides_);
+                    }
+                };
+                
+                e << method(collides_, common::always_collides_)
+                  << method(on_collision_, socket_on_col);
+            }
         }
         
         void init_floor(entity & e)
         {
             ELIB_ASSERT(is_floor(e));
-            if (!is_acting_floor(e)) return;
+            if (!is_acting_floor(e))
+            {
+                e << method(collides_, common::never_collides_)
+                  << method(on_collision_, common::null_on_collision_);
+                return;
+            }
         }
     }                                                       // namespace detail
     
@@ -591,6 +668,10 @@ do {                                                  \
             init_base(e);
         }
        
+        for (auto & e : EntityIs<entity_id::socket>().filter(l.entity_list))
+        {
+            e << sock_chip_count(l.chip_count());
+        }
         
         for (auto & butt : IsBlueButton().filter(l.entity_list))
         {

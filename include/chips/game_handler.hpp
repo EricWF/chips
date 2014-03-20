@@ -1,6 +1,7 @@
 #ifndef CHIPS_GAME_HANDLER_HPP
 #define CHIPS_GAME_HANDLER_HPP
 
+# include "chips/core.hpp"
 # include "chips/game.hpp"
 # include <elib/aux.hpp>
 # include <SFML/Graphics.hpp>
@@ -36,7 +37,8 @@ namespace chips
         
     private:
         game_event_id m_handle_event(sf::RenderWindow & win);
-        
+        void m_move_chip_event(sf::Event const &);
+        void m_move_chip(direction);
     private:
         chips::level m_level;
     };

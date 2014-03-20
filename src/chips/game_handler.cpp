@@ -91,6 +91,9 @@ namespace chips
             {
                 case sf::Event::Closed:
                     return game_event_id::closed;
+                case sf::Event::KeyPressed:
+                    m_move_chip_event(e);
+                    break;
                 default: break;
             }
         }
@@ -101,4 +104,39 @@ namespace chips
 #elif defined(ELIB_CONFIG_GCC)
 # pragma GCC diagnostic pop
 #endif
+
+    void game_handler::m_move_chip_event(sf::Event const & ev)
+    {
+        if (sf::Keyboard::Up == ev.key.code)
+            m_move_chip(direction::N);
+        else if (sf::Keyboard::Down == ev.key.code)
+            m_move_chip(direction::S);
+        else if (sf::Keyboard::Right == ev.key.code)
+            m_move_chip(direction::E);
+        else if (sf::Keyboard::Left)
+            m_move_chip(direction::W);
+        
+    }
+    
+    void game_handler::m_move_chip(direction d)
+    {
+        entity & chip = m_level.chip;
+        ELIB_ASSERT(chip);
+        position old_pos = chip.get<position>();
+        
+        chip(move_in_, d, 1u);
+       
+        for (auto & e : AtPosition(chip.get<position>()).filter(m_level.entity_list))
+        {
+            if (!e) continue;
+            if (e && e.has(on_collision_))
+                e(on_collision_, chip);
+            if (e && e.has(collides_) && e(collides_, chip))
+            {
+                chip << old_pos;
+                break;
+            }
+        }
+
+    }
 }                                                           // namespace chips

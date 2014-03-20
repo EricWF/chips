@@ -63,7 +63,11 @@ namespace chips
     
     /// A list of pointers no entities that should be notified via notify_ call.
     using bindings = any_attribute<std::vector<entity*>, detail::bindings_tag>;
-
+    
+    
+    namespace detail { struct chip_count_tag {}; }
+    
+    using sock_chip_count = any_attribute<unsigned, detail::chip_count_tag>;
 ////////////////////////////////////////////////////////////////////////////////
 //                                 METHODS
 ////////////////////////////////////////////////////////////////////////////////
@@ -93,7 +97,7 @@ namespace chips
     struct collides_m : method_base<collides_m, bool(entity const &) const> {};
     
     /// Apply results of a collision with a given entity.
-    struct on_collision_m : method_base<on_collision_m, void(entity const &)> {};
+    struct on_collision_m : method_base<on_collision_m, void(entity &)> {};
     
     /// When an item is picked up, or a lock destroyed, or whenever custom 
     /// death logic is needed, this method should be used
@@ -177,6 +181,26 @@ namespace chips
             e >> p;
             e << d << move(p, d, n);
         };
+        
+        auto always_collides_ =
+        [](entity const &, entity const &)
+        {
+            return true;
+        };
+        
+        auto never_collides_ =
+        [](entity const &, entity const &)
+        {
+            return false;
+        };
+        
+        auto collides_with_monster_ =
+        [](entity const &, entity const & e)
+        {
+            return e && is_monster(e);
+        };
+        
+        auto null_on_collision_ = [](entity &, entity &) {};
         
     }                                                       // namespace common
 # if defined(__clang__)
