@@ -44,6 +44,8 @@ namespace chips
     game_event_id game_handler::update(sf::RenderWindow & win)
     {
         game_event_id ev_id = m_handle_event(win);
+        
+        if (ev_id == game_event_id::closed) return ev_id;
         if (!m_level.chip) return game_event_id::level_failed;
         
         return game_event_id::none;
@@ -82,6 +84,7 @@ namespace chips
 #endif
     game_event_id game_handler::m_handle_event(sf::RenderWindow & win)
     {
+        sf::Event e;
         while (win.pollEvent(e))
         {
             switch (e.type)

@@ -20,7 +20,7 @@ namespace chips
         
         game_handler gh(l);
         
-        while (gh.update() == game_event_id::none)
+        while (gh.update(window) == game_event_id::none)
         {
             window.clear(sf::Color::Black);
             gh.draw(window);
