@@ -1,17 +1,9 @@
 #ifndef CHIPS_GAME_HANDLER_HPP
 #define CHIPS_GAME_HANDLER_HPP
 
-# include "chip/core.hpp"
-# include "chips/draw.hpp"
-# include "chips/entity.hpp"
 # include "chips/game.hpp"
-# include "chips/resource_manager.hpp"
 # include <elib/aux.hpp>
-# include <elib/fmt.hpp>
-# include <string>
-# include <vector>
-# include <utility>
-# include <cstddef>
+# include <SFML/Graphics.hpp>
 
 namespace chips
 {
@@ -30,18 +22,25 @@ namespace chips
     public:
         game_handler() = default;
         
-        game_handler(level const & l)
+        game_handler(chips::level const & l)
           : m_level(l)
         {}
         
         ELIB_DEFAULT_COPY_MOVE(game_handler);
         
-        game_event_id update();
+        game_event_id update(sf::RenderWindow & win);
         
-        void draw(sf::RenderWindow & to);
+        void draw(sf::RenderWindow & to) const;
+        
+        chips::level const & level() const { return m_level; }
         
     private:
-        level m_level;
+        game_event_id m_handle_event(sf::RenderWindow & win);
+        
+    private:
+        chips::level m_level;
     };
+    
+    
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HANDLER_HPP */

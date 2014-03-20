@@ -1,6 +1,7 @@
 #include "chips/chips_main.hpp"
 #include "chips/core.hpp"
 #include "chips/game.hpp"
+#include "chips/game_handler.hpp"
 #include "chips/resource_manager.hpp"
 #include "chips/menu.hpp"
 #include <SFML/Graphics.hpp>
@@ -9,6 +10,26 @@
 
 namespace chips
 { 
+    void run_level(unsigned lvl_pick)
+    {
+        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
+        resource_manager::get();
+        
+        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "tileset.tsx" );
+        auto l = create_level(lvl_pick, prop_list);
+        
+        game_handler gh(l);
+        
+        while (gh.update() == game_event_id::none)
+        {
+            window.clear(sf::Color::Black);
+            gh.draw(window);
+            window.display();
+        }
+        
+        window.close();
+    }
+    
 	void level_test(const unsigned lvl_pick)
 	{
 		log::level(level_e::debug);
@@ -19,7 +40,7 @@ namespace chips
 	void menu_test()
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
-		resource_manager::get();
+        resource_manager::get();
 
 
 		menu_handler mh;
@@ -40,7 +61,11 @@ namespace chips
 		window.close();
 		
 	}
-
+	
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wswitch-default"
+#endif
     int chips_main(int argc, char** argv, char**)
     {        
 		bool level_flag = false;//, menu_flag = false;
@@ -78,11 +103,13 @@ namespace chips
 		}
 
 		if(level_flag)
-			level_test((unsigned)lvl_arg);
+			run_level((unsigned)lvl_arg);
 		else
 			menu_test();
 		
         return 0;
     }
-  
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif
 }                                                           // namespace chips

@@ -6,12 +6,10 @@
 
 namespace chips
 {
-    bool draw(sf::RenderWindow & to, entity const & e)
+    bool draw(sf::RenderWindow & to, entity const & e, position at)
     {
         // Don't draw if the entity is dead
         if (!e) return false;
-        
-        position p = e.get<position>();
         
         tile_id tex_id;
         if (e.has<tile_id>())
@@ -43,7 +41,7 @@ namespace chips
             index = to_texture_index(tex_id);
         }
         
-        draw(to, p, index);
+        draw(to, at, index);
         return true;
     }
     

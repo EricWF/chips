@@ -6,6 +6,7 @@ bin/
 #all kate & gedit temp files
 *.kate-swp
 *~
+*#
 .DS_Store
 
 /test_files

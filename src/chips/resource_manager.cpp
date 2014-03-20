@@ -24,7 +24,11 @@ namespace chips
                 {
                     sf::Color mask_c = img.getPixel(x + mask_start_xpos, y);
                     if (mask_c == sf::Color::Black)
-                        img.setPixel(x + cutout_start_xpos, y, sf::Color::Transparent);
+                    {
+                        img.setPixel(
+                            x + cutout_start_xpos, y
+                          , sf::Color::Transparent);
+                    }
                 }
             }
         }

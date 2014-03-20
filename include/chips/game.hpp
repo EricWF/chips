@@ -2,7 +2,6 @@
 #define CHIPS_GAME_HPP
 
 # include "chips/core.hpp"
-# include "chips/entity_fwd.hpp"
 # include "chips/entity.hpp"
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
@@ -109,6 +108,33 @@ namespace chips
     constexpr on_collision_m on_collision_{};
     constexpr on_death_m     on_death_    {};
     
+////////////////////////////////////////////////////////////////////////////////
+//                               CONCEPTS
+////////////////////////////////////////////////////////////////////////////////
+    /// Concepts about basic functionality
+    using Updateable = EntityHas<update_m>;
+    using Moveable   = EntityHas<direction, velocity, position>;
+    
+    using Directional = 
+        Concept<EntityHas<direction>, EntityMatches<&is_directional>>;
+    
+    using Toggleable = EntityHas<toggle_state, toggle_m>;
+    using Bindable   = EntityHas<bindings, notify_m>;
+    
+    /// Concepts for certain types
+    using Chip = EntityIs<entity_id::chip>;
+    using Monster = EntityMatches<&is_monster>;
+    using ActingBase = EntityMatches<&is_acting_base>; 
+    
+    using IsGreenButton = EntityIs<entity_id::green_button>;
+    using IsToggleWall  = EntityIs<entity_id::toggle_wall>;
+    
+    using IsBlueButton  = EntityIs<entity_id::blue_button>;
+    using IsTank        = EntityIs<entity_id::tank>;
+    
+////////////////////////////////////////////////////////////////////////////////
+//                              COMMON METHODS
+////////////////////////////////////////////////////////////////////////////////
 # if defined(__clang__)
 #   pragma clang diagnostic push
 #   pragma clang diagnostic ignored "-Wglobal-constructors"
@@ -119,13 +145,14 @@ namespace chips
         auto toggle_ =
         [](entity & e)
         {
-            toggle_state st = e.get<toggle_state>();
-            e << (st = !st);
+            REQUIRE_CONCEPT(e, EntityHas<toggle_state>);
+            e << toggle_state(!e.get<toggle_state>());
         };
         
         auto notify_ =
         [](entity const & e)
         {
+            REQUIRE_CONCEPT(e, EntityHas<bindings>);
             for (entity * other_ptr : *e.get<bindings>())
             {
                 ELIB_ASSERT(other_ptr);
@@ -136,6 +163,7 @@ namespace chips
         auto move_ = 
         [](entity & e)
         {
+            REQUIRE_CONCEPT(e, Concept<Directional, Moveable>);
             position p; velocity v; direction d;
             e >> p >> v >> d;
             e << move(p, d, v);
@@ -144,9 +172,7 @@ namespace chips
         auto move_in_ =
         [](entity & e, direction d, unsigned n)
         {
-            ELIB_ASSERT(e.has<position>()
-                     && e.has<direction>());
-            
+            REQUIRE_CONCEPT(e, Concept<Directional, EntityHas<position>>);
             position p;
             e >> p;
             e << d << move(p, d, n);
@@ -157,10 +183,7 @@ namespace chips
 #   pragma clang diagnostic pop
 # endif
     
-////////////////////////////////////////////////////////////////////////////////
-//                               CONCEPTS
-////////////////////////////////////////////////////////////////////////////////
-    
+
     
 ////////////////////////////////////////////////////////////////////////////////
 //                               INVENTORY
@@ -234,18 +257,7 @@ namespace chips
         std::string const & help() const noexcept { return m_help; }
         
         entity chip;
-        
-        std::vector<entity> actors;
-        std::vector<entity> items;
-        std::vector<entity> base;
-        
-        /// TODO: maybe? It makes iteration easier.
-        /// The order of entities in all is
-        /// Base -> Items -> Actors
-        std::vector<entity*> all;
-        
-        /// put every entity into the all vector
-        void update_all();
+        std::vector<entity> entity_list;
         
     public:
         entity * find_raw(std::vector<entity> & el, position p);
@@ -376,13 +388,6 @@ namespace chips
     
     void process_level(level & l);
     
-    namespace detail
-    {
-        void bind_buttons_to_tank(level & l);
-        void bind_buttons_to_toggle_wall(level & l);
-        void process_actions(level & l);
-    }
-    
 ////////////////////////////////////////////////////////////////////////////////
 //                                  MISC
 ////////////////////////////////////////////////////////////////////////////////
@@ -392,7 +397,7 @@ namespace chips
     to_index(position p) noexcept
     {
         return static_cast<std::size_t>(
-            (p.x * level_height) + p.y
+            (p.y * level_height) + p.x
         );
     }
     
@@ -401,8 +406,8 @@ namespace chips
     to_position(std::size_t index) noexcept
     {
         return position{
-            static_cast<unsigned>(index / level_height)
-          , static_cast<unsigned>(index % level_height)
+            static_cast<unsigned>(index % level_height)
+          , static_cast<unsigned>(index / level_height)
         };
     }
 

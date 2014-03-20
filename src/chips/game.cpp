@@ -98,31 +98,7 @@ do {                                                  \
 //                               LEVEL
 ////////////////////////////////////////////////////////////////////////////////
     
-    void level::update_all()
-    {
-        all.clear();
-        all.reserve( actors.size() + items.size() + base.size() );
-        
-        auto transform_fn = [](entity & e) { return &e; };
-        
-        std::transform(
-            std::begin(base), std::end(base)
-          , std::back_inserter(all)
-          , transform_fn
-        );
-        
-        std::transform(
-            std::begin(items), std::end(items)
-          , std::back_inserter(all)
-          , transform_fn
-        );
-        
-        std::transform(
-            std::begin(actors), std::end(actors)
-          , std::back_inserter(all)
-          , transform_fn
-        );
-    }
+
     
 ////////////////////////////////////////////////////////////////////////////////
 //                               PARSING
@@ -393,27 +369,39 @@ do {                                                  \
         // Create the level
         level l(raw.level, raw.chip_count, raw.help);
         
-        // Insert each entity for each level
-        for (unsigned i=0; i < level_width * level_height; ++i)
+        unsigned index = 0;
+        for (auto & gid : raw.base)
         {
-            l.base.push_back( create_entity(raw.base[i], i, props) );
-            
-            if (raw.items[i] != 0)
-            {
-                l.items.push_back( create_entity(raw.items[i], i, props) );
-            }
-            
-            if (raw.actors[i] != 0)
-            {
-                entity tmp = create_entity(raw.actors[i], i, props);
-                if (is_chip(tmp)) 
-                {
-                    ELIB_ASSERT(!l.chip);
-                    l.chip = tmp;
-                }
-                else l.actors.push_back(tmp);
-            }
+            l.entity_list.push_back( 
+                create_entity(gid, index, props)
+            );
+            ++index;
         }
+        
+        index = 0;
+        for (auto & gid : raw.items)
+        {
+            ++index;
+            if (gid == 0) continue;
+            l.entity_list.push_back(create_entity(gid, index - 1, props));
+        }
+        
+        index = 0;
+        for (auto & gid : raw.actors)
+        {
+            entity tmp = create_entity(gid, index, props);
+            if (is_chip(tmp))
+            {
+                ELIB_ASSERT(!l.chip);
+                l.chip = tmp;
+            }
+            else if (tmp)
+            {
+                l.entity_list.push_back( tmp );
+            }
+            ++index;
+        }
+    
         ELIB_ASSERT(l.chip);
     
         process_level(l);
@@ -441,6 +429,7 @@ do {                                                  \
         
         gid -= 1;
         auto props = pm.at(static_cast<unsigned>(gid));
+        
         entity e(props.id, pos);
         
         for (auto & p : props.properties)
@@ -482,8 +471,10 @@ do {                                                  \
     void init_chip(entity & e)
     {
         ELIB_ASSERT(is_chip(e));
+        e.remove<tile_id>();
         e << inventory() << chips_state::normal 
-          << method(move_in_, common::move_in_);
+          << method(move_in_, common::move_in_)
+          << texture_type::cutout;
     }
     
     void init_actor(entity & e)
@@ -509,14 +500,15 @@ do {                                                  \
         void init_monster(entity & e)
         {
             ELIB_ASSERT(is_monster(e));
-            ELIB_ASSERT(e.has<direction>() && e.has<position>());
-            
+            REQUIRE_CONCEPT(e, Directional);
+            e.remove<tile_id>();
             // TODO remove this
             // add a default velocity if none is present.
             if (!e.has<velocity>())
                 e << velocity(1);
                 
-            e << method(move_, common::move_);
+            e << method(move_, common::move_)
+              << texture_type::cutout;
         }
         
         void init_wall(entity & e)
@@ -534,118 +526,33 @@ do {                                                  \
     
     namespace detail { namespace
     {
-        entity & find_entity(std::vector<entity> & el, position p)
-        {
-            auto pos = 
-                std::find_if(
-                    std::begin(el), std::end(el)
-                  , [&](entity const & e)
-                    { return bool(e) && e.get<position>() == p; }
-                );
-                
-            if (pos == el.end())
-            {
-                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                    "Failed to find entity at %s", to_string(p)
-                )));
-            }
-            return *pos;
-        }
-        
-        entity & find_entity(level & l, entity_location const & loc)
-        {
-            if      (is_chip(loc.id))  return l.chip;
-            else if (is_actor(loc.id)) return find_entity(l.actors, loc.pos);
-            else if (is_item(loc.id))  return find_entity(l.items, loc.pos);
-            else if (is_base(loc.id))  return find_entity(l.base, loc.pos);
-            else
-            {
-                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                    "Failed to find entity %s at %s"
-                  , to_string(loc.id), to_string(loc.pos)
-                )));
-            }
-        }
         
         void process_bind(level & l, parsed_action const & act)
         {
             ELIB_ASSERT(act.action == action_type::bind);
             
-            entity & actor = find_entity(l, act.actor);
+            
+            entity & actor = Concept<>(
+                AtPosition(act.actor.pos), HasId(act.actor.id)
+            ).find(l.entity_list);
+            
+            REQUIRE_CONCEPT(actor, Bindable);
             bindings & actor_binds = actor.get<bindings>();
             
             for (auto & epos : act.act_on)
             {
-                actor_binds->push_back( &find_entity(l, epos) );
-            }
-        }
-    }}                                                      // namespace detail
-        
-    void process_level(level & l)
-    {
-        init_chip(l.chip);
-    
-        std::for_each(
-            std::begin(l.actors), std::end(l.actors)
-          , init_actor
-        );
-        
-        std::for_each(
-            std::begin(l.items), std::end(l.items)
-          , init_item
-        );
-        
-        std::for_each(
-            std::begin(l.base), std::end(l.base)
-          , init_base
-        );
-        
-        detail::bind_buttons_to_tank(l);
-        detail::bind_buttons_to_toggle_wall(l);
-        detail::process_actions(l);
-    }
-        
-    namespace detail
-    {
-        void bind_buttons_to_tank(level & l)
-        {
-            for (auto & base_e : l.base)
-            {
-                if (!base_e || base_e.id() != entity_id::blue_button) continue;
-                ELIB_ASSERT(base_e.has<bindings>());
-                for (auto & actor_e : l.actors)
-                {
-                    if (!actor_e || actor_e.id() != entity_id::tank) continue;
-                    ELIB_ASSERT(actor_e.has<toggle_state>() 
-                            && actor_e.has(toggle_));
-                            
-                    base_e.get<bindings>()->push_back(&actor_e);
-                }
-            }
-        }
-        
-        void bind_buttons_to_toggle_wall(level & l)
-        {
-            for (auto & base_e :  l.base)
-            {
-                if (!base_e || base_e.id() != entity_id::green_button) continue;
-                ELIB_ASSERT(base_e.has<bindings>());
-                for (auto & other_e : l.base)
-                {
-                    if (!other_e || other_e.id() != entity_id::toggle_wall) continue;
-                    ELIB_ASSERT(other_e.has<toggle_state>() 
-                             && other_e.has(toggle_));
-                             
-                    base_e.get<bindings>()->push_back(&other_e);
-                }
+                entity & act_on = Concept<>(
+                    AtPosition(epos.pos), HasId(epos.id)
+                ).find(l.entity_list);
+                
+                actor_binds->push_back( &act_on );
             }
         }
         
         void process_actions(level & l)
         {
             std::vector<parsed_action> actions = parse_actions(l.id());
-            if (actions.empty()) return;
-                
+         
             for (auto & act : actions)
             {
                 if (act.action == action_type::bind)
@@ -660,6 +567,51 @@ do {                                                  \
                 }
             }
         }
-    }                                                       // namespace detail
-    
+        
+    }}                                                      // namespace detail
+        
+    void process_level(level & l)
+    {
+        init_chip(l.chip);
+
+        for (auto & e : l.entity_list)
+        {
+            log::debug("entity: %s", to_string(e.id()));
+        }
+        for (auto & e : EntityMatches<&is_actor>().filter(l.entity_list))
+        {
+            init_actor(e);
+        }
+        for (auto & e : EntityMatches<&is_item>().filter(l.entity_list))
+        {
+           init_item(e);
+        }
+        for (auto & e : EntityMatches<&is_base>().filter(l.entity_list))
+        {
+            init_base(e);
+        }
+       
+        
+        for (auto & butt : IsBlueButton().filter(l.entity_list))
+        {
+            REQUIRE_CONCEPT(butt, Bindable);
+            for (auto & tank : IsTank().filter(l.entity_list))
+            {
+                REQUIRE_CONCEPT(tank, Toggleable);
+                butt.get<bindings>()->push_back( &tank );
+            }
+        }
+        
+        for (auto & butt : IsGreenButton().filter(l.entity_list))
+        {
+            REQUIRE_CONCEPT(butt, Bindable);
+            for (auto & wall : IsToggleWall().filter(l.entity_list))
+            {
+                REQUIRE_CONCEPT(wall, Toggleable);
+                butt.get<bindings>()->push_back(&wall);
+            }
+        }
+        
+        detail::process_actions(l);
+    }
 }                                                           // namespace chips

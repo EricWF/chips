@@ -8,7 +8,7 @@
 namespace chips
 {
     // return true if the entity is drawn
-    bool draw(sf::RenderWindow &, entity const &);
+    bool draw(sf::RenderWindow &, entity const &, position at);
     void draw(sf::RenderWindow &, position, texture_index);
 }                                                           // namespace chips
 #endif /* CHIPS_DRAW_HPP */

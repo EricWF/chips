@@ -1,7 +1,7 @@
 #ifndef CHIPS_CORE_HPP
 #define CHIPS_CORE_HPP
 
-# include "chips/entity_fwd.hpp"
+# include "chips/entity/fwd.hpp"
 # include <elib/except.hpp>
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
@@ -40,8 +40,8 @@ namespace chips
     constexpr const unsigned level_view_height = 9;
     
     /// Information about the part of the window the game is displayed in
-    constexpr const unsigned level_window_xpos = 10;
-    constexpr const unsigned level_window_ypos = 10;
+    constexpr const unsigned level_window_xpos = 25;
+    constexpr const unsigned level_window_ypos = 25;
     constexpr const unsigned level_window_width = level_view_width * tile_width;
     constexpr const unsigned level_window_height = level_view_height * tile_height;
     
@@ -380,6 +380,14 @@ namespace chips
 #   pragma GCC diagnostic pop
 # endif
     
+    // forward //
+    enum class tile_id;
+    constexpr bool is_directional_texture(tile_id) noexcept;
+    
+    constexpr bool is_directional(entity_id id) noexcept
+    {
+        return is_directional_texture(static_cast<tile_id>(id));
+    }
     
 ////////////////////////////////////////////////////////////////////////////////
 //                                TILE_ID
@@ -579,6 +587,8 @@ namespace chips
             || (id >= tile_id::chip_swimming_N && id <= tile_id::germ_E)
             || (id >= tile_id::chip_N && id <= tile_id::chip_E);
     }
+    
+   
     
     /// check if the tile_id has black outline sprite 
     /// and white alpha channel sprite

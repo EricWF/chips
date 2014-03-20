@@ -60,10 +60,7 @@ BOOST_AUTO_TEST_CASE(concept_check)
     BOOST_CHECK(IsChip().check(e));
     BOOST_CHECK(!IsTank().check(e));
     
-    using MetaConcept = Concept<Alive, IsChip
-                             , position, direction
-                             , toggle_state, toggle_m
-                             >;
+    using MetaConcept = Concept<Alive, IsChip, Directional, Toggleable>;
     BOOST_CHECK(MetaConcept().check(e));
 }
 
