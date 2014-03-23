@@ -118,20 +118,25 @@ namespace chips { namespace logic
         {
             auto end = l.entity_list.end();
             
-            auto ice_pos = OnIce(self).find(l.entity_list);
-            if (ice_pos != end)
+            if (!self.get<inventory>().contains(entity_id::skates))
             {
-                move_on_ice(self, *ice_pos, l);
-                return;
+                auto ice_pos = OnIce(self).find(l.entity_list);
+                if (ice_pos != end)
+                {
+                    move_on_ice(self, *ice_pos, l);
+                    return;
+                }
             }
             
-            auto ff_pos = OnForceFloor(self).find(l.entity_list);
-            if (ff_pos != end)
+            if (!self.get<inventory>().contains(entity_id::suction_boots))
             {
-                move_on_force_floor(self, *ff_pos, l);
-                return;
+                auto ff_pos = OnForceFloor(self).find(l.entity_list);
+                if (ff_pos != end)
+                {
+                    move_on_force_floor(self, *ff_pos, l);
+                    return;
+                }
             }
-
         };
         
         e << inventory() 

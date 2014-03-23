@@ -15,7 +15,9 @@ namespace chips { namespace logic
         bool elem_floor_collide(entity const & self, entity const & other)
         {
             return same_position(self, other)
-                && !(is_chip(other) || other.id() == entity_id::block);
+                && !(is_chip(other) 
+                ||   is_actor(other)
+            );
         }
 
         
@@ -32,6 +34,10 @@ namespace chips { namespace logic
                     if (!inv.contains(entity_id::flippers))
                         other.kill();
                     return;
+                }
+                else if (is_monster(other) && !(other.id() == entity_id::glider))
+                {
+                    other.kill();
                 }
                 else if (other.id() == entity_id::block)
                 {
