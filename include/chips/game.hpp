@@ -145,7 +145,5 @@ namespace chips
         int gid, unsigned index
       , std::map<unsigned, tile_properties> const &
     );
-    
-    void process_level(level &);
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HPP */

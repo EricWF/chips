@@ -116,66 +116,22 @@ namespace chips { namespace logic
         auto chip_update_ =
         [](entity & self, level & l)
         {
-            auto & inv = self.get<inventory>();
-            self.remove<move_lock>();
-            if (OnIce(self).contains(l.entity_list) 
-                    && !inv.contains(entity_id::skates))
+            auto end = l.entity_list.end();
+            
+            auto ice_pos = OnIce(self).find(l.entity_list);
+            if (ice_pos != end)
             {
-                self << move_lock();
-                auto & ice = *OnIce(self).find(l.entity_list);
-                tile_id tid = ice.get<tile_id>();
-                direction d = self.get<direction>();
-                
-                if (tid == tile_id::ice_NW)
-                {
-                    if (d == direction::N)
-                        self(move_, direction::E, l);
-                    else
-                        self(move_, direction::S, l);
-                }
-                else if (tid == tile_id::ice_NE)
-                {
-                    if (d == direction::N) 
-                        self(move_, direction::W, l);
-                    else
-                        self(move_, direction::S, l);
-                }
-                else if (tid == tile_id::ice_SW)
-                {
-                    if (d == direction::S)
-                        self(move_, direction::E, l);
-                    else
-                        self(move_, direction::N, l);
-                }
-                else if (tid == tile_id::ice_SE)
-                {
-                    if (d == direction::S)
-                        self(move_, direction::W, l);
-                    else
-                        self(move_, direction::N, l);
-                }
-                else
-                {
-                    self(move_, self.get<direction>(), l);
-                }
+                move_on_ice(self, *ice_pos, l);
+                return;
             }
-            else if (OnForceFloor(self).contains(l.entity_list))
+            
+            auto ff_pos = OnForceFloor(self).find(l.entity_list);
+            if (ff_pos != end)
             {
-                for(auto & ff : OnForceFloor(self).filter(l.entity_list))
-                {
-                    if (!inv.contains(entity_id::suction_boots))
-                    {
-                        if (ff.get<tile_id>() == tile_id::force_floor_N)
-                            self(move_, direction::N, l);
-                        else if (ff.get<tile_id>() == tile_id::force_floor_S)
-                            self(move_, direction::S, l);
-                        else if (ff.get<tile_id>() == tile_id::force_floor_E)
-                            self(move_, direction::E, l);
-                        else if (ff.get<tile_id>() == tile_id::force_floor_W)
-                            self(move_, direction::W, l);
-                    }
-                }
+                move_on_force_floor(self, *ff_pos, l);
+                return;
             }
+
         };
         
         e << inventory() 

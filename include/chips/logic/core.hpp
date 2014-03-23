@@ -47,7 +47,18 @@ namespace chips { namespace logic
         }
     }
     
+    void move_on_ice(entity & e, entity const & ice, level &);
+    void move_on_force_floor(entity & e, entity const & ff, level &);
     
+    struct reading_order_cmp
+    {
+        bool operator()(entity const &, entity const &) const;
+    };
+    
+    struct reverse_reading_order_cmp
+    {
+        bool operator()(entity const &, entity const &) const;
+    };
 }}                                                          // namespace chips
 
 namespace chips
@@ -260,6 +271,7 @@ namespace chips
     using IsFire       = Concept<EntityIs<entity_id::fire>>;
     using IsIce        = Concept<EntityIs<entity_id::ice>>;
     using IsForceFloor = Concept<EntityIs<entity_id::force_floor>>;
+    using IsTeleport   = Concept<EntityIs<entity_id::teleport>>;
     
     using OnExit       = OnEntity<entity_id::exit>;
     using OnWater      = OnEntity<entity_id::water>;

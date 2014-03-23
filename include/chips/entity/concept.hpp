@@ -109,7 +109,11 @@ namespace chips
         {
             using ref_type = decltype(std::ref(*b));
             std::vector<ref_type> filtered;
-            std::copy_if(b, e, std::back_inserter(filtered), *this);
+            std::copy_if(
+                b, e
+              , std::back_inserter(filtered)
+              , static_cast<Derived const &>(*this)
+            );
             return filtered;
         }
         
@@ -118,7 +122,11 @@ namespace chips
         {
             using std::begin; using std::end;
             std::vector<entity_ref> filtered;
-            std::copy_if(begin(s), end(s), std::back_inserter(filtered), *this);
+            std::copy_if(
+                begin(s), end(s)
+              , std::back_inserter(filtered)
+              , static_cast<Derived const &>(*this)
+            );
             return filtered;
         }
         
@@ -139,10 +147,30 @@ namespace chips
               );
         }
         
+        
+        
         template <class Sequence>
         filter_view<Sequence const, Derived> filter(Sequence const & s) const
         {
             return filter_view<Sequence const, Derived>(
+                s, *static_cast<Derived const*>(this)
+              );
+        }
+        
+        template <class Sequence>
+        reverse_filter_view<Sequence, Derived>
+        rfilter(Sequence & s) const
+        {
+            return reverse_filter_view<Sequence, Derived>(
+                s, *static_cast<Derived const*>(this)
+              );
+        }
+        
+        template <class Sequence>
+        reverse_filter_view<Sequence const, Derived> 
+        rfilter(Sequence const & s) const
+        {
+            return reverse_filter_view<Sequence const, Derived>(
                 s, *static_cast<Derived const*>(this)
               );
         }

@@ -345,6 +345,30 @@ namespace chips { namespace logic
         }
         
         ////////////////////////////////////////////////////////////////////////
+        void pop_up_wall_update(entity & e, level & l)
+        {
+            if (!SamePosition(e).contains(l.entity_list) 
+                && e.get<position>() != l.chip.get<position>())
+            {
+                clean_entity(e);
+                e.id(entity_id::wall);
+                e << method(collides_, common::always_collides_);
+            }
+        }
+        
+        void init_pop_up_wall(entity & e, level &)
+        {
+            
+            auto on_col =
+            [](entity & self, entity &, level &)
+            {
+                self << method(update_, pop_up_wall_update);
+            };
+            
+            e << method(on_collision_, on_col);
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
         void init_blue_wall(entity & e, level &)
         {
             auto real_on_col =
@@ -396,6 +420,89 @@ namespace chips { namespace logic
               << method(clone_, clone);
         }
         
+        struct teleport_order
+        {
+            teleport_order(entity const & tele)
+              : m_e(&tele)
+            {}
+            
+            bool operator()(entity const & lhs, entity const & rhs) const
+            {
+                ELIB_ASSERT(lhs && rhs);
+                reading_order_cmp cmp;
+                reverse_reading_order_cmp rcmp;
+                
+                position lp, rp, ep;
+                lhs >> lp; rhs >> rp; *m_e >> ep;
+                
+                
+                if (lp == ep)
+                    return false;
+                else if (rp == ep)
+                    return true;
+                else if (rcmp(lhs, *m_e))
+                {
+                    if (!rcmp(rhs, *m_e))
+                        return true;
+                    return cmp(lhs, rhs);
+                }
+                else
+                {
+                    if (rcmp(rhs, *m_e))
+                        return false;
+                    return cmp(lhs, rhs);
+                }
+            }
+        private:
+            entity const* m_e;
+        };
+        
+        void init_teleport(entity & t, level &)
+        {
+            auto on_col = 
+            [](entity & self, entity & e, level & l)
+            {
+                auto tele_list = IsTeleport().apply_filter(l.entity_list);
+               
+                ELIB_ASSERT(tele_list.size() > 0);
+                teleport_order cmp(self);
+                std::sort(
+                    tele_list.begin() 
+                  , tele_list.end()
+                  , cmp
+                );
+                
+                tele_list.erase(tele_list.end()--);
+                
+                for (auto & tmp_wrap : tele_list)
+                {
+                    entity const & tmp = tmp_wrap;
+                    position tmp_pos =
+                        move(tmp.get<position>(), e.get<direction>(), 1);
+                    entity dummy_ent(e.id(), tmp_pos);
+                    
+                    bool can_move = true;
+                    for (auto & e_at_pos : AtPosition(tmp_pos).filter(l.entity_list))
+                    {
+                        if (e_at_pos.has(collides_) 
+                            && e_at_pos(collides_, dummy_ent))
+                        {
+                            can_move = false;
+                            break;
+                        }
+                    }
+                    
+                    if (can_move)
+                    {
+                        e << tmp_pos;
+                        return;
+                    }
+                }
+            };
+            
+            t << method(on_collision_, on_col);
+        }
+        
 #if defined(__GNUC__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wswitch-enum"
@@ -417,6 +524,9 @@ namespace chips { namespace logic
                     break;
                 case entity_id::toggle_wall:
                     init_toggle_wall(e, l);
+                    break;
+                case entity_id::pop_up_wall:
+                    init_pop_up_wall(e, l);
                     break;
                 case entity_id::blue_wall:
                     init_blue_wall(e, l);
@@ -459,6 +569,9 @@ namespace chips { namespace logic
                     break;
                 case entity_id::trap:
                     init_trap(e, l);
+                    break;
+                case entity_id::teleport:
+                    init_teleport(e, l);
                     break;
                 case entity_id::bomb:
                     init_bomb(e, l);

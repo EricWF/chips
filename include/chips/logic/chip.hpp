@@ -13,6 +13,8 @@ namespace chips
     class entity;
     class level;
     
+     chips_state get_chips_state(level const & l);
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                               INVENTORY
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,6 +61,6 @@ namespace chips
     
     using HasInventory = EntityHas<inventory>;
     
-    chips_state get_chips_state(level const & l);
+   
 }                                                           // namespace chips
 #endif /* CHIPS_LOGIC_CHIP_HPP */

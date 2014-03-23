@@ -518,7 +518,6 @@
  <tile id="184">
   <properties>
    <property name="entity_id" value="pop_up_wall"/>
-   <property name="toggle_state" value="false"/>
   </properties>
  </tile>
  <tile id="185">

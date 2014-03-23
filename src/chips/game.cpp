@@ -304,6 +304,57 @@ namespace chips
         return actions;
     }
 
+     namespace detail { namespace
+    {
+        
+        void process_bind(level & l, parsed_action & act)
+        {
+            auto pos = AtLocation(act.actor).find(l.entity_list);
+            ELIB_ASSERT(pos != l.entity_list.end());
+            
+            entity & actor = *pos;
+            REQUIRE_CONCEPT(actor, EntityHas<entity_list>);
+            entity_list & elist = actor.get<entity_list>();
+            
+            for (auto & dest : act.act_on)
+            {
+                elist->push_back(dest);
+            }
+        }
+        
+        void process_actions(level & l)
+        {
+            std::vector<parsed_action> actions = parse_actions(l.id());
+         
+            for (auto & act : actions)
+            {
+                if (act.action == action_type::bind)
+                {
+                    detail::process_bind(l, act);
+                }
+                else
+                {
+                    ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
+                        "Unknown action type %s", to_string(act.action)
+                    )));
+                }
+            }
+        }
+        
+        void process_level(level & l)
+        {
+            logic::init(l.chip, l);
+            for (auto & e : l.entity_list)
+            {
+                log::debug("entity: %s", to_string(e.id()));
+                logic::init(e, l);
+            }
+            detail::process_actions(l);
+        }
+    }}                                                      // namespace detail
+        
+   
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                             CREATION
 ////////////////////////////////////////////////////////////////////////////////
@@ -357,7 +408,7 @@ namespace chips
     
         ELIB_ASSERT(l.chip);
     
-        process_level(l);
+        detail::process_level(l);
     
         return l;
     }
@@ -408,53 +459,5 @@ namespace chips
     }
 
 
-    namespace detail { namespace
-    {
-        
-        void process_bind(level & l, parsed_action & act)
-        {
-            auto pos = AtLocation(act.actor).find(l.entity_list);
-            ELIB_ASSERT(pos != l.entity_list.end());
-            
-            entity & actor = *pos;
-            REQUIRE_CONCEPT(actor, EntityHas<entity_list>);
-            entity_list & elist = actor.get<entity_list>();
-            
-            for (auto & dest : act.act_on)
-            {
-                elist->push_back(dest);
-            }
-        }
-        
-        void process_actions(level & l)
-        {
-            std::vector<parsed_action> actions = parse_actions(l.id());
-         
-            for (auto & act : actions)
-            {
-                if (act.action == action_type::bind)
-                {
-                    detail::process_bind(l, act);
-                }
-                else
-                {
-                    ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                        "Unknown action type %s", to_string(act.action)
-                    )));
-                }
-            }
-        }
-        
-    }}                                                      // namespace detail
-        
-    void process_level(level & l)
-    {
-        logic::init(l.chip, l);
-        for (auto & e : l.entity_list)
-        {
-            log::debug("entity: %s", to_string(e.id()));
-            logic::init(e, l);
-        }
-        detail::process_actions(l);
-    }
+   
 }                                                           // namespace chips

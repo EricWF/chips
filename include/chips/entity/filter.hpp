@@ -77,10 +77,12 @@ namespace chips
         );
         using detected_iter  = decltype(elib::declval<Sequence>().begin());
         using detected_citer = decltype(elib::declval<Sequence>().cbegin());
+        using detected_riter = decltype(elib::declval<Sequence>().rbegin());
+        using detected_criter = decltype(elib::declval<Sequence>().crbegin());
     public:
         using iterator       = filter_iterator<detected_iter, ConceptT>;
         using const_iterator = filter_iterator<detected_citer, ConceptT>;
-            
+        
     public:
         explicit filter_view(Sequence & s)
           : m_seq(elib::addressof(s))
@@ -133,6 +135,24 @@ namespace chips
             ); 
         }
         
+        const_iterator cbegin() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->cbegin()
+              , m_seq->cend()
+            ); 
+        }
+        
+        const_iterator cend() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->cend()
+              , m_seq->cend()
+            ); 
+        }
+        
         void swap(filter_view & other) noexcept
         {
             using std::swap;
@@ -170,6 +190,130 @@ namespace chips
     
     template <class Seq, class ConceptT>
     auto end(filter_view<Seq, ConceptT> const & v)
+    ELIB_AUTO_RETURN( v.end() )
+    
+    ////////////////////////////////////////////////////////////////////////////
+    template <class Sequence, class ConceptT>
+    class reverse_filter_view
+    {
+    private:
+        static_assert(
+            is_concept<ConceptT>::value
+          , "Must be a concept type"
+        );
+        using detected_iter = decltype(elib::declval<Sequence>().rbegin());
+        using detected_citer = decltype(elib::declval<Sequence>().crbegin());
+    public:
+        using iterator       = filter_iterator<detected_iter, ConceptT>;
+        using const_iterator = filter_iterator<detected_citer, ConceptT>;
+        
+    public:
+        explicit reverse_filter_view(Sequence & s)
+          : m_seq(elib::addressof(s))
+        {}
+        
+        reverse_filter_view(Sequence & s, ConceptT p) 
+          : m_seq(elib::addressof(s)), m_pred(p)
+        {}
+        
+        ELIB_DEFAULT_COPY_MOVE(reverse_filter_view);
+        
+        reverse_filter_view & operator=(Sequence & s)  
+        { 
+            m_seq = elib::addressof(s); 
+        }
+        
+        iterator begin() 
+        { 
+            return iterator(
+                m_pred
+              , m_seq->rbegin()
+              , m_seq->rend()
+            ); 
+        }
+        
+        iterator end() 
+        { 
+            return iterator(
+                m_pred
+              , m_seq->rend()
+              , m_seq->rend()
+            ); 
+        }
+        
+        const_iterator begin() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->rbegin()
+              , m_seq->rend()
+            ); 
+        }
+        
+        const_iterator end() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->rend()
+              , m_seq->rend()
+            ); 
+        }
+        
+        const_iterator cbegin() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->rbegin()
+              , m_seq->rend()
+            ); 
+        }
+        
+        const_iterator cend() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->rend()
+              , m_seq->rend()
+            ); 
+        }
+        
+        void swap(reverse_filter_view & other) noexcept
+        {
+            using std::swap;
+            swap(m_seq, other.m_seq);
+            swap(m_pred, other.m_pred);
+        }
+        
+    private:
+        Sequence *m_seq;
+        ConceptT m_pred;
+    };
+    
+    
+    template <class Seq, class ConceptT>
+    void swap(
+        reverse_filter_view<Seq, ConceptT> & lhs
+      , reverse_filter_view<Seq, ConceptT> & rhs
+      ) noexcept
+    {
+        lhs.swap(rhs);
+    }
+    
+    
+    template <class Seq, class ConceptT>
+    auto begin(reverse_filter_view<Seq, ConceptT> & v) 
+    ELIB_AUTO_RETURN( v.begin() )
+    
+    template <class Seq, class ConceptT>
+    auto end(reverse_filter_view<Seq, ConceptT> & v)
+    ELIB_AUTO_RETURN( v.end() )
+    
+    template <class Seq, class ConceptT>
+    auto begin(reverse_filter_view<Seq, ConceptT> const & v) 
+    ELIB_AUTO_RETURN( v.begin() )
+    
+    template <class Seq, class ConceptT>
+    auto end(reverse_filter_view<Seq, ConceptT> const & v)
     ELIB_AUTO_RETURN( v.end() )
 }                                                           // namespace chips
 #endif /* CHIPS_ENTITY_FILTER_HPP */
