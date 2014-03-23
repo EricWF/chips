@@ -80,14 +80,28 @@ namespace chips { namespace logic
             auto fireball_update =
             [](entity & self, level & l)
             {
-                if (self.has<move_lock>()) return;
+               ELIB_ASSERT(self);
+                
+                if (self.has<move_lock>()) 
+                    return;
+                    
                 position p; direction d;
                 self >> p >> d;
-                self(move_, d, l);
-                if (self.get<position>() == p)
-                {
+             
+                auto & el  = l.entity_list;
+                bool front = ColFront(self).contains(el);
+                bool back  = ColBack(self).contains(el);
+                bool left  = ColLeft(self).contains(el);
+                bool right = ColRight(self).contains(el);
+                
+                if (!front)
+                    self(move_, d, l);
+                else if (!right)
                     self(move_, turn_right(d), l);
-                }
+                else if (!left)
+                    self(move_, turn_left(d), l);
+                else if (!back)
+                    self(move_, turn_around(d), l);
             };
                 
             e << method(update_, fireball_update);
@@ -153,17 +167,29 @@ namespace chips { namespace logic
             [](entity & self, level & l)
             {
                 ELIB_ASSERT(self);
-                if (self.has<move_lock>()) return;
+                
+                if (self.has<move_lock>()) 
+                    return;
+                    
                 position p; direction d;
                 self >> p >> d;
-                self(move_, d, l);
-                if (self.get<position>() != p) return;
-                self(move_, turn_left(d), l);
-                if (self.get<position>() != p) return;
-                self(move_, turn_right(d), l);
-                if (self.get<position>() != p) return;
-                self(move_, turn_around(d), l);
+             
+                auto & el  = l.entity_list;
+                bool front = ColFront(self).contains(el);
+                bool back  = ColBack(self).contains(el);
+                bool left  = ColLeft(self).contains(el);
+                bool right = ColRight(self).contains(el);
+                
+                if (!front)
+                    self(move_, d, l);
+                else if (!left)
+                    self(move_, turn_left(d), l);
+                else if (!right)
+                    self(move_, turn_right(d), l);
+                else if (!back)
+                    self(move_, turn_around(d), l);
             };
+            
             e << method(update_, glider_update);
         }
         

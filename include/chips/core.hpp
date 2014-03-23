@@ -50,6 +50,10 @@ namespace chips
     constexpr const unsigned scoreboard_width = (25 * 2) + (4 * tile_width);
     constexpr const unsigned scoreboard_height = level_window_height;
     
+    constexpr const unsigned helptext_xpos = level_window_xpos;
+    constexpr const unsigned helptext_ypos = level_window_ypos
+                                           + level_window_height + 30;
+    
     constexpr const unsigned inventory_xpos = scoreboard_xpos + 25;
     constexpr const unsigned inventory_ypos = 
         (scoreboard_ypos + scoreboard_height) - (2 * tile_height) - 25;

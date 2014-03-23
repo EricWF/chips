@@ -139,7 +139,7 @@ namespace chips
         }
         
         m_draw_chip(win, detail::entity_window_position(tl_pos, m_level.chip));
-        
+        m_draw_helptext(win);
         m_draw_scoreboard(win);
         
     }
@@ -166,6 +166,21 @@ namespace chips
         chips::draw(win, chip_dummy, win_pos);
     }
     
+    void game_handler::m_draw_helptext(sf::RenderWindow & win) const
+    {
+        auto CheckHelp = Concept<EntityIs<entity_id::hint>>(
+            AtPosition(m_level.chip.get<position>())
+          );
+        if (CheckHelp.contains(m_level.entity_list))
+        {
+            auto & res = resource_manager::get();
+            sf::Text txt(m_level.help(), res[font_uid::arial], 25);
+            txt.setPosition((float)helptext_xpos, (float)helptext_ypos);
+            txt.setColor(sf::Color::Red);
+            win.draw(txt);
+        }
+    }
+    
     void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
     {
         sf::RectangleShape rect{
@@ -178,6 +193,7 @@ namespace chips
         m_draw_chip_count(win);
         m_draw_inventory(win);
     }
+    
     
     void game_handler::m_draw_chip_count(sf::RenderWindow & win) const
     {

@@ -43,6 +43,7 @@ namespace chips
         
         void m_draw_chip(sf::RenderWindow &, position win_pos) const;
         void m_draw_scoreboard(sf::RenderWindow &) const;
+        void m_draw_helptext(sf::RenderWindow &) const;
         void m_draw_chip_count(sf::RenderWindow &) const;
         void m_draw_inventory(sf::RenderWindow &) const;
     private:
