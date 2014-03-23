@@ -406,6 +406,25 @@ namespace chips { namespace logic
             }
         }
         
+        void init_thief(entity & e, level &)
+        {
+            auto on_col =
+            [](entity &, entity & other, level &)
+            {
+                if (!is_chip(other)) return;
+                REQUIRE_CONCEPT(other, HasInventory);
+                auto & inv = other.get<inventory>();
+                
+                inv.erase_item(entity_id::flippers);
+                inv.erase_item(entity_id::fire_boots);
+                inv.erase_item(entity_id::skates);
+                inv.erase_item(entity_id::suction_boots);
+            };
+            
+            e << method(on_collision_, on_col)
+              << method(collides_, common::collides_with_monster_);
+        }
+        
         ////////////////////////////////////////////////////////////////////////
         void init_clone_machine(entity & e, level &)
         {
@@ -420,6 +439,7 @@ namespace chips { namespace logic
               << method(clone_, clone);
         }
         
+        ////////////////////////////////////////////////////////////////////////
         struct teleport_order
         {
             teleport_order(entity const & tele)
@@ -572,6 +592,9 @@ namespace chips { namespace logic
                     break;
                 case entity_id::teleport:
                     init_teleport(e, l);
+                    break;
+                case entity_id::thief:
+                    init_thief(e, l);
                     break;
                 case entity_id::bomb:
                     init_bomb(e, l);
