@@ -94,6 +94,23 @@ namespace chips { namespace logic
         }
         
         ////////////////////////////////////////////////////////////////////////
+        void init_pink_ball(entity & e, level &)
+        {
+            auto update =
+            [](entity & self, level & l)
+            {
+                bool front = ColFront(self).contains(l.entity_list);
+                bool back = ColBack(self).contains(l.entity_list);
+                if (!front)
+                    self(move_, self.get<direction>(), l);
+                else if (!back)
+                    self(move_, turn_around(self.get<direction>()), l);
+            };
+            
+            e << method(update_, update);
+        }
+        
+        ////////////////////////////////////////////////////////////////////////
         void init_teeth(entity & e, level &)
         {
             auto teeth_update =
@@ -198,7 +215,7 @@ namespace chips { namespace logic
                     init_fireball(e, l);
                     break;
                 case entity_id::pink_ball:
-                    // TODO
+                    init_pink_ball(e, l);
                     break;
                 case entity_id::tank:
                     init_tank(e, l);
