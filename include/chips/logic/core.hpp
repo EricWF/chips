@@ -168,14 +168,14 @@ namespace chips
             {
                 if (!e || !e.has<position>()) return false;
 
-                return e.get<position>() == m_pos 
+                return e.get<position>() == m_pos
                     && m_ent.id() != e.id()
                     && (!DoColl || (e.has(collides_) && e(collides_, m_ent)));
             }
             
         private:
-            entity m_ent;
             position m_pos;
+            entity m_ent;
         };
 
     }                                                       // namespace detail
@@ -189,7 +189,8 @@ namespace chips
         
         bool test(entity const & e) const
         {
-            return e.has(collides_) && e(collides_, *m_eptr);
+            return &e != m_eptr
+                  && e.has(collides_) && e(collides_, *m_eptr);
         }
 
     private:

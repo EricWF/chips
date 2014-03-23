@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="32" height="32" tilewidth="32" tileheight="32">
  <properties>
-  <property name="chip_count" value="0"/>
+  <property name="chip_count" value="3"/>
   <property name="help" value="Don't Die"/>
   <property name="level" value="7"/>
  </properties>
@@ -275,11 +275,11 @@
    <tile gid="1"/>
    <tile gid="14"/>
    <tile gid="41"/>
-   <tile gid="41"/>
+   <tile gid="1"/>
    <tile gid="41"/>
    <tile gid="170"/>
    <tile gid="54"/>
-   <tile gid="54"/>
+   <tile gid="1"/>
    <tile gid="54"/>
    <tile gid="54"/>
    <tile gid="54"/>
@@ -507,8 +507,8 @@
    <tile gid="14"/>
    <tile gid="120"/>
    <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
+   <tile gid="14"/>
+   <tile gid="14"/>
    <tile gid="14"/>
    <tile gid="41"/>
    <tile gid="41"/>
@@ -539,8 +539,8 @@
    <tile gid="14"/>
    <tile gid="1"/>
    <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
+   <tile gid="29"/>
+   <tile gid="67"/>
    <tile gid="14"/>
    <tile gid="28"/>
    <tile gid="14"/>
@@ -1034,7 +1034,7 @@
    <tile gid="1"/>
   </data>
  </layer>
- <layer name="Items" width="32" height="32" visible="0">
+ <layer name="Items" width="32" height="32">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -1303,11 +1303,11 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
+   <tile gid="27"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="27"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -1632,7 +1632,7 @@
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
-   <tile gid="0"/>
+   <tile gid="27"/>
    <tile gid="0"/>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2062,7 +2062,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Actors" width="32" height="32" visible="0" opacity="0.64">
+ <layer name="Actors" width="32" height="32" opacity="0.64">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

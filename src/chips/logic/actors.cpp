@@ -94,6 +94,42 @@ namespace chips { namespace logic
         }
         
         ////////////////////////////////////////////////////////////////////////
+        void init_teeth(entity & e, level &)
+        {
+            auto teeth_update =
+            [](entity & self, level & l)
+            {
+                if (self.has<move_lock>()) return;
+                
+                position cp, p;
+                l.chip >> cp; self >> p;
+                
+                direction hdir, vdir;
+                hdir = cp.x < p.x ? direction::W : direction::E;
+                vdir = cp.y < p.y ? direction::N : direction::S;
+                unsigned hmov = cp.x < p.x ? p.x - cp.x : cp.x - p.x;
+                unsigned vmov = cp.y < p.y ? p.y - cp.y : cp.y - p.y;
+            
+                if (hmov == 0 && vmov == 0) return;
+                    
+                if (vmov >= hmov)
+                {
+                    self(move_, vdir, l);
+                    if (self.get<position>() != p)
+                        return;
+                }
+                
+                // virtical move wasnt taken
+                if (hmov != 0)
+                    self(move_, hdir, l);
+             
+            };    
+            
+            e << method(update_, teeth_update);
+        }
+        
+        
+        ////////////////////////////////////////////////////////////////////////
         void init_glider(entity & e, level &)
         {
             auto glider_update =
@@ -171,7 +207,7 @@ namespace chips { namespace logic
                     init_glider(e, l);
                     break;
                 case entity_id::teeth:
-                    // TODO
+                    init_teeth(e, l);
                     break;
                 case entity_id::walker:
                     // TODO
