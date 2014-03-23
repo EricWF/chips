@@ -23,6 +23,7 @@ namespace elib { namespace enumeration
     basic_enum_traits<::chips::action_type>::name_map =
         {
             _(bind)
+          , _(clone)
         };
 #undef _
 #if defined(__clang__)
@@ -32,20 +33,32 @@ namespace elib { namespace enumeration
 
 namespace chips
 {
-    
-  
-////////////////////////////////////////////////////////////////////////////////
-//                               LEVEL
-////////////////////////////////////////////////////////////////////////////////
-    
 
-    
 ////////////////////////////////////////////////////////////////////////////////
 //                               PARSING
 ////////////////////////////////////////////////////////////////////////////////
     
     namespace detail { namespace 
     {
+        /// Convert a position on the 32x32 grid to an index in an array
+        constexpr std::size_t 
+        to_index(position p) noexcept
+        {
+            return static_cast<std::size_t>(
+                (p.y * level_height) + p.x
+            );
+        }
+        
+        /// Convert an index in an array to a position on the 32x32 grid
+        constexpr position 
+        to_position(std::size_t index) noexcept
+        {
+            return position{
+                static_cast<unsigned>(index % level_height)
+              , static_cast<unsigned>(index / level_height)
+            };
+        }
+        
         ////////////////////////////////////////////////////////////////////////
         /// A guarded access wrapper for XML Element Access
         template <class T>
@@ -101,7 +114,7 @@ namespace chips
                 }
             }
             
-            ELIB_ASSERT(has_id && tp.second.properties.size() >= 1);
+            ELIB_ASSERT(has_id);
             return tp;
         }
         
@@ -223,9 +236,9 @@ namespace chips
     
     namespace detail { namespace 
     {
-        entity_location parse_entity_location(TiXmlElement & elem)
+        entity_locator parse_entity_location(TiXmlElement & elem)
         {
-            entity_location loc;
+            entity_locator loc;
             loc.id = to_entity_id( query_attr<std::string>(elem, "entity_id") );
             loc.pos.x = query_attr<unsigned>(elem, "x");
             loc.pos.y = query_attr<unsigned>(elem, "y");
@@ -258,7 +271,7 @@ namespace chips
         std::vector<parsed_action> actions;
         
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "level%u.actions", level_num
+            CHIPS_RESOURCE_ROOT "actions%u.xml", level_num
         );
         
         TiXmlDocument doc(fname.c_str());
@@ -356,7 +369,7 @@ namespace chips
       )
     {
         // get the position of the entity via the index.
-        position pos = to_position(index);
+        position pos = detail::to_position(index);
         
         // if the gid is zero there is no entity at that location
         // create a dead entity and return it.
@@ -382,22 +395,6 @@ namespace chips
             {
                 e.set( to_direction(p.second) );
             }
-            else if (p.first == "velocity")
-            {
-                e.set( to_velocity(p.second) );
-            }
-            else if (p.first == "toggle_state")
-            {
-                e << to_toggle_state(p.second) 
-                  << method(toggle_, common::toggle_);
-            }
-            else if (p.first == "bindings")
-            {
-                ELIB_ASSERT(p.second == "");
-                e << bindings() 
-                  << method(notify_, common::notify_)
-                  << method(on_collision_, common::notify_on_collision_);
-            }
             else
             {
                 ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
@@ -414,25 +411,18 @@ namespace chips
     namespace detail { namespace
     {
         
-        void process_bind(level & l, parsed_action const & act)
+        void process_bind(level & l, parsed_action & act)
         {
-            ELIB_ASSERT(act.action == action_type::bind);
+            auto pos = AtLocation(act.actor).find(l.entity_list);
+            ELIB_ASSERT(pos != l.entity_list.end());
             
+            entity & actor = *pos;
+            REQUIRE_CONCEPT(actor, EntityHas<entity_list>);
+            entity_list & elist = actor.get<entity_list>();
             
-            entity & actor = Concept<>(
-                AtPosition(act.actor.pos), HasId(act.actor.id)
-            ).find(l.entity_list);
-            
-            REQUIRE_CONCEPT(actor, Bindable);
-            bindings & actor_binds = actor.get<bindings>();
-            
-            for (auto & epos : act.act_on)
+            for (auto & dest : act.act_on)
             {
-                entity & act_on = Concept<>(
-                    AtPosition(epos.pos), HasId(epos.id)
-                ).find(l.entity_list);
-                
-                actor_binds->push_back( &act_on );
+                elist->push_back(dest);
             }
         }
         
@@ -460,49 +450,11 @@ namespace chips
     void process_level(level & l)
     {
         logic::init(l.chip, l);
-
         for (auto & e : l.entity_list)
         {
             log::debug("entity: %s", to_string(e.id()));
-        }
-        for (auto & e : EntityMatches<&is_actor>().filter(l.entity_list))
-        {
             logic::init(e, l);
         }
-        for (auto & e : EntityMatches<&is_item>().filter(l.entity_list))
-        {
-           logic::init(e, l);
-        }
-        for (auto & e : EntityMatches<&is_base>().filter(l.entity_list))
-        {
-            logic::init(e, l);
-        }
-       
-        for (auto & e : EntityIs<entity_id::socket>().filter(l.entity_list))
-        {
-            e << sock_chip_count(l.chip_count());
-        }
-        
-        for (auto & butt : IsBlueButton().filter(l.entity_list))
-        {
-            REQUIRE_CONCEPT(butt, Bindable);
-            for (auto & tank : IsTank().filter(l.entity_list))
-            {
-                REQUIRE_CONCEPT(tank, Toggleable);
-                butt.get<bindings>()->push_back( &tank );
-            }
-        }
-        
-        for (auto & butt : IsGreenButton().filter(l.entity_list))
-        {
-            REQUIRE_CONCEPT(butt, Bindable);
-            for (auto & wall : IsToggleWall().filter(l.entity_list))
-            {
-                REQUIRE_CONCEPT(wall, Toggleable);
-                butt.get<bindings>()->push_back(&wall);
-            }
-        }
-        
         detail::process_actions(l);
     }
 }                                                           // namespace chips

@@ -23,12 +23,14 @@ do {                                                  \
     }                                                 \
 } while (false)
 #
+    ////////////////////////////////////////////////////////////////////////////
     void inventory::add_item(entity_id item)
     {
         CHIPS_THROW_BAD_ITEM(item);
         m_items[item]++;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void inventory::use_item(entity_id item, unsigned ucount)
     {
         CHIPS_THROW_BAD_ITEM(item);
@@ -44,22 +46,20 @@ do {                                                  \
         
         ELIB_ASSERT(pos->second > 0);
         
-        if (pos->second <= ucount)
-        {
+        if (pos->second <= ucount) 
             m_items.erase(pos);
-        }
         else
-        {
             pos->second -= ucount;
-        }
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void inventory::erase_item(entity_id item)
     {
         CHIPS_THROW_BAD_ITEM(item);
         m_items.erase(item);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     unsigned inventory::count(entity_id item) const
     {
         CHIPS_THROW_BAD_ITEM(item);
@@ -68,6 +68,7 @@ do {                                                  \
         return pos->second;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     bool inventory::contains(entity_id item) const
     {
         CHIPS_THROW_BAD_ITEM(item);
@@ -75,11 +76,38 @@ do {                                                  \
     }
     
 #undef CHIPS_THROW_BAD_ITEM
+    
+    ////////////////////////////////////////////////////////////////////////////
+    chips_state get_chips_state(level const & l)
+    {
+        entity const & chip = l.chip;
+        auto const & el = l.entity_list;
+        
+        if (OnWater(chip).contains(el))
+        {
+            if (chip) return chips_state::swimming;
+            else      return chips_state::drowned;
+        }
+        
+        if (OnFire(chip).contains(el))
+        {
+            if (chip) return chips_state::normal;
+            else      return chips_state::burned_fire;
+        }
+        
+        if (OnEntity<entity_id::fake_exit>(chip).contains(el))
+        {
+            return chips_state::fake_exit;
+        }
+      
+        return chips_state::normal;
+    }
+
 }                                                           // namespace chips
 
 namespace chips { namespace logic 
 {
-
+    ////////////////////////////////////////////////////////////////////////////
     void init_chip(entity & e, level &)
     {
         ELIB_ASSERT(is_chip(e));
@@ -89,50 +117,15 @@ namespace chips { namespace logic
         [](entity & self, level & l)
         {
             auto & inv = self.get<inventory>();
-            
-            auto InWater = Concept<EntityIs<entity_id::water>>(
-                AtPosition(self.get<position>())
-            );
-            
-            auto InFire = Concept<EntityIs<entity_id::fire>>(
-                AtPosition(self.get<position>())
-            );
-            
-            auto OnIce = Concept<EntityIs<entity_id::ice>>(
-                AtPosition(self.get<position>())
-            );
-            
-            auto OnForceFloor = Concept<EntityIs<entity_id::force_floor>>(
-                AtPosition(self.get<position>())
-            );
-            
-            self << moveable(true);
-            if (InWater.contains(l.entity_list))
+            self.remove<move_lock>();
+            if (OnIce(self).contains(l.entity_list) 
+                    && !inv.contains(entity_id::skates))
             {
-                self.remove<texture_type>();
-                if (self)
-                    self << static_cast<tile_id>(chips_state::swimming);
-                else
-                {
-                    self << static_cast<tile_id>(chips_state::drowned);
-                    self.remove<direction>();
-                }
-            }
-            else if (InFire.contains(l.entity_list))
-            {
-                if (!self)
-                {
-                    self << static_cast<tile_id>(chips_state::burned_fire);
-                    self.remove<texture_type>();
-                    self.remove<direction>();
-                }
-            }
-            else if (OnIce.contains(l.entity_list) && !inv.contains(entity_id::skates))
-            {
-                self << moveable(false);
-                auto & ice = OnIce.find(l.entity_list);
+                self << move_lock();
+                auto & ice = *OnIce(self).find(l.entity_list);
                 tile_id tid = ice.get<tile_id>();
                 direction d = self.get<direction>();
+                
                 if (tid == tile_id::ice_NW)
                 {
                     if (d == direction::N)
@@ -142,7 +135,7 @@ namespace chips { namespace logic
                 }
                 else if (tid == tile_id::ice_NE)
                 {
-                    if (d == direction::N)
+                    if (d == direction::N) 
                         self(move_, direction::W, l);
                     else
                         self(move_, direction::S, l);
@@ -166,9 +159,9 @@ namespace chips { namespace logic
                     self(move_, self.get<direction>(), l);
                 }
             }
-            else if (OnForceFloor.contains(l.entity_list))
+            else if (OnForceFloor(self).contains(l.entity_list))
             {
-                for(auto & ff : OnForceFloor.filter(l.entity_list))
+                for(auto & ff : OnForceFloor(self).filter(l.entity_list))
                 {
                     if (!inv.contains(entity_id::suction_boots))
                     {
@@ -183,19 +176,11 @@ namespace chips { namespace logic
                     }
                 }
             }
-            else
-            {
-                self.remove<tile_id>();
-                self << texture_type::cutout;
-            }
         };
         
-        e << texture_type::cutout << chips_state::normal 
-          << inventory() << chip_at_exit(false)
+        e << inventory() 
           << method(update_, chip_update_)
           << method(move_, common::move_);
-          
-        
     }
     
     void process_chip(entity &, level &)

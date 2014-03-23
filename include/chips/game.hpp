@@ -3,11 +3,10 @@
 
 # include "chips/core.hpp"
 # include "chips/entity.hpp"
+# include "chips/logic/fwd.hpp"
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
-# include <elib/fmt.hpp>
 # include <elib/lexical_cast.hpp>
-# include <functional> /* for std::reference_wrapper */
 # include <map>
 # include <string>
 # include <vector>
@@ -16,14 +15,10 @@
 
 namespace chips
 {
-
 ////////////////////////////////////////////////////////////////////////////////
 //                                LEVEL
 ////////////////////////////////////////////////////////////////////////////////
 
-    /// TODO make this better.
-    /// only access to id and chip_count are guarded since
-    /// they should not be changed.
     class level
     {
     public:
@@ -53,7 +48,6 @@ namespace chips
         std::string m_help;
     };
     
-
 ////////////////////////////////////////////////////////////////////////////////
 //                              PARSING
 ////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +85,7 @@ namespace chips
         none,
         /// bind a trigger to another entity
         bind, 
+        clone
     };
 }                                                           // namespace chips
 
@@ -113,15 +108,7 @@ namespace chips
     inline action_type to_action_type(std::string const & s)
     {
         return elib::enumeration::enum_cast<action_type>(s);
-    }
-    
-    /// The required fields to locate an entity in the level struct
-    /// This is used when parsing special actions
-    struct entity_location
-    {
-        entity_id id;
-        position pos;
-    };
+    }  
     
     /// The type of action parsed
     struct parsed_action
@@ -130,12 +117,12 @@ namespace chips
         action_type action;
         
         /// The entity that requested the action
-        entity_location actor;
+        entity_locator actor;
         
         /// The entities to act on
         /// USED BY:
         ///  - bind (buttons & teleports)
-        std::vector<entity_location> act_on;
+        std::vector<entity_locator> act_on;
     };
     
     std::vector<parsed_action> parse_actions(unsigned level);
@@ -146,7 +133,8 @@ namespace chips
     /// create a level from its number
     /// and the list of properties to pass to the tile factory
     level create_level(
-        unsigned level_number, std::map<unsigned, tile_properties> const &
+        unsigned level_number
+      , std::map<unsigned, tile_properties> const &
     );
     
     /// Create an entity from its tile gid and a list of entity properties
@@ -158,30 +146,6 @@ namespace chips
       , std::map<unsigned, tile_properties> const &
     );
     
-    void process_level(level & l);
-    
-////////////////////////////////////////////////////////////////////////////////
-//                                  MISC
-////////////////////////////////////////////////////////////////////////////////
-
-    /// Convert a position on the 32x32 grid to an index in an array
-    constexpr std::size_t 
-    to_index(position p) noexcept
-    {
-        return static_cast<std::size_t>(
-            (p.y * level_height) + p.x
-        );
-    }
-    
-    /// Convert an index in an array to a position on the 32x32 grid
-    constexpr position 
-    to_position(std::size_t index) noexcept
-    {
-        return position{
-            static_cast<unsigned>(index % level_height)
-          , static_cast<unsigned>(index / level_height)
-        };
-    }
-
+    void process_level(level &);
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HPP */

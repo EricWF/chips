@@ -9,6 +9,10 @@
 
 namespace chips 
 {
+    // forward //
+    class entity;
+    class level;
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                               INVENTORY
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,5 +56,9 @@ namespace chips
     private:
         std::map<entity_id, unsigned> m_items;
     };
+    
+    using HasInventory = EntityHas<inventory>;
+    
+    chips_state get_chips_state(level const & l);
 }                                                           // namespace chips
 #endif /* CHIPS_LOGIC_CHIP_HPP */

@@ -41,6 +41,7 @@ namespace chips
         void m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);
         
+        void m_draw_chip(sf::RenderWindow &, position win_pos) const;
         void m_draw_scoreboard(sf::RenderWindow &) const;
         void m_draw_chip_count(sf::RenderWindow &) const;
         void m_draw_inventory(sf::RenderWindow &) const;

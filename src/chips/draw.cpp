@@ -33,7 +33,7 @@ namespace chips
                 index = to_texture_index(
                     tex_id
                   , e.get<direction>()
-                  );
+                );
             }
         }
         else

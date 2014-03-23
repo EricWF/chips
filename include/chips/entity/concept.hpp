@@ -98,7 +98,7 @@ namespace chips
             {
                 ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
                     "Entity %s does not meet the concept %s"
-                  , to_string(e.id()), typeid(Derived).name()
+                  , to_string(e.id()), elib::aux::demangle(typeid(Derived).name())
                 )));
             }
         }
@@ -148,34 +148,13 @@ namespace chips
         }
         
         template <class Sequence>
-        auto find(Sequence && s) const -> decltype(s.front()) 
+        auto find(Sequence && s) const -> decltype( s.begin() )
         {
-            auto view = filter(s);
-            auto b = view.begin();
-            auto e = view.end();
-            if (b == e)
-            {
-                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                    "Failed to find entity matching concept %s"
-                  , typeid(Derived).name()
-                )));
-            }
-            
-            auto cp = b;
-            
-            if (++b != e)
-            {
-                ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
-                    "Found more than one entity for concept %s"
-                  , typeid(Derived).name()
-                )));
-            }
-            
-            return *cp;
+            return filter(s).begin().position();
         }
         
         template <class Sequence>
-        auto first(Sequence && s) const -> decltype(*filter(s).begin())
+        auto get(Sequence && s) const -> decltype( s.front() )
         {
             auto view = filter(s);
             auto b = view.begin(); 
@@ -184,18 +163,19 @@ namespace chips
             {
                 ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
                     "Failed to find entity matching concept %s"
-                  , typeid(Derived).name()
+                  , elib::aux::demangle(typeid(Derived).name())
                 )));
             }
             
             return *b;
         }
         
+        
         template <class Seq>
         bool contains(Seq && s) const
         {
             auto v = filter(s);
-            return v.begin() != v.end();
+            return v.begin().position() != s.end();
         }
         
         operator detail::concept_tag() const;
@@ -272,6 +252,7 @@ namespace chips
                 return typeid(ConceptType);
             }
             
+            // workaround in for issue with const in any.
             bool test(entity const & e) const
             {
                return const_cast<concept_holder *>(this)->test_impl(e);
@@ -453,11 +434,29 @@ namespace chips
         position m_pos;
     };
     
-    struct HasId : concept_base<HasId>
+    struct AtEntity : concept_base<AtEntity>
     {
-        HasId(entity_id id) : m_id(id) {}
+        AtEntity(entity const & e)
+        {
+            ELIB_ASSERT(e.has<position>());
+            m_pos = e.get<position>();
+        }
+
+        bool test(entity const & e) const
+        {
+            if (!e || !e.has<position>()) return false;
+            return e.get<position>() == m_pos;
+        }
         
-        ELIB_DEFAULT_COPY_MOVE(HasId);
+    private:
+        position m_pos;
+    };
+    
+    struct HasID : concept_base<HasID>
+    {
+        HasID(entity_id id) : m_id(id) {}
+        
+        ELIB_DEFAULT_COPY_MOVE(HasID);
         
         bool test(entity const & e) const
         {

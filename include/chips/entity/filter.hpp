@@ -8,7 +8,6 @@
 
 namespace chips
 {
-
     ////////////////////////////////////////////////////////////////////////////
     template<class Iterator, class ConceptType>
     class filter_iterator
@@ -24,15 +23,14 @@ namespace chips
         using iterator_category = std::forward_iterator_tag;
         
     public:
-        //filter_iterator() = default;
-        ELIB_DEFAULT_COPY_MOVE(filter_iterator);
-        
+
         filter_iterator(ConceptType p, Iterator b, Iterator e = Iterator())
           : m_pred(p), m_pos(b), m_end(e)
         {
             satify_pred();
         }
         
+        ELIB_DEFAULT_COPY_MOVE(filter_iterator);
         
         bool operator==(self const & other) const { return m_pos == other.m_pos; }
         bool operator!=(self const & other) const { return m_pos != other.m_pos; }
@@ -42,7 +40,7 @@ namespace chips
         
         self & operator++() { increment(); return *this; }
         
-        Iterator position();
+        Iterator position() { return m_pos; }
         
     private:
         void increment() { ++m_pos; satify_pred(); }
@@ -69,7 +67,6 @@ namespace chips
     
     
     ////////////////////////////////////////////////////////////////////////////
-    //
     template <class Sequence, class ConceptT>
     class filter_view
     {
@@ -95,13 +92,46 @@ namespace chips
         
         ELIB_DEFAULT_COPY_MOVE(filter_view);
         
-        filter_view & operator=(Sequence & s)  { m_seq = elib::addressof(s); }
+        filter_view & operator=(Sequence & s)  
+        { 
+            m_seq = elib::addressof(s); 
+        }
         
-        iterator begin() { return iterator(m_pred, m_seq->begin(), m_seq->end()); }
-        iterator end()   { return iterator(m_pred, m_seq->end(), m_seq->end()); }
+        iterator begin() 
+        { 
+            return iterator(
+                m_pred
+              , m_seq->begin()
+              , m_seq->end()
+            ); 
+        }
         
-        const_iterator begin() const { return const_iterator(m_pred, m_seq->cbegin(), m_seq->cend()); }
-        const_iterator end()   const { return const_iterator(m_pred, m_seq->cend(), m_seq->cend()); }
+        iterator end() 
+        { 
+            return iterator(
+                m_pred
+              , m_seq->end()
+              , m_seq->end()
+            ); 
+        }
+        
+        const_iterator begin() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->cbegin()
+              , m_seq->cend()
+            ); 
+        }
+        
+        const_iterator end() const 
+        { 
+            return const_iterator(
+                m_pred
+              , m_seq->cend()
+              , m_seq->cend()
+            ); 
+        }
         
         void swap(filter_view & other) noexcept
         {
@@ -115,6 +145,7 @@ namespace chips
         ConceptT m_pred;
     };
     
+    
     template <class Seq, class ConceptT>
     void swap(
         filter_view<Seq, ConceptT> & lhs
@@ -123,6 +154,7 @@ namespace chips
     {
         lhs.swap(rhs);
     }
+    
     
     template <class Seq, class ConceptT>
     auto begin(filter_view<Seq, ConceptT> & v) 

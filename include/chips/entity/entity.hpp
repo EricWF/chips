@@ -17,7 +17,6 @@
 # include <cstddef>
 
 
-
 /// The summary of the entity interface
 /// This summary is provided to prevent ANYBODY from having to read the
 /// metaprogramming and type-erasure that goes into entity and that 

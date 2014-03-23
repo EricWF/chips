@@ -2,10 +2,18 @@
 #define CHIPS_LOGIC_FWD_HPP
 
 # include "chips/core.hpp"
-# include "chips/entity.hpp"
-# include "chips/game.hpp"
-# include <elib/aux.hpp>
 
+namespace chips
+{
+    class entity;
+    class level;
+    
+    struct entity_locator
+    {
+        entity_id id;
+        position pos;
+    };
+}                                                           // namespace chips
 namespace chips { namespace logic
 {
     void init(entity & e, level & l);

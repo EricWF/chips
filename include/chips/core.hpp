@@ -258,9 +258,10 @@ namespace chips
     constexpr bool is_acting_wall(entity_id id) noexcept
     {
         return is_lock(id) 
-          || entity_id::socket      == id
-          || entity_id::pop_up_wall == id
-          || entity_id::toggle_wall == id;
+          || entity_id::socket        == id
+          || entity_id::pop_up_wall   == id
+          || entity_id::toggle_wall   == id
+          || entity_id::clone_machine == id;
     }
     
     constexpr bool is_wall(entity_id id) noexcept
@@ -288,7 +289,6 @@ namespace chips
             || id == entity_id::bomb
             || id == entity_id::trap
             || id == entity_id::hint
-            || id == entity_id::clone_machine
             || id == entity_id::fake_exit
             || is_button(id)
             || is_element_floor(id);
@@ -602,8 +602,6 @@ namespace chips
             || (id >= tile_id::chip_N && id <= tile_id::chip_E);
     }
     
-   
-    
     /// check if the tile_id has black outline sprite 
     /// and white alpha channel sprite
     constexpr bool is_typed_texture(tile_id id) noexcept
@@ -780,7 +778,7 @@ namespace chips
 # endif
     
     constexpr direction 
-    turn_clockwise(direction dir, unsigned times = 1) noexcept
+    turn_right(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
             ((static_cast<unsigned>(dir) + times) + 2) % 4
@@ -788,7 +786,7 @@ namespace chips
     }
     
     constexpr direction 
-    turn_counter_clockwise(direction dir, unsigned times = 1) noexcept
+    turn_left(direction dir, unsigned times = 1) noexcept
     {
         return static_cast<direction>(
             (static_cast<unsigned>(dir) + times) % 4

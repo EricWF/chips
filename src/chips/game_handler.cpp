@@ -68,7 +68,7 @@ namespace chips
             m_level.chip(update_, m_level);
             
             m_tick = std::chrono::high_resolution_clock::now() 
-                    + std::chrono::milliseconds(100);
+                    + std::chrono::milliseconds(200);
         }
         
         
@@ -83,7 +83,8 @@ namespace chips
             log::info("Game: level failed");
             return game_event_id::level_failed;
         }
-        if (m_level.chip.get<chip_at_exit>()) 
+        
+        if (Concept<>(IsExit(), AtEntity(m_level.chip)).contains(m_level.entity_list))
         {
             log::info("Game: level passed");
             return game_event_id::level_passed;
@@ -92,6 +93,33 @@ namespace chips
         return game_event_id::none;
     }
     
+#if defined(__GNUC__)
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wswitch-enum"
+#endif
+    void game_handler::m_move_chip_event(sf::Event const & ev)
+    {
+        if (!CanMove()(m_level.chip)) return;
+            
+        direction d;
+        switch (ev.key.code)
+        {
+            case sf::Keyboard::Up:
+                d = direction::N; break;
+            case sf::Keyboard::Down:
+                d = direction::S; break;
+            case sf::Keyboard::Right:
+                d = direction::E; break;
+            case sf::Keyboard::Left:
+                d = direction::W; break;
+            default: return;
+        }
+        
+        m_level.chip(move_, d, m_level);
+    }
+#if defined(__GNUC__)
+# pragma GCC diagnostic pop
+#endif
     void game_handler::draw(sf::RenderWindow & win) const
     {
         position tl_pos = detail::top_left_position(m_level);
@@ -110,13 +138,32 @@ namespace chips
             chips::draw(win, e, detail::entity_window_position(tl_pos, e));
         }
         
-        chips::draw(
-            win, m_level.chip
-          , detail::entity_window_position(tl_pos, m_level.chip)
-        );
+        m_draw_chip(win, detail::entity_window_position(tl_pos, m_level.chip));
         
         m_draw_scoreboard(win);
         
+    }
+    
+    void game_handler::m_draw_chip(sf::RenderWindow & win, position win_pos) const
+    {
+        entity const & chip = m_level.chip;
+        
+        entity chip_dummy(entity_id::chip);
+        
+        chips_state st = get_chips_state(m_level);
+        chip_dummy << static_cast<tile_id>(st);
+        
+        if (st == chips_state::normal)
+        {
+            chip_dummy << chip.get<direction>()
+                       << texture_type::cutout; 
+        }
+        else if (st == chips_state::swimming) 
+        {
+            chip_dummy << chip.get<direction>();
+        }
+        
+        chips::draw(win, chip_dummy, win_pos);
     }
     
     void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
@@ -217,26 +264,6 @@ namespace chips
 # pragma GCC diagnostic pop
 #endif
 
-    void game_handler::m_move_chip_event(sf::Event const & ev)
-    {
-        if (!m_level.chip || (m_level.chip.has<moveable>() 
-            && !m_level.chip.get<moveable>()))
-        {
-            return;
-        }
-        if (sf::Keyboard::Up == ev.key.code)
-            m_level.chip(move_, direction::N, m_level);
-        else if (sf::Keyboard::Down == ev.key.code)
-            m_level.chip(move_, direction::S, m_level);
-        else if (sf::Keyboard::Right == ev.key.code)
-            m_level.chip(move_, direction::E, m_level);
-        else if (sf::Keyboard::Left)
-            m_level.chip(move_, direction::W, m_level);
-        else
-            return;
-        if (m_level.chip.has(update_))
-            m_level.chip(update_, m_level);
-        
-    }
+    
     
 }                                                           // namespace chips
