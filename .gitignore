@@ -7,7 +7,7 @@ bin/
 *.kate-swp
 *~
 *#
-.DS_Store
+*DS_Store
 
 /test_files
 /cov-int
