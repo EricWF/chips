@@ -1,7 +1,7 @@
 #ifndef CHIPS_CORE_CHIPS_STATE_HPP
 #define CHIPS_CORE_CHIPS_STATE_HPP
 
-# include "chips/core/tile_id.hpp"
+# include "chips/core/id.hpp"
 # include <elib/enumeration.hpp>
 # include <string>
 # include <map>

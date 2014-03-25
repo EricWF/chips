@@ -1,6 +1,6 @@
 #include "chips/chips_main.hpp"
 #include "chips/core.hpp"
-#include "chips/game.hpp"
+#include "chips/logic.hpp"
 #include "chips/game_handler.hpp"
 #include "chips/draw.hpp"
 #include "chips/menu.hpp"

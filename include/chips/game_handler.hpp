@@ -2,7 +2,7 @@
 #define CHIPS_GAME_HANDLER_HPP
 
 # include "chips/core.hpp"
-# include "chips/game.hpp"
+# include "chips/logic.hpp"
 # include <elib/aux.hpp>
 # include <SFML/Graphics.hpp>
 # include <chrono>

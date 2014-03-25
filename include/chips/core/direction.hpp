@@ -1,5 +1,5 @@
-#ifndef CHIPS_GAME_DIRECTION_HPP
-#define CHIPS_GAME_DIRECTION_HPP
+#ifndef CHIPS_CORE_DIRECTION_HPP
+#define CHIPS_CORE_DIRECTION_HPP
 
 # include "chips/core/error.hpp"
 # include "chips/entity/fwd.hpp"
@@ -87,4 +87,4 @@ namespace chips
         struct is_attribute_impl<direction> : elib::true_ {};
     }                                                       // namespace extension
 }                                                           // namespace chips
-#endif /* CHIPS_GAME_DIRECTION_HPP */
+#endif /* CHIPS_CORE_DIRECTION_HPP */

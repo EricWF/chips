@@ -1,8 +1,8 @@
 #ifndef CHIPS_GAME_ENTITY_LOCATOR_HPP
 #define CHIPS_GAME_ENTITY_LOCATOR_HPP
 
-# include "chips/core/entity_id.hpp"
-# include "chips/game/position.hpp"
+# include "chips/core/id.hpp"
+# include "chips/core/position.hpp"
 
 namespace chips
 {

@@ -1,7 +1,5 @@
 #include "chips/draw.hpp"
 #include "chips/core.hpp"
-#include "chips/game/position.hpp"
-#include "chips/game/direction.hpp"
 #include "chips/entity.hpp"
 #include <elib/aux.hpp>
 

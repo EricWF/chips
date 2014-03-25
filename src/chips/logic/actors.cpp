@@ -1,11 +1,10 @@
-#include "chips/game/fwd.hpp"
-#include "chips/game/common.hpp"
+#include "chips/logic/fwd.hpp"
+#include "chips/logic/common.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
-#include "chips/game.hpp"
 #include <elib/aux.hpp>
 
-namespace chips 
+namespace chips { namespace logic
 {
     namespace 
     {
@@ -289,4 +288,4 @@ namespace chips
     void finalize_actor(entity &, level &)
     {
     }
-}                                                           // namespace chips
+}}                                                           // namespace chips

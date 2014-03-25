@@ -1,12 +1,11 @@
-#include "chips/game/fwd.hpp"
-#include "chips/game/common.hpp"
+#include "chips/logic/fwd.hpp"
+#include "chips/logic/common.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
-#include "chips/game.hpp"
 #include <elib/aux.hpp>
 #include <elib/fmt.hpp>
 
-namespace chips 
+namespace chips { namespace logic
 {
     ////////////////////////////////////////////////////////////////////////////
     void init_chip(entity & e, level &)
@@ -52,4 +51,4 @@ namespace chips
     void finalize_chip(entity &, level &)
     {
     }
-}                                                           // namespace chips
+}}                                                          // namespace chips

@@ -1,8 +1,9 @@
-#ifndef CHIPS_GAME_LOAD_HPP
-#define CHIPS_GAME_LOAD_HPP
+#ifndef CHIPS_CORE_LOAD_HPP
+#define CHIPS_CORE_LOAD_HPP
 
-# include "chips/game/fwd.hpp"
-# include "chips/game/entity_locator.hpp"
+# include "chips/core/id.hpp"
+# include "chips/core/level.hpp"
+# include "chips/core/entity_locator.hpp"
 # include <elib/enumeration.hpp>
 # include <map>
 # include <string>

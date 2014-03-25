@@ -1,56 +1,16 @@
-#ifndef CHIPS_GAME_COMMON_HPP
-#define CHIPS_GAME_COMMON_HPP
+#ifndef CHIPS_LOGIC_COMMON_HPP
+#define CHIPS_LOGIC_COMMON_HPP
 
-# include "chips/game/fwd.hpp"
+# include "chips/logic/fwd.hpp"
 # include "chips/core.hpp"
-# include "chips/game/position.hpp"
-# include "chips/game/inventory.hpp"
-# include "chips/game/entity_locator.hpp"
-# include "chips/game/level.hpp"
 # include "chips/entity.hpp"
 # include <vector>
 
 
-namespace chips
+namespace chips { namespace logic
 {
     
-    inline void init_entity(entity & e, level & l)
-    {
-        if      (is_chip(e))  init_chip(e, l);
-        else if (is_actor(e)) init_actor(e, l);
-        else if (is_item(e))  init_item(e, l);
-        else if (is_base(e))  init_base(e, l);
-        else if (e.id() == entity_id::BAD_ID) {}
-        else
-        {
-            log::err("In default case for init with entity %s"
-                    , to_string(e.id()));
-        }
-    }
-    
-    inline void process_entity(entity & e, level & l)
-    {
-        if      (is_chip(e))  process_chip(e, l);
-        else if (is_actor(e)) process_actor(e, l);
-        else if (is_item(e))  process_item(e, l);
-        else if (is_base(e))  process_base(e, l);
-        else
-        {
-            ELIB_ASSERT(false, "I should not be here!");
-        }
-    }
-
-    inline void finalize_entity(entity & e, level & l)
-    {
-        if      (is_chip(e))   finalize_chip(e, l);
-        else if (is_actor(e))  finalize_actor(e, l);
-        else if (is_item(e))   finalize_item(e, l);
-        else if (is_base(e))   finalize_base(e, l);
-        else
-        {
-            ELIB_ASSERT(false, "I should not be here!");
-        }
-    }
+   
     
     void move_on_ice(entity & e, entity const & ice, level &);
     void move_on_force_floor(entity & e, entity const & ff, level &);
@@ -95,16 +55,16 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
     
     /// A list of entities to be called after a given event
-    namespace detail { struct entity_list_tag {}; } 
-    using entity_list = any_attribute<std::vector<entity_locator>, detail::entity_list_tag>;
+    namespace logic_detail { struct entity_list_tag {}; } 
+    using entity_list = any_attribute<std::vector<entity_locator>, logic_detail::entity_list_tag>;
     
     /// Used by socket to count the number of chips it needs
-    namespace detail { struct chip_lock_tag {}; }
-    using chip_count_lock = any_attribute<unsigned, detail::chip_lock_tag>;
+    namespace logic_detail { struct chip_lock_tag {}; }
+    using chip_count_lock = any_attribute<unsigned, logic_detail::chip_lock_tag>;
     
     /// For use with traps. 
-    namespace detail { struct trapped_entity_tag {}; }
-    using trapped_entity = any_attribute<entity*, detail::trapped_entity_tag>;
+    namespace logic_detail { struct trapped_entity_tag {}; }
+    using trapped_entity = any_attribute<entity*, logic_detail::trapped_entity_tag>;
     
     /// For use with traps and other things
     struct move_lock : attribute_base {};
@@ -145,7 +105,7 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
 //                               CONCEPTS
 ////////////////////////////////////////////////////////////////////////////////
-    namespace detail
+    namespace logic_detail
     {
         template <unsigned Times, bool DoColl = false>
         struct EntityAtPosImpl : concept_base<EntityAtPosImpl<Times, DoColl>>
@@ -252,15 +212,15 @@ namespace chips
     using CanMove    = Concept<EntityHas<move_m>, EntityHasNone<move_lock>>;
     using CanCollide = EntityHasAny<collides_m, on_collision_m>;
   
-    using InFront = detail::EntityAtPosImpl<0>;
-    using Behind  = detail::EntityAtPosImpl<2>;
-    using ToRight = detail::EntityAtPosImpl<3>;
-    using ToLeft  = detail::EntityAtPosImpl<1>;
+    using InFront = logic_detail::EntityAtPosImpl<0>;
+    using Behind  = logic_detail::EntityAtPosImpl<2>;
+    using ToRight = logic_detail::EntityAtPosImpl<3>;
+    using ToLeft  = logic_detail::EntityAtPosImpl<1>;
     
-    using ColFront = detail::EntityAtPosImpl<0, true>;
-    using ColBack  = detail::EntityAtPosImpl<2, true>;
-    using ColRight = detail::EntityAtPosImpl<3, true>;
-    using ColLeft  = detail::EntityAtPosImpl<1, true>;
+    using ColFront = logic_detail::EntityAtPosImpl<0, true>;
+    using ColBack  = logic_detail::EntityAtPosImpl<2, true>;
+    using ColRight = logic_detail::EntityAtPosImpl<3, true>;
+    using ColLeft  = logic_detail::EntityAtPosImpl<1, true>;
 
     using HasPos        = EntityHas<position>;
     using HasDir        = EntityHas<direction>;
@@ -336,5 +296,5 @@ namespace chips
         }
         
     }                                                       // namespace common
-}                                                           // namespace chips
-#endif /* CHIPS_GAME_COMMON_HPP */
+}}                                                           // namespace chips
+#endif /* CHIPS_LOGIC_COMMON_HPP */

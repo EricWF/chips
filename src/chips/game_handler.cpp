@@ -1,6 +1,7 @@
 #include "chips/game_handler.hpp"
 #include "chips/core.hpp"
 #include "chips/draw.hpp"
+#include "chips/logic.hpp"
 #include "chips/entity.hpp"
 
 #include <elib/fmt.hpp>
@@ -8,6 +9,8 @@
 
 namespace chips
 {
+    using namespace logic;
+    
     namespace detail { namespace
     {
         unsigned top_left_coord(unsigned c)

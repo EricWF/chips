@@ -1,7 +1,7 @@
-#ifndef CHIPS_GAME_POSITION_HPP
-#define CHIPS_GAME_POSITION_HPP
+#ifndef CHIPS_CORE_POSITION_HPP
+#define CHIPS_CORE_POSITION_HPP
 
-# include "chips/game/direction.hpp"
+# include "chips/core/direction.hpp"
 # include "chips/entity/fwd.hpp"
 # include <elib/aux.hpp>
 # include <elib/fmt.hpp>
@@ -86,4 +86,4 @@ namespace chips
         struct is_attribute_impl<position>  : elib::true_ {};
     }
 }                                                           // namespace chips
-#endif /* CHIPS_GAME_POSITION_HPP */
+#endif /* CHIPS_CORE_POSITION_HPP */

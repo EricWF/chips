@@ -1,11 +1,9 @@
-#include "chips/game/load.hpp"
-#include "chips/game/common.hpp"
-#include "chips/game/direction.hpp"
-#include "chips/game/entity_locator.hpp"
-#include "chips/game/level.hpp"
-#include "chips/game/position.hpp"
-#include "chips/game/level.hpp"
-#include "chips/core.hpp"
+#include "chips/core/load.hpp"
+#include "chips/core/direction.hpp"
+#include "chips/core/entity_locator.hpp"
+#include "chips/core/level.hpp"
+#include "chips/core/position.hpp"
+#include "chips/logic.hpp"
 #include "chips/entity.hpp"
 #include "tinyxml/tinyxml.h"
 #include <elib/aux.hpp>
@@ -41,6 +39,9 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
 //                               PARSING
 ////////////////////////////////////////////////////////////////////////////////
+    using logic::entity_list;
+    using logic::AtLocation;
+
     
     namespace detail { namespace 
     {
@@ -349,11 +350,11 @@ namespace chips
         
         void process_level(level & l)
         {
-            init_entity(l.chip, l);
+            logic::init(l.chip, l);
             for (auto & e : l.entity_list)
             {
                 log::debug("entity: %s", to_string(e.id()));
-                init_entity(e, l);
+                logic::init(e, l);
             }
             detail::process_actions(l);
         }

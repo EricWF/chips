@@ -1,6 +1,6 @@
-#include "chips/game/inventory.hpp"
-#include "chips/core/entity_id.hpp"
+#include "chips/core/inventory.hpp"
 #include "chips/core/error.hpp"
+#include "chips/core/id.hpp"
 #include <elib/fmt.hpp>
 
 

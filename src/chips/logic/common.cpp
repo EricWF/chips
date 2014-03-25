@@ -1,8 +1,48 @@
-#include "chips/game/common.hpp"
+#include "chips/logic/fwd.hpp"
+#include "chips/logic/common.hpp"
 #include "chips/core.hpp"
 
-namespace chips 
+namespace chips { namespace logic
 {
+    
+     void init(entity & e, level & l)
+    {
+        if      (is_chip(e))  init_chip(e, l);
+        else if (is_actor(e)) init_actor(e, l);
+        else if (is_item(e))  init_item(e, l);
+        else if (is_base(e))  init_base(e, l);
+        else if (e.id() == entity_id::BAD_ID) {}
+        else
+        {
+            log::err("In default case for init with entity %s"
+                    , to_string(e.id()));
+        }
+    }
+    
+    void process(entity & e, level & l)
+    {
+        if      (is_chip(e))  process_chip(e, l);
+        else if (is_actor(e)) process_actor(e, l);
+        else if (is_item(e))  process_item(e, l);
+        else if (is_base(e))  process_base(e, l);
+        else
+        {
+            ELIB_ASSERT(false, "I should not be here!");
+        }
+    }
+
+    void finalize(entity & e, level & l)
+    {
+        if      (is_chip(e))   finalize_chip(e, l);
+        else if (is_actor(e))  finalize_actor(e, l);
+        else if (is_item(e))   finalize_item(e, l);
+        else if (is_base(e))   finalize_base(e, l);
+        else
+        {
+            ELIB_ASSERT(false, "I should not be here!");
+        }
+    }
+    
     void move_on_ice(entity & e, entity const & ice, level & l)
     {
         e << move_lock();
@@ -128,4 +168,4 @@ namespace chips
       
         return chips_state::normal;
     }
-}                                                           // namespace chips
+}}                                                           // namespace chips

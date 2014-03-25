@@ -1,11 +1,10 @@
-#include "chips/game/fwd.hpp"
-#include "chips/game/common.hpp"
+#include "chips/logic/fwd.hpp"
+#include "chips/logic/common.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
-#include "chips/game.hpp"
 #include <elib/aux.hpp>
 
-namespace chips 
+namespace chips { namespace logic
 {
     namespace 
     {
@@ -44,7 +43,7 @@ namespace chips
                     other.kill();
                     clean_entity(self);
                     self.id(entity_id::dirt);
-                    init_entity(self, l);
+                    init(self, l);
                     return;
                 }
             };
@@ -300,7 +299,7 @@ namespace chips
                     inv.use_item(req_key);
                     clean_entity(self);
                     self.id(entity_id::floor);
-                    init_entity(self, l);
+                    init(self, l);
                 }
             };
 
@@ -396,7 +395,7 @@ namespace chips
                 {
                     clean_entity(self);
                     self.id(entity_id::floor);
-                    init_entity(self, l);
+                    init(self, l);
                 }
             };
                 
@@ -635,4 +634,4 @@ namespace chips
     void finalize_base(entity &, level &)
     {
     }
-}                                                          // namespace chips
+}}                                                         // namespace chips
