@@ -1,6 +1,7 @@
-#include "chips/logic/core.hpp"
+#include "chips/game/common.hpp"
+#include "chips/core.hpp"
 
-namespace chips { namespace logic
+namespace chips 
 {
     void move_on_ice(entity & e, entity const & ice, level & l)
     {
@@ -45,6 +46,7 @@ namespace chips { namespace logic
             e.remove<move_lock>();
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void move_on_force_floor(entity & e, entity const & ff, level & l)
     {
         tile_id id = ff.get<tile_id>();
@@ -58,7 +60,10 @@ namespace chips { namespace logic
             e(move_, direction::W, l); 
     }
     
-    bool reading_order_cmp::operator()(entity const & lhs, entity const & rhs) const
+    ////////////////////////////////////////////////////////////////////////////
+    bool reading_order_cmp::operator()(
+        entity const & lhs, entity const & rhs
+      ) const
     {
         if (!rhs) return false;
         if (!lhs) return true;
@@ -97,4 +102,30 @@ namespace chips { namespace logic
             return false;
         return false;
     }
-}}                                                          // namespace chips
+    
+    ////////////////////////////////////////////////////////////////////////////
+    chips_state get_chips_state(level const & l)
+    {
+        entity const & chip = l.chip;
+        auto const & el = l.entity_list;
+        
+        if (OnWater(chip).contains(el))
+        {
+            if (chip) return chips_state::swimming;
+            else      return chips_state::drowned;
+        }
+        
+        if (OnFire(chip).contains(el))
+        {
+            if (chip) return chips_state::normal;
+            else      return chips_state::burned_fire;
+        }
+        
+        if (OnEntity<entity_id::fake_exit>(chip).contains(el))
+        {
+            return chips_state::fake_exit;
+        }
+      
+        return chips_state::normal;
+    }
+}                                                           // namespace chips

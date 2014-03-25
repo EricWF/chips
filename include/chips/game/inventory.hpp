@@ -1,35 +1,29 @@
-#ifndef CHIPS_LOGIC_CHIP_HPP
-#define CHIPS_LOGIC_CHIP_HPP
+#ifndef CHIPS_GAME_INVENTORY_HPP
+#define CHIPS_GAME_INVENTORY_HPP
 
-# include "chips/logic/fwd.hpp"
-# include "chips/logic/core.hpp"
-# include "chips/core.hpp"
-# include <elib/aux.hpp>
+# include "chips/entity/fwd.hpp" /* for attribute_base */
 # include <map>
 
-namespace chips 
+namespace chips
 {
     // forward //
-    class entity;
-    class level;
+    enum class entity_id;
     
-     chips_state get_chips_state(level const & l);
-    
-////////////////////////////////////////////////////////////////////////////////
-//                               INVENTORY
-////////////////////////////////////////////////////////////////////////////////
-
     /// an inventory is an attribute that chip has.
     /// It can hold boots and keys. Keys have an associated count.
     /// It also holds the number of computer chips that chip has collected
     class inventory : attribute_base
     {
-    private:
+    public:
         using item_map = std::map<entity_id, unsigned>;
+        
     public:
         inventory() = default;
         
-        ELIB_DEFAULT_COPY_MOVE(inventory);
+        inventory(inventory const &) = default;
+        inventory(inventory &&) = default;
+        inventory & operator=(inventory const &) = default;
+        inventory & operator=(inventory &&) = default;
         
         /// insert the item in non-existent, otherwise increase its count
         void add_item(entity_id item);
@@ -58,9 +52,5 @@ namespace chips
     private:
         std::map<entity_id, unsigned> m_items;
     };
-    
-    using HasInventory = EntityHas<inventory>;
-    
-   
 }                                                           // namespace chips
-#endif /* CHIPS_LOGIC_CHIP_HPP */
+#endif /* CHIPS_GAME_INVENTORY_HPP */

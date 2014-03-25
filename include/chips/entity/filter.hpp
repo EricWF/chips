@@ -77,8 +77,6 @@ namespace chips
         );
         using detected_iter  = decltype(elib::declval<Sequence>().begin());
         using detected_citer = decltype(elib::declval<Sequence>().cbegin());
-        using detected_riter = decltype(elib::declval<Sequence>().rbegin());
-        using detected_criter = decltype(elib::declval<Sequence>().crbegin());
     public:
         using iterator       = filter_iterator<detected_iter, ConceptT>;
         using const_iterator = filter_iterator<detected_citer, ConceptT>;

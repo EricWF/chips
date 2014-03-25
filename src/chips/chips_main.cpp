@@ -2,7 +2,7 @@
 #include "chips/core.hpp"
 #include "chips/game.hpp"
 #include "chips/game_handler.hpp"
-#include "chips/resource_manager.hpp"
+#include "chips/draw.hpp"
 #include "chips/menu.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdlib.h> 

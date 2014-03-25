@@ -31,6 +31,7 @@ namespace chips
     namespace detail
     {
         ////////////////////////////////////////////////////////////////////////
+        // Variadic logical AND
         template <class ...Args>
         constexpr bool test_and(Args &&...)
         {
@@ -45,6 +46,7 @@ namespace chips
         }
         
         ////////////////////////////////////////////////////////////////////////
+        // Variadic logical OR
         template <class ...Args>
         constexpr bool test_or(Args &&...)
         {
@@ -135,7 +137,11 @@ namespace chips
         {
             using std::begin; using std::end;
             std::vector<entity_cref> filtered;
-            std::copy_if(begin(s), end(s), std::back_inserter(filtered), *this);
+            std::copy_if(
+                begin(s), end(s)
+              , std::back_inserter(filtered)
+              , static_cast<Derived const &>(*this)
+            );
             return filtered;
         }
         
@@ -143,7 +149,7 @@ namespace chips
         filter_view<Sequence, Derived> filter(Sequence & s) const
         {
             return filter_view<Sequence, Derived>(
-                s, *static_cast<Derived const*>(this)
+                s, static_cast<Derived const &>(*this)
               );
         }
         
@@ -153,7 +159,7 @@ namespace chips
         filter_view<Sequence const, Derived> filter(Sequence const & s) const
         {
             return filter_view<Sequence const, Derived>(
-                s, *static_cast<Derived const*>(this)
+                s, static_cast<Derived const &>(*this)
               );
         }
         
@@ -162,7 +168,7 @@ namespace chips
         rfilter(Sequence & s) const
         {
             return reverse_filter_view<Sequence, Derived>(
-                s, *static_cast<Derived const*>(this)
+                s, *static_cast<Derived const &>(*this)
               );
         }
         
@@ -171,7 +177,7 @@ namespace chips
         rfilter(Sequence const & s) const
         {
             return reverse_filter_view<Sequence const, Derived>(
-                s, *static_cast<Derived const*>(this)
+                s, static_cast<Derived const &>(*this)
               );
         }
         
@@ -263,6 +269,7 @@ namespace chips
             virtual bool test(entity const &) const = 0;
         };
         
+        // TODO 
         template <class ConceptType>
         class concept_holder : public basic_concept_holder
         {

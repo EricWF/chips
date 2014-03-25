@@ -58,7 +58,8 @@ set(UNIT_TEST_SRC "")
 
 # compile into objects
 include(chips/build.cmake)
-include(chips/logic/build.cmake)
+include(chips/core/build.cmake)
+include(chips/game/build.cmake)
 include(chips/menu/build.cmake)
 include(tinyxml/build.cmake)
 

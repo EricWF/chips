@@ -1,9 +1,14 @@
-#include "chips/game.hpp"
+#include "chips/game/load.hpp"
+#include "chips/game/common.hpp"
+#include "chips/game/direction.hpp"
+#include "chips/game/entity_locator.hpp"
+#include "chips/game/level.hpp"
+#include "chips/game/position.hpp"
+#include "chips/game/level.hpp"
+#include "chips/core.hpp"
 #include "chips/entity.hpp"
-#include "chips/logic.hpp"
 #include "tinyxml/tinyxml.h"
 #include <elib/aux.hpp>
-#include <elib/enumeration.hpp>
 #include <elib/fmt.hpp>
 #include <elib/lexical_cast.hpp>
 #include <algorithm>
@@ -33,13 +38,13 @@ namespace elib { namespace enumeration
 
 namespace chips
 {
-
 ////////////////////////////////////////////////////////////////////////////////
 //                               PARSING
 ////////////////////////////////////////////////////////////////////////////////
     
     namespace detail { namespace 
     {
+# if 0
         /// Convert a position on the 32x32 grid to an index in an array
         constexpr std::size_t 
         to_index(position p) noexcept
@@ -48,7 +53,8 @@ namespace chips
                 (p.y * level_height) + p.x
             );
         }
-        
+# endif
+    
         /// Convert an index in an array to a position on the 32x32 grid
         constexpr position 
         to_position(std::size_t index) noexcept
@@ -343,11 +349,11 @@ namespace chips
         
         void process_level(level & l)
         {
-            logic::init(l.chip, l);
+            init_entity(l.chip, l);
             for (auto & e : l.entity_list)
             {
                 log::debug("entity: %s", to_string(e.id()));
-                logic::init(e, l);
+                init_entity(e, l);
             }
             detail::process_actions(l);
         }
@@ -458,6 +464,4 @@ namespace chips
         return e;
     }
 
-
-   
 }                                                           // namespace chips

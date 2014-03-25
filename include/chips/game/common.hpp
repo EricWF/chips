@@ -1,15 +1,20 @@
-#ifndef CHIPS_LOGIC_CORE_HPP
-#define CHIPS_LOGIC_CORE_HPP
+#ifndef CHIPS_GAME_COMMON_HPP
+#define CHIPS_GAME_COMMON_HPP
 
-# include "chips/logic/fwd.hpp"
+# include "chips/game/fwd.hpp"
 # include "chips/core.hpp"
+# include "chips/game/position.hpp"
+# include "chips/game/inventory.hpp"
+# include "chips/game/entity_locator.hpp"
+# include "chips/game/level.hpp"
 # include "chips/entity.hpp"
-# include "chips/game.hpp"
-# include <elib/aux.hpp>
+# include <vector>
 
-namespace chips { namespace logic
+
+namespace chips
 {
-    inline void init(entity & e, level & l)
+    
+    inline void init_entity(entity & e, level & l)
     {
         if      (is_chip(e))  init_chip(e, l);
         else if (is_actor(e)) init_actor(e, l);
@@ -23,7 +28,7 @@ namespace chips { namespace logic
         }
     }
     
-    inline void process(entity & e, level & l)
+    inline void process_entity(entity & e, level & l)
     {
         if      (is_chip(e))  process_chip(e, l);
         else if (is_actor(e)) process_actor(e, l);
@@ -35,7 +40,7 @@ namespace chips { namespace logic
         }
     }
 
-    inline void finalize(entity & e, level & l)
+    inline void finalize_entity(entity & e, level & l)
     {
         if      (is_chip(e))   finalize_chip(e, l);
         else if (is_actor(e))  finalize_actor(e, l);
@@ -49,6 +54,7 @@ namespace chips { namespace logic
     
     void move_on_ice(entity & e, entity const & ice, level &);
     void move_on_force_floor(entity & e, entity const & ff, level &);
+    chips_state get_chips_state(level const &);
     
     struct reading_order_cmp
     {
@@ -59,13 +65,6 @@ namespace chips { namespace logic
     {
         bool operator()(entity const &, entity const &) const;
     };
-}}                                                          // namespace chips
-
-namespace chips
-{
-///////////////////////////////////////////////////////////////////////////////
-//                              Helpers
-////////////////////////////////////////////////////////////////////////////////
     
     inline void clean_entity(entity & e)
     {
@@ -294,7 +293,7 @@ namespace chips
     using IsRedButton    = EntityIs<entity_id::red_button>;
     using IsCloneMachine = EntityIs<entity_id::clone_machine>;
     
-    
+    using HasInventory = EntityHas<inventory>;
 ////////////////////////////////////////////////////////////////////////////////
 //                              COMMON METHODS
 ////////////////////////////////////////////////////////////////////////////////
@@ -338,4 +337,4 @@ namespace chips
         
     }                                                       // namespace common
 }                                                           // namespace chips
-#endif /* CHIPS_LOGIC_CORE_HPP */
+#endif /* CHIPS_GAME_COMMON_HPP */

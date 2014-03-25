@@ -2,8 +2,7 @@
 #include "chips/core.hpp"
 #include "chips/draw.hpp"
 #include "chips/entity.hpp"
-#include "chips/logic.hpp"
-#include "chips/resource_manager.hpp"
+
 #include <elib/fmt.hpp>
 #include <string>
 

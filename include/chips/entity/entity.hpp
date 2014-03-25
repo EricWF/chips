@@ -322,7 +322,8 @@ namespace chips
     public:
         ////////////////////////////////////////////////////////////////////////
         entity()
-          : m_id(entity_id::BAD_ID), m_alive(false), m_on_death(nullptr)
+          : m_id(entity_id::BAD_ID)
+          , m_alive(false), m_on_death(nullptr)
         {}
         
         ////////////////////////////////////////////////////////////////////////
@@ -394,7 +395,6 @@ namespace chips
         >
         bool has() const
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             return m_attributes.count(std::type_index(typeid(Attr)));
         }
     
@@ -405,7 +405,6 @@ namespace chips
         >
         bool insert(Attr && attr)
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             auto ret = m_attributes.insert(std::make_pair(
                 std::type_index(typeid(Attr))
               , elib::any(elib::forward<Attr>(attr))
@@ -420,7 +419,6 @@ namespace chips
         >
         void set(Attr && attr)
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             m_attributes[std::type_index(typeid(Attr))] = 
                 elib::forward<Attr>(attr);
         }
@@ -432,7 +430,6 @@ namespace chips
         >
         Attr const * get_raw() const
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             return const_cast<entity &>(*this).get_raw<Attr>();
         }
         
@@ -443,7 +440,6 @@ namespace chips
         >
         Attr * get_raw()
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             auto pos = m_attributes.find(std::type_index(typeid(Attr)));
             if (pos == m_attributes.end()) return nullptr;
             return elib::addressof(
@@ -458,7 +454,6 @@ namespace chips
         >
         Attr const & get() const
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             auto ptr = (*this).get_raw<Attr>();
             if (!ptr)
             {
@@ -490,7 +485,6 @@ namespace chips
         >
         bool remove()
         {
-            CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
             return m_attributes.erase(std::type_index(typeid(Attr)));
         }
         
@@ -507,7 +501,6 @@ namespace chips
         >
         bool has(MethodTag) const
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return m_methods.count(std::type_index(typeid(MethodTag)));
         }
         
@@ -520,10 +513,7 @@ namespace chips
         >
         bool insert(MethodTag, MethodDef def)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
-            
             using FnPtr = typename MethodTag::function_type*;
-            
             auto ret = m_methods.insert(std::make_pair(
                 std::type_index(typeid(MethodTag))
               , elib::any(static_cast<FnPtr>(def))
@@ -539,11 +529,8 @@ namespace chips
             >::value)
         >
         void set(MethodTag, MethodDef def)
-        {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
-            
+        {            
             using FnPtr = typename MethodTag::function_type*;
-            
             m_methods[std::type_index(typeid(MethodTag))] = 
                 elib::any( static_cast<FnPtr>(def) );
         }
@@ -596,7 +583,6 @@ namespace chips
         typename MethodTag::result_type
         operator()(MethodTag, MethodArgs &&... args)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             auto pos = m_methods.find(std::type_index(typeid(MethodTag)));
             if (pos == m_methods.end())
             {
@@ -618,7 +604,6 @@ namespace chips
         typename MethodTag::result_type
         operator()(MethodTag, MethodArgs &&... args) const
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             static_assert(
                 MethodTag::is_const
               , "Attempting to class a non-const method on a const entity"
@@ -643,7 +628,6 @@ namespace chips
         typename MethodTag::result_type
         call(MethodTag tag, Args &&... args)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return (*this)(tag, elib::forward<Args>(args)...);
         }
         
@@ -654,7 +638,6 @@ namespace chips
         typename MethodTag::result_type
         call(MethodTag tag, Args &&... args) const
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             return (*this)(tag, elib::forward<Args>(args)...);
         }
         
@@ -665,7 +648,6 @@ namespace chips
         >
         bool call_if(MethodTag tag, Args &&... args)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             if (!alive() || !has(tag)) return false;
             call(tag, elib::forward<Args>(args)...);
             return true;
@@ -677,7 +659,6 @@ namespace chips
         >
         bool call_if(MethodTag tag, Args &&... args) const
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             if (!alive() || !has(tag)) return false;
             call(tag, elib::forward<Args>(args)...);
             return true;
@@ -690,7 +671,6 @@ namespace chips
         bool call_if(typename MethodTag::result_type & res, MethodTag tag
                    , Args &&... args)
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             if (!alive() || !has(tag)) return false;
             res = call(tag, elib::forward<Args>(args)...);
             return true;
@@ -703,7 +683,6 @@ namespace chips
         bool call_if(typename MethodTag::result_type & res, MethodTag tag
                    , Args &&... args) const
         {
-            CHIPS_ASSERT_METHOD_TYPE(MethodTag);
             if (!alive() || !has(tag)) return false;
             res = call(tag, elib::forward<Args>(args)...);
             return true;
@@ -750,7 +729,6 @@ namespace chips
     >
     entity & operator<<(entity & e, Attr && attr)
     {
-        CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
         e.set(elib::forward<Attr>(attr));
         return e;
     }
@@ -762,7 +740,6 @@ namespace chips
     >
     entity const & operator>>(entity const & e, Attr & r)
     {
-        CHIPS_ASSERT_ATTRIBUTE_TYPE(Attr);
         r = e.get<Attr>();
         return e;
     }
@@ -774,7 +751,6 @@ namespace chips
     >
     entity & operator<<(entity & e, detail::stored_method<MethodTag> m)
     {
-        CHIPS_ASSERT_METHOD_TYPE(MethodTag);
         e.set(m.tag(), m.method());
         return e;
     }
