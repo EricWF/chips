@@ -5,6 +5,7 @@
 #include "chips/draw.hpp"
 #include "chips/menu.hpp"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
 #include <stdlib.h> 
 #include <chrono>
 #include <unistd.h>
@@ -14,7 +15,7 @@ namespace chips
     void run_level(unsigned lvl_pick);
     void run_level(unsigned lvl_pick)
     {
-       
+		sf::Music music;
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         resource_manager::get();
         
@@ -22,6 +23,12 @@ namespace chips
         auto l = create_level(lvl_pick, prop_list);
         
         game_handler gh(l);
+
+		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav"))
+		   fprintf(stderr, "Failed to open music: poc.wav\n");
+			
+		   music.setLoop(true);
+		   music.play();
     
         while (gh.update(window) == game_event_id::none)
         {
