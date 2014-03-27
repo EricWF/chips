@@ -6,6 +6,7 @@
 
 namespace chips
 {
+    // TODO this is a stupid class. remove it.
     struct entity_locator
     {
         entity_id id;

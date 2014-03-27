@@ -1,6 +1,7 @@
 #ifndef CHIPS_CORE_LOAD_HPP
 #define CHIPS_CORE_LOAD_HPP
 
+# include "chips/core/fwd.hpp"
 # include "chips/core/id.hpp"
 # include "chips/core/level.hpp"
 # include "chips/core/entity_locator.hpp"

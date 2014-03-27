@@ -1,11 +1,38 @@
-#include "chips/logic/fwd.hpp"
-#include "chips/logic/common.hpp"
+#include "chips/logic.hpp"
 #include "chips/core.hpp"
+#include "chips/entity.hpp"
 
+namespace chips
+{
+    void clean_entity(entity & e)
+    {
+        if (e.has<position>())
+        {
+            position p = e.get<position>();
+            e.clear();
+            e <<  p;
+        }
+    }
+
+    bool same_position(entity const & lhs, entity const & rhs)
+    {
+        if (!lhs || !rhs || &lhs == &rhs)
+            return false;
+        return lhs.get<position>() == rhs.get<position>();
+    }
+    
+    bool at_location(entity_locator loc, entity const & e)
+    {
+        return e 
+          && e.id() == loc.id
+          && e.get<position>() == loc.pos;
+    }
+    
+}                                                           // namespace chips
 namespace chips { namespace logic
 {
     
-     void init(entity & e, level & l)
+    void init(entity & e, level & l)
     {
         if      (is_chip(e))  init_chip(e, l);
         else if (is_actor(e)) init_actor(e, l);

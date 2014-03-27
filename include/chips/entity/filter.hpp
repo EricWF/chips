@@ -77,9 +77,14 @@ namespace chips
         );
         using detected_iter  = decltype(elib::declval<Sequence>().begin());
         using detected_citer = decltype(elib::declval<Sequence>().cbegin());
+        using detected_riter = decltype(elib::declval<Sequence>().rbegin());
+        using detected_criter = decltype(elib::declval<Sequence>().crbegin());
     public:
         using iterator       = filter_iterator<detected_iter, ConceptT>;
         using const_iterator = filter_iterator<detected_citer, ConceptT>;
+        using reverse_iterator = filter_iterator<detected_riter, ConceptT>;
+        using const_reverse_iterator  = filter_iterator<detected_criter, ConceptT>;
+        
         
     public:
         explicit filter_view(Sequence & s)
@@ -151,6 +156,64 @@ namespace chips
             ); 
         }
         
+        ////////////////////////////////////////////////////////////////////////
+        //                          REVERSE
+        ////////////////////////////////////////////////////////////////////////
+        reverse_iterator rbegin() 
+        { 
+            return reverse_iterator(
+                m_pred
+              , m_seq->rbegin()
+              , m_seq->rend()
+            ); 
+        }
+        
+        reverse_iterator rend() 
+        { 
+            return reverse_iterator(
+                m_pred
+              , m_seq->rend()
+              , m_seq->rend()
+            ); 
+        }
+        
+        const_reverse_iterator rbegin() const 
+        { 
+            return const_reverse_iterator(
+                m_pred
+              , m_seq->crbegin()
+              , m_seq->crend()
+            ); 
+        }
+        
+        const_reverse_iterator rend() const 
+        { 
+            return const_reverse_iterator(
+                m_pred
+              , m_seq->crend()
+              , m_seq->crend()
+            ); 
+        }
+        
+        const_reverse_iterator crbegin() const 
+        { 
+            return const_reverse_iterator(
+                m_pred
+              , m_seq->crbegin()
+              , m_seq->crend()
+            ); 
+        }
+        
+        const_reverse_iterator crend() const 
+        { 
+            return const_reverse_iterator(
+                m_pred
+              , m_seq->crend()
+              , m_seq->crend()
+            ); 
+        }
+        
+        
         void swap(filter_view & other) noexcept
         {
             using std::swap;
@@ -190,7 +253,24 @@ namespace chips
     auto end(filter_view<Seq, ConceptT> const & v)
     ELIB_AUTO_RETURN( v.end() )
     
+    template <class Seq, class ConceptT>
+    auto rbegin(filter_view<Seq, ConceptT> & v) 
+    ELIB_AUTO_RETURN( v.rbegin() )
+    
+    template <class Seq, class ConceptT>
+    auto rend(filter_view<Seq, ConceptT> & v)
+    ELIB_AUTO_RETURN( v.rend() )
+    
+    template <class Seq, class ConceptT>
+    auto rbegin(filter_view<Seq, ConceptT> const & v) 
+    ELIB_AUTO_RETURN( v.rbegin() )
+    
+    template <class Seq, class ConceptT>
+    auto rend(filter_view<Seq, ConceptT> const & v)
+    ELIB_AUTO_RETURN( v.rend() )
+    
     ////////////////////////////////////////////////////////////////////////////
+    
     template <class Sequence, class ConceptT>
     class reverse_filter_view
     {

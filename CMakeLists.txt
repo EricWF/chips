@@ -25,7 +25,7 @@ option(CONFIG_UNIT_TESTS "build unit tests" ON)
 
 # Toolchain Configuration
 if(CONFIG_USE_CLANG)
-    set(CMAKE_C_COMPILER /usr/bin/clang)
+    set(CMAKE_C_COMPILER   /usr/bin/clang)
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 endif()
 

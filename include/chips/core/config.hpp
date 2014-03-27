@@ -8,6 +8,7 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
     
     /// The directory where all resources are held
+    /// CHIPS_RESOURCE_ROOT must be defined by the build.
     constexpr const char resource_root[] = CHIPS_RESOURCE_ROOT;
     
     /// Information about the textures/sprites

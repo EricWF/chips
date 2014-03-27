@@ -1,14 +1,12 @@
-#ifndef CHIPS_GAME_INVENTORY_HPP
-#define CHIPS_GAME_INVENTORY_HPP
+#ifndef CHIPS_CORE_INVENTORY_HPP
+#define CHIPS_CORE_INVENTORY_HPP
 
+# include "chips/core/fwd.hpp"
 # include "chips/entity/fwd.hpp" /* for attribute_base */
 # include <map>
 
 namespace chips
 {
-    // forward //
-    enum class entity_id;
-    
     /// an inventory is an attribute that chip has.
     /// It can hold boots and keys. Keys have an associated count.
     /// It also holds the number of computer chips that chip has collected

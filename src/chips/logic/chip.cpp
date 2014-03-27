@@ -1,5 +1,4 @@
-#include "chips/logic/fwd.hpp"
-#include "chips/logic/common.hpp"
+#include "chips/logic.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include <elib/aux.hpp>
