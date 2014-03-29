@@ -39,6 +39,24 @@ namespace chips
     clone_m : method_base<clone_m, void(level &)>
     {} clone_ {};
     
+    ENTITY_METHOD_EXTERN( update_m );
+    ENTITY_METHOD_CALL_EXTERN(update_m, entity &, level &);
+    
+    ENTITY_METHOD_EXTERN( move_m );
+    ENTITY_METHOD_CALL_EXTERN(move_m, entity &&, direction &&, level &&);
+    ENTITY_METHOD_CALL_EXTERN(move_m, entity &, direction const &, level &);
+    ENTITY_METHOD_CALL_EXTERN(move_m, entity &, direction &&, level &);
+    
+    ENTITY_METHOD_EXTERN( collides_m );
+    ENTITY_METHOD_CONST_CALL_EXTERN(collides_m, entity const &, entity const &);
+    
+    ENTITY_METHOD_EXTERN( on_collision_m );
+    ENTITY_METHOD_CALL_EXTERN(on_collision_m, entity &, entity &, level &);
+    
+    ENTITY_METHOD_EXTERN( clone_m );
+    ENTITY_METHOD_CALL_EXTERN(clone_m, entity &, level &);
+    
+    
 ////////////////////////////////////////////////////////////////////////////////
 //                              COMMON METHODS
 ////////////////////////////////////////////////////////////////////////////////

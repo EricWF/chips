@@ -2,6 +2,14 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 
+namespace chips
+{
+    ENTITY_METHOD_INSTANTIATE( update_m );
+    ENTITY_METHOD_INSTANTIATE( move_m );
+    ENTITY_METHOD_INSTANTIATE( collides_m );
+    ENTITY_METHOD_INSTANTIATE( on_collision_m );
+    ENTITY_METHOD_INSTANTIATE( clone_m );
+}                                                           // namespace chips
 namespace chips { namespace logic 
 {
     namespace common

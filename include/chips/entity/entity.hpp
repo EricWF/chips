@@ -16,6 +16,124 @@
 # include <utility> /* for std::make_pair */
 # include <cstddef>
 
+// This is an attempt to speed up compile times by externing template definitions
+// it currently gives WORSE performance. TODO fix that.
+# define CHIPS_ENTITY_EXTERN_TEMPLATE
+# if defined(CHIPS_ENTITY_EXTERN_TEMPLATE) 
+#   
+#   define ENTITY_ATTRIBUTE_EXTERN(Name)                                  \
+        extern template bool entity::has<Name>() const;                   \
+                                                                          \
+        extern template bool entity::insert( Name & );                    \
+        extern template bool entity::insert( Name const &);               \
+        extern template bool entity::insert( Name &&);                    \
+                                                                          \
+        extern template void entity::set( Name & );                       \
+        extern template void entity::set( Name const &);                  \
+        extern template void entity::set( Name && );                      \
+                                                                          \
+        extern template Name const * entity::get_raw<Name>() const;       \
+        extern template Name * entity::get_raw<Name>();                   \
+                                                                          \
+        extern template Name const & entity::get<Name>() const;           \
+        extern template Name & entity::get<Name>();                       \
+                                                                          \
+        extern template bool entity::remove<Name>();                      \
+                                                                          \
+        extern template entity & operator<<(entity &, Name const &);      \
+        extern template entity & operator<<(entity &, Name &);            \
+        extern template entity & operator<<(entity &, Name &&);           \
+                                                                          \
+        extern template entity const & operator>>(entity const &, Name &)
+# 
+#   
+#   define ENTITY_ATTRIBUTE_INSTANTIATE(Name)                      \
+        template bool entity::has<Name>() const;                   \
+                                                                   \
+        template bool entity::insert( Name & );                    \
+        template bool entity::insert( Name const &);               \
+        template bool entity::insert( Name &&);                    \
+                                                                   \
+        template void entity::set( Name & );                       \
+        template void entity::set( Name const &);                  \
+        template void entity::set( Name && );                      \
+                                                                   \
+        template Name const * entity::get_raw<Name>() const;       \
+        template Name * entity::get_raw<Name>();                   \
+                                                                   \
+        template Name const & entity::get<Name>() const;           \
+        template Name & entity::get<Name>();                       \
+                                                                   \
+        template bool entity::remove<Name>();                      \
+                                                                   \
+        template entity & operator<<(entity &, Name const &);      \
+        template entity & operator<<(entity &, Name &);            \
+        template entity & operator<<(entity &, Name &&);           \
+                                                                   \
+        template entity const & operator>>(entity const &, Name &)
+#
+#   
+#   define ENTITY_METHOD_EXTERN(Name)                                     \
+        extern template bool entity::has(Name) const;                     \
+                                                                          \
+        extern template bool entity::insert(Name, Name::function_type*);  \
+        extern template void entity::set(Name, Name::function_type*);     \
+                                                                          \
+        extern template Name::function_type* entity::get_raw(Name) const; \
+        extern template Name::function_type* entity::get(Name) const;     \
+                                                                          \
+        extern template void entity::remove(Name)
+# 
+#     
+#   define ENTITY_METHOD_INSTANTIATE(Name)                         \
+        template bool entity::has(Name) const;                     \
+                                                                   \
+        template bool entity::insert(Name, Name::function_type*);  \
+        template void entity::set(Name, Name::function_type*);     \
+                                                                   \
+        template Name::function_type* entity::get_raw(Name) const; \
+        template Name::function_type* entity::get(Name) const;     \
+                                                                   \
+        template void entity::remove(Name)
+#
+#   
+#   define ENTITY_METHOD_CALL_EXTERN(Name, ...)                                  \
+        extern template Name::result_type entity::operator()(Name, __VA_ARGS__); \
+        extern template Name::result_type entity::call<Name>(Name, __VA_ARGS__);       \
+        extern template bool entity::call_if(Name, __VA_ARGS__)
+#   
+#   
+#   define ENTITY_METHOD_CALL_INSTANTIATE(Name, ...)                      \
+        template Name::result_type entity::operator()(Name, __VA_ARGS__); \
+        template Name::result_type entity::call<Name>(Name, __VA_ARGS__); \
+        template bool entity::call_if(Name, __VA_ARGS__)
+#   
+#   
+#   define ENTITY_METHOD_CONST_CALL_EXTERN(Name, ...)                                  \
+        extern template Name::result_type entity::operator()(Name, __VA_ARGS__) const; \
+        extern template Name::result_type entity::call(Name, __VA_ARGS__) const;       \
+        extern template bool entity::call_if(Name, __VA_ARGS__) const
+#
+#   
+#   define ENTITY_METHOD_CONST_CALL_INSTANTIATE(Name, ...)                             \
+        template Name::result_type entity::operator()(Name, __VA_ARGS__) const; \
+        template Name::result_type entity::call(Name, __VA_ARGS__) const;       \
+        template bool entity::call_if(Name, __VA_ARGS__) const
+#   
+#   
+# else /* not CHIPS_ENTITY_EXTERN_TEMPLATE */
+#    
+#   // extern int dummy__ is used to eat the semi-colon
+#   define ENTITY_ATTRIBUTE_EXTERN(...)              extern int dummy__
+#   define ENTITY_ATTRIBUTE_INSTANTIATE(...)         extern int dummy__
+#   define ENTITY_METHOD_EXTERN(...)                 extern int dummy__
+#   define ENTITY_METHOD_INSTANTIATE(...)            extern int dummy__
+#   define ENTITY_METHOD_CALL_EXTERN(...)            extern int dummy__
+#   define ENTITY_METHOD_CALL_INSTANTIATE(...)       extern int dummy__
+#   define ENTITY_METHOD_CONST_CALL_EXTERN(...)      extern int dummy__
+#   define ENTITY_METHOD_CONST_CALL_INSTANTIATE(...) extern int dummy__
+#   
+# endif
 
 /// The summary of the entity interface
 /// This summary is provided to prevent ANYBODY from having to read the
@@ -523,10 +641,12 @@ namespace chips
         
         template <
             class MethodTag, class MethodDef
-          , ELIB_ENABLE_IF(is_method<MethodTag>::value)
-          , ELIB_ENABLE_IF(elib::aux::is_convertible<
-              MethodDef, typename MethodTag::function_type*
-            >::value)
+          , ELIB_ENABLE_IF(is_method<MethodTag>::value) 
+          , ELIB_ENABLE_IF(
+              elib::aux::is_convertible<
+                MethodDef, typename MethodTag::function_type*
+              >::value
+            )
         >
         void set(MethodTag, MethodDef def)
         {            
