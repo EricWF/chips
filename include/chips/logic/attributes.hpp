@@ -26,14 +26,6 @@ namespace chips
     
     /// For use with traps and other things
     struct move_lock : attribute_base {};
-    
-    ENTITY_ATTRIBUTE_EXTERN( direction );
-    ENTITY_ATTRIBUTE_EXTERN( position );
-    ENTITY_ATTRIBUTE_EXTERN( tile_id );
-    ENTITY_ATTRIBUTE_EXTERN( entity_list );
-    ENTITY_ATTRIBUTE_EXTERN( chip_count_lock );
-    ENTITY_ATTRIBUTE_EXTERN( trapped_entity );
-    ENTITY_ATTRIBUTE_EXTERN( move_lock );
-    
+
 }                                                           // namespace chips
 #endif /* CHIPS_LOGIC_ATTRIBUTES_HPP */
