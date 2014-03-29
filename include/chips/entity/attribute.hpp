@@ -5,8 +5,6 @@
 # include <elib/aux.hpp>
 # include <utility> /* for std::swap */
 
-
-
 namespace chips
 {       
 //========================== ATTRIBUTE EXAMPLE ===============================//
@@ -84,8 +82,8 @@ namespace chips
         T &       operator*() noexcept       { return m_value; }
         
         /// This magical operator
-        T *       operator->()       { return elib::addressof(m_value); }
-        T const * operator->() const { return elib::addressof(m_value); }
+        T *       operator->()       noexcept { return elib::addressof(m_value); }
+        T const * operator->() const noexcept { return elib::addressof(m_value); }
             
         /// Set T
         void set(T const & v) { m_value = v; }
@@ -114,36 +112,38 @@ namespace chips
         lhs.swap(rhs);
     }
     
-# define ANY_ATTRIBUTE_OP(Op)                                             \
+
+///  Define comparison operators for any_attribute. 
+/// The following comparisons are provided:
+///    - any_attribute<T> == any_attribute<T>
+///    - any_attribute<T> == T
+///    - T == any_attribute<T>
+///  NOTE: any_attribute's with the same value type but different
+///  dummy params ARE NOT comparible.
+# define ANY_ATTRIBUTE_CMP(Op)                                            \
     template <class T, class Dummy>                                       \
-    bool operator Op (any_attribute<T, Dummy> const & lhs                 \
+    auto operator Op (any_attribute<T, Dummy> const & lhs                 \
                   , any_attribute<T, Dummy> const & rhs)                  \
-    {                                                                     \
-        return lhs.get() Op rhs.get();                                    \
-    }                                                                     \
+    ELIB_AUTO_RETURN_NOEXCEPT( lhs.get() Op rhs.get() )                   \
                                                                           \
     template <class T, class Dummy>                                       \
-    bool operator Op (any_attribute<T, Dummy> const & lhs, T const & rhs) \
-    {                                                                     \
-        return lhs.get() Op rhs;                                          \
-    }                                                                     \
+    auto operator Op (any_attribute<T, Dummy> const & lhs, T const & rhs) \
+    ELIB_AUTO_RETURN_NOEXCEPT( lhs.get() Op rhs )                         \
                                                                           \
     template <class T, class Dummy>                                       \
-    bool operator Op (T const & lhs, any_attribute<T, Dummy> const & rhs) \
-    {                                                                     \
-        return lhs Op rhs.get();                                          \
-    }                                                                     \
+    auto operator Op (T const & lhs, any_attribute<T, Dummy> const & rhs) \
+    ELIB_AUTO_RETURN_NOEXCEPT( lhs Op rhs.get() )                         \
                                                                           \
     template <class T, class Dummy1, class Dummy2>                        \
     bool operator Op (any_attribute<T, Dummy1> const &                    \
                     , any_attribute<T, Dummy2> const &) = delete;
     
-    ANY_ATTRIBUTE_OP( == )
-    ANY_ATTRIBUTE_OP( != )
-    ANY_ATTRIBUTE_OP( <  )
-    ANY_ATTRIBUTE_OP( <= )
-    ANY_ATTRIBUTE_OP( >  )
-    ANY_ATTRIBUTE_OP( >= )
+    ANY_ATTRIBUTE_CMP( == )
+    ANY_ATTRIBUTE_CMP( != )
+    ANY_ATTRIBUTE_CMP( <  )
+    ANY_ATTRIBUTE_CMP( <= )
+    ANY_ATTRIBUTE_CMP( >  )
+    ANY_ATTRIBUTE_CMP( >= )
     
 # undef ANY_ATTRIBUTE_OP
 

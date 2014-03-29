@@ -359,7 +359,11 @@ namespace chips
         ELIB_DEFAULT_COPY_MOVE(entity);        
         
         ////////////////////////////////////////////////////////////////////////
-        entity_id id()       const noexcept { return m_id; }
+        entity_id id() const noexcept 
+        { 
+            return m_id; 
+        }
+        
         void id(entity_id xid) noexcept { m_id = xid; }
         operator entity_id() const noexcept { return m_id; }
         

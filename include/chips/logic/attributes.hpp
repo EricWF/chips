@@ -6,12 +6,9 @@
 # include "chips/entity.hpp"
 # include <vector>
 
+
 namespace chips
-{
-////////////////////////////////////////////////////////////////////////////////
-//                               MISC ATTRIBUTES
-////////////////////////////////////////////////////////////////////////////////
-    
+{    
     /// A list of entities to be called after a given event
     namespace logic_detail { struct entity_list_tag {}; } 
     using entity_list = any_attribute<std::vector<entity_locator>, logic_detail::entity_list_tag>;
