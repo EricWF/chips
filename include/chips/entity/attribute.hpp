@@ -5,6 +5,8 @@
 # include <elib/aux.hpp>
 # include <utility> /* for std::swap */
 
+
+
 namespace chips
 {       
 //========================== ATTRIBUTE EXAMPLE ===============================//
@@ -111,6 +113,39 @@ namespace chips
     {
         lhs.swap(rhs);
     }
+    
+# define ANY_ATTRIBUTE_OP(Op)                                             \
+    template <class T, class Dummy>                                       \
+    bool operator Op (any_attribute<T, Dummy> const & lhs                 \
+                  , any_attribute<T, Dummy> const & rhs)                  \
+    {                                                                     \
+        return lhs.get() Op rhs.get();                                    \
+    }                                                                     \
+                                                                          \
+    template <class T, class Dummy>                                       \
+    bool operator Op (any_attribute<T, Dummy> const & lhs, T const & rhs) \
+    {                                                                     \
+        return lhs.get() Op rhs;                                          \
+    }                                                                     \
+                                                                          \
+    template <class T, class Dummy>                                       \
+    bool operator Op (T const & lhs, any_attribute<T, Dummy> const & rhs) \
+    {                                                                     \
+        return lhs Op rhs.get();                                          \
+    }                                                                     \
+                                                                          \
+    template <class T, class Dummy1, class Dummy2>                        \
+    bool operator Op (any_attribute<T, Dummy1> const &                    \
+                    , any_attribute<T, Dummy2> const &) = delete;
+    
+    ANY_ATTRIBUTE_OP( == )
+    ANY_ATTRIBUTE_OP( != )
+    ANY_ATTRIBUTE_OP( <  )
+    ANY_ATTRIBUTE_OP( <= )
+    ANY_ATTRIBUTE_OP( >  )
+    ANY_ATTRIBUTE_OP( >= )
+    
+# undef ANY_ATTRIBUTE_OP
 
 }                                                           // namespace chips
 #endif /* CHIPS_ENTITY_ATTRIBUTE_HPP */
