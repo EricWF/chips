@@ -15,6 +15,7 @@ convert -extract 32x32+0+352 tileset.gif tile-0-11.png
 convert -extract 32x32+0+384 tileset.gif tile-0-12.png
 convert -extract 32x32+0+416 tileset.gif tile-0-13.png
 convert -extract 32x32+0+448 tileset.gif tile-0-14.png
+convert -extract 32x32+0+480 tileset.gif tile-0-15.png
 convert -extract 32x32+32+0 tileset.gif tile-1-0.png
 convert -extract 32x32+32+32 tileset.gif tile-1-1.png
 convert -extract 32x32+32+64 tileset.gif tile-1-2.png
@@ -30,6 +31,7 @@ convert -extract 32x32+32+352 tileset.gif tile-1-11.png
 convert -extract 32x32+32+384 tileset.gif tile-1-12.png
 convert -extract 32x32+32+416 tileset.gif tile-1-13.png
 convert -extract 32x32+32+448 tileset.gif tile-1-14.png
+convert -extract 32x32+32+480 tileset.gif tile-1-15.png
 convert -extract 32x32+64+0 tileset.gif tile-2-0.png
 convert -extract 32x32+64+32 tileset.gif tile-2-1.png
 convert -extract 32x32+64+64 tileset.gif tile-2-2.png
@@ -45,6 +47,7 @@ convert -extract 32x32+64+352 tileset.gif tile-2-11.png
 convert -extract 32x32+64+384 tileset.gif tile-2-12.png
 convert -extract 32x32+64+416 tileset.gif tile-2-13.png
 convert -extract 32x32+64+448 tileset.gif tile-2-14.png
+convert -extract 32x32+64+480 tileset.gif tile-2-15.png
 convert -extract 32x32+96+0 tileset.gif tile-3-0.png
 convert -extract 32x32+96+32 tileset.gif tile-3-1.png
 convert -extract 32x32+96+64 tileset.gif tile-3-2.png
@@ -60,6 +63,7 @@ convert -extract 32x32+96+352 tileset.gif tile-3-11.png
 convert -extract 32x32+96+384 tileset.gif tile-3-12.png
 convert -extract 32x32+96+416 tileset.gif tile-3-13.png
 convert -extract 32x32+96+448 tileset.gif tile-3-14.png
+convert -extract 32x32+96+480 tileset.gif tile-3-15.png
 convert -extract 32x32+128+0 tileset.gif tile-4-0.png
 convert -extract 32x32+128+32 tileset.gif tile-4-1.png
 convert -extract 32x32+128+64 tileset.gif tile-4-2.png
@@ -75,6 +79,7 @@ convert -extract 32x32+128+352 tileset.gif tile-4-11.png
 convert -extract 32x32+128+384 tileset.gif tile-4-12.png
 convert -extract 32x32+128+416 tileset.gif tile-4-13.png
 convert -extract 32x32+128+448 tileset.gif tile-4-14.png
+convert -extract 32x32+128+480 tileset.gif tile-4-15.png
 convert -extract 32x32+160+0 tileset.gif tile-5-0.png
 convert -extract 32x32+160+32 tileset.gif tile-5-1.png
 convert -extract 32x32+160+64 tileset.gif tile-5-2.png
@@ -90,6 +95,7 @@ convert -extract 32x32+160+352 tileset.gif tile-5-11.png
 convert -extract 32x32+160+384 tileset.gif tile-5-12.png
 convert -extract 32x32+160+416 tileset.gif tile-5-13.png
 convert -extract 32x32+160+448 tileset.gif tile-5-14.png
+convert -extract 32x32+160+480 tileset.gif tile-5-15.png
 convert -extract 32x32+192+0 tileset.gif tile-6-0.png
 convert -extract 32x32+192+32 tileset.gif tile-6-1.png
 convert -extract 32x32+192+64 tileset.gif tile-6-2.png
@@ -105,6 +111,7 @@ convert -extract 32x32+192+352 tileset.gif tile-6-11.png
 convert -extract 32x32+192+384 tileset.gif tile-6-12.png
 convert -extract 32x32+192+416 tileset.gif tile-6-13.png
 convert -extract 32x32+192+448 tileset.gif tile-6-14.png
+convert -extract 32x32+192+480 tileset.gif tile-6-15.png
 convert -extract 32x32+224+0 tileset.gif tile-7-0.png
 convert -extract 32x32+224+32 tileset.gif tile-7-1.png
 convert -extract 32x32+224+64 tileset.gif tile-7-2.png
@@ -120,6 +127,7 @@ convert -extract 32x32+224+352 tileset.gif tile-7-11.png
 convert -extract 32x32+224+384 tileset.gif tile-7-12.png
 convert -extract 32x32+224+416 tileset.gif tile-7-13.png
 convert -extract 32x32+224+448 tileset.gif tile-7-14.png
+convert -extract 32x32+224+480 tileset.gif tile-7-15.png
 convert -extract 32x32+256+0 tileset.gif tile-8-0.png
 convert -extract 32x32+256+32 tileset.gif tile-8-1.png
 convert -extract 32x32+256+64 tileset.gif tile-8-2.png
@@ -135,6 +143,7 @@ convert -extract 32x32+256+352 tileset.gif tile-8-11.png
 convert -extract 32x32+256+384 tileset.gif tile-8-12.png
 convert -extract 32x32+256+416 tileset.gif tile-8-13.png
 convert -extract 32x32+256+448 tileset.gif tile-8-14.png
+convert -extract 32x32+256+480 tileset.gif tile-8-15.png
 convert -extract 32x32+288+0 tileset.gif tile-9-0.png
 convert -extract 32x32+288+32 tileset.gif tile-9-1.png
 convert -extract 32x32+288+64 tileset.gif tile-9-2.png
@@ -150,3 +159,4 @@ convert -extract 32x32+288+352 tileset.gif tile-9-11.png
 convert -extract 32x32+288+384 tileset.gif tile-9-12.png
 convert -extract 32x32+288+416 tileset.gif tile-9-13.png
 convert -extract 32x32+288+448 tileset.gif tile-9-14.png
+convert -extract 32x32+288+480 tileset.gif tile-9-15.png
