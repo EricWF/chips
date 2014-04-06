@@ -52,8 +52,7 @@ namespace chips
         (scoreboard_ypos + scoreboard_height) - (2 * tile_height) - 25;
         
     constexpr const unsigned chip_count_xpos = scoreboard_xpos + 25;
-    constexpr const unsigned chip_count_ypos = 
-        scoreboard_ypos + (scoreboard_height / 2) - 25;
+    constexpr const unsigned chip_count_ypos = scoreboard_ypos + 10;
         
     /// Information about the top level window
     constexpr const char window_name[] = "chips";

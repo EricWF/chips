@@ -199,7 +199,7 @@ namespace chips
     void resource_manager::init_tileset()
     {
         sf::Image img;
-        if (!img.loadFromFile(CHIPS_RESOURCE_ROOT "/tileset.gif"))
+        if (!img.loadFromFile(CHIPS_RESOURCE_ROOT "/tileset.png"))
             throw "TODO";
         
         detail::mask_tileset(img);

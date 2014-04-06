@@ -185,13 +185,23 @@ namespace chips
     
     void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
     {
-        sf::RectangleShape rect{
-            sf::Vector2f((float)scoreboard_width, (float)scoreboard_height)
-        };
-        rect.setPosition((float)scoreboard_xpos, (float)scoreboard_ypos);
-        rect.setFillColor(sf::Color(192, 192, 192));
-        win.draw(rect);
-        
+		sf::Image img;
+		sf::Texture tex;
+		sf::Sprite s;
+
+
+		// TODO: Put this in resource manager
+
+		if(!img.loadFromFile(CHIPS_RESOURCE_ROOT "/scoreboard.png"))
+			throw "TODO";
+
+		if(!tex.loadFromImage(img))
+			throw "TODO";
+
+		s.setTexture(tex);
+		s.setPosition(sf::Vector2f((float)scoreboard_xpos, (float)scoreboard_ypos));
+		win.draw(s);
+		        
         m_draw_chip_count(win);
         m_draw_inventory(win);
     }

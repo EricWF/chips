@@ -20,3 +20,8 @@
 
 - Add find_entity methods to level. these methods should search all parts of a level
   for matching entities.
+
+
+
+- Fix background for scoreboard
+- Add resource management for scoreboard
