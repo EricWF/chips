@@ -131,7 +131,7 @@ namespace chips
         {
             switch (id)
             {
-                case font_uid::arial: return CHIPS_RESOURCE_ROOT "/arial.ttf";
+                case font_uid::arial: return CHIPS_RESOURCE_ROOT "/Treamd.ttf";
                 case font_uid::none:
                 default: 
                     ELIB_THROW_EXCEPTION(chips_error("Invalid font_uid"));
