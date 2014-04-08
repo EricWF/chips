@@ -2,6 +2,7 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 #include <elib/aux.hpp>
+#include <elib/fmt.hpp>
 
 namespace chips
 {
@@ -199,7 +200,7 @@ namespace chips
     void resource_manager::init_tileset()
     {
         sf::Image img;
-        if (!img.loadFromFile(CHIPS_RESOURCE_ROOT "/tileset.png"))
+        if (!img.loadFromFile(tile_image_file))
             throw "TODO";
         
         detail::mask_tileset(img);
