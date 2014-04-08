@@ -9,7 +9,7 @@ namespace chips
     template <class Tag, class Ret, class ...Args>
     struct method_base<Tag, Ret(Args...)> 
     {
-        /// The method "Tag" on "Name"
+        /// The method "Tag" or "Name"
         using tag = Tag;
         
         /// The return type of the method (result_type is the standard C++ name)

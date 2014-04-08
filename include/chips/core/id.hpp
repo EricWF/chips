@@ -514,12 +514,5 @@ namespace chips
             || (id >= tile_id::chip_swimming_N && id <= tile_id::germ_E)
             || (id >= tile_id::chip_N && id <= tile_id::chip_E);
     }
-    
-    /// check if the tile_id has black outline sprite 
-    /// and white alpha channel sprite
-    constexpr bool is_typed_texture(tile_id id) noexcept
-    {
-        return id >= tile_id::chip_swimming_N;
-    }
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_ID_HPP */

@@ -7,9 +7,9 @@ namespace chips { namespace logic
 {
     namespace 
     {
-        ////////////////////////////////////////////////////////////////////////
-        //                            FLOOR
-        ////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    //                               FLOOR
+    ////////////////////////////////////////////////////////////////////////////
 
         bool elem_floor_collide(entity const & self, entity const & other)
         {
@@ -460,20 +460,18 @@ namespace chips { namespace logic
                 lhs >> lp; rhs >> rp; *m_e >> ep;
                 
                 
-                if (lp == ep)
+                if (lp == ep) {
                     return false;
-                else if (rp == ep)
+                } 
+                else if (rp == ep) {
                     return true;
-                else if (rcmp(lhs, *m_e))
-                {
-                    if (!rcmp(rhs, *m_e))
-                        return true;
+                }
+                else if (rcmp(lhs, *m_e)) {
+                    if (!rcmp(rhs, *m_e)) { return true; }
                     return cmp(lhs, rhs);
                 }
-                else
-                {
-                    if (rcmp(rhs, *m_e))
-                        return false;
+                else {
+                    if (rcmp(rhs, *m_e)) { return false; }
                     return cmp(lhs, rhs);
                 }
             }

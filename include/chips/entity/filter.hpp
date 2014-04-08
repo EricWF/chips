@@ -75,9 +75,9 @@ namespace chips
             is_concept<ConceptT>::value
           , "Must be a concept type"
         );
-        using detected_iter  = decltype(elib::declval<Sequence>().begin());
-        using detected_citer = decltype(elib::declval<Sequence>().cbegin());
-        using detected_riter = decltype(elib::declval<Sequence>().rbegin());
+        using detected_iter  =  decltype(elib::declval<Sequence>().begin());
+        using detected_citer =  decltype(elib::declval<Sequence>().cbegin());
+        using detected_riter =  decltype(elib::declval<Sequence>().rbegin());
         using detected_criter = decltype(elib::declval<Sequence>().crbegin());
     public:
         using iterator       = filter_iterator<detected_iter, ConceptT>;
@@ -376,7 +376,6 @@ namespace chips
     {
         lhs.swap(rhs);
     }
-    
     
     template <class Seq, class ConceptT>
     auto begin(reverse_filter_view<Seq, ConceptT> & v) 

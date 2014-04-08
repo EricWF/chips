@@ -277,8 +277,7 @@ namespace chips
               );
         }
         
-        
-        
+        ////////////////////////////////////////////////////////////////////////
         template <class Iter>
         auto apply_filter(Iter b, Iter e) const
           -> std::vector<decltype(std::ref(*b))> 
