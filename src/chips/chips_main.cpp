@@ -71,8 +71,10 @@ namespace chips
     int chips_main(int argc, char** argv, char**)
     {        
 		bool level_flag = false;//, menu_flag = false;
-		int lvl_arg = 1, c;
-		char *tileset_fname = nullptr;
+		int c;
+		char *tileset_fname = nullptr,
+			*lvl_name = nullptr;
+		
 		opterr = 0;
 
 		while ((c = getopt (argc, argv, "l:mt:")) != -1)
@@ -84,7 +86,7 @@ namespace chips
 				break;
             case 'l':
 				level_flag = true;
-				lvl_arg = atoi(optarg);
+				lvl_name = optarg;
 				break;
 			case 'm':
 				//menu_flag = true;
@@ -108,10 +110,13 @@ namespace chips
 			}
 		}
 		
-		if(level_flag)
-		 	run_level((unsigned)lvl_arg);
-		else
-		 	menu_test();
+		// if(level_flag)
+		//  	run_level((unsigned)lvl_arg);
+		// else
+		//  	menu_test();
+		
+		
+		printf("%s\n", lvl_name);
 		
         return 0;
     }
