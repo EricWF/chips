@@ -30,7 +30,7 @@ namespace chips
 		   music.setLoop(true);
 		   music.play();
     
-        while (gh.update(window) == game_event_id::none)
+        while (gh.update(window) == game_event_id::closed)
         {
             window.clear(sf::Color::Black);
             gh.draw(window);
@@ -43,7 +43,6 @@ namespace chips
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         resource_manager::get();
-
 
 		menu_handler mh;
 		auto blist = parse_menu(CHIPS_RESOURCE_ROOT "main_menu.xml");
@@ -61,7 +60,6 @@ namespace chips
         }
 
 		window.close();
-		
 	}
 	
 #if defined(__GNUC__)

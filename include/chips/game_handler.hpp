@@ -37,6 +37,7 @@ namespace chips
         chips::level const & level() const { return m_level; }
         
     private:
+        game_event_id m_update_logic();
         game_event_id m_handle_event(sf::RenderWindow & win);
         void m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);

@@ -45,7 +45,7 @@ namespace chips
     //                           GAME_HANDLER  
     ////////////////////////////////////////////////////////////////////////////
     
-    game_event_id game_handler::update(sf::RenderWindow & win)
+    game_event_id game_handler::m_update_logic(sf::RenderWindow & win)
     {
         if (m_tick < std::chrono::high_resolution_clock::now())
         {
@@ -101,7 +101,7 @@ namespace chips
 #endif
     void game_handler::m_move_chip_event(sf::Event const & ev)
     {
-        if (!CanMove()(m_level.chip)) return;
+        if (not m_level.chip || !CanMove()(m_level.chip)) return;
             
         direction d;
         switch (ev.key.code)
@@ -150,8 +150,6 @@ namespace chips
     {
         entity const & chip = m_level.chip;
         
-        entity chip_dummy(entity_id::chip);
-        
         chips_state st = get_chips_state(m_level);
         tile_id tid = static_cast<tile_id>(st);
         
@@ -160,9 +158,8 @@ namespace chips
             tid = directional_tile_id(tid, chip.get<direction>());
         }
         
-        chip_dummy << tid;
         
-        chips::draw(win, chip_dummy, win_pos);
+        chips::draw(win, win_pos, tid);
     }
     
     void game_handler::m_draw_helptext(sf::RenderWindow & win) const
@@ -276,6 +273,7 @@ namespace chips
                 case sf::Event::Closed:
                     return game_event_id::closed;
                 case sf::Event::KeyPressed:
+                    if ()
                     m_move_chip_event(e);
                     break;
                 default: break;
