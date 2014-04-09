@@ -17,12 +17,15 @@ namespace chips
     {
 		sf::Music music;
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
-        resource_manager::get();
         
+        // initialize the tileset
         if (ts_name == "") ts_name = "pirate_tileset.png";
         resource_manager::init(ts_name);
         
+        // parse the tileset info
         auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "/default_tileset.tsx");
+        
+        // load the level using the tileset info
         auto l = create_level(lv_name, prop_list);
         
         game_handler gh(l);
@@ -30,11 +33,16 @@ namespace chips
 		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav"))
 		   fprintf(stderr, "Failed to open music: poc.wav\n");
 			
-		   music.setLoop(true);
-		   music.play();
-    
-        while (gh.update(window) == game_event_id::none)
+        music.setLoop(true);
+        music.play();
+        
+        game_event_id last = game_event_id::none;
+        while (gh.update(window) != game_event_id::closed)
         {
+            if (last != gh.state()) {
+                last = gh.state();
+                music.stop();
+            }
             window.clear(sf::Color::Black);
             gh.draw(window);
             window.display();
@@ -46,7 +54,6 @@ namespace chips
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         resource_manager::get();
-
 
 		menu_handler mh;
 		auto blist = parse_menu(CHIPS_RESOURCE_ROOT "main_menu.xml");
