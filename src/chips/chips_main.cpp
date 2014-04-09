@@ -39,13 +39,6 @@ namespace chips
         window.close();
     }
     
-	void level_test(const unsigned lvl_pick)
-	{
-		log::level(level_e::debug);
-		auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "default_tileset.tsx" );
-        auto l = create_level(lvl_pick, prop_list);
-	}
-
 	void menu_test()
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
