@@ -79,12 +79,17 @@ namespace chips
     {        
 		bool level_flag = false;//, menu_flag = false;
 		int lvl_arg = 1, c;
+		char *file_name = nullptr;
 		opterr = 0;
 
-		while ((c = getopt (argc, argv, "l:m")) != -1)
+		while ((c = getopt (argc, argv, "l:mt:")) != -1)
 		{
 			switch (c)
 			{
+			case 't':
+				file_name = optarg;
+				printf("%s\n", optarg);
+				break;
             case 'l':
 				level_flag = true;
 				lvl_arg = atoi(optarg);
@@ -110,11 +115,11 @@ namespace chips
 				exit(EXIT_FAILURE);
 			}
 		}
-
+		
 		if(level_flag)
-			run_level((unsigned)lvl_arg);
+		 	run_level((unsigned)lvl_arg);
 		else
-			menu_test();
+		 	menu_test();
 		
         return 0;
     }
