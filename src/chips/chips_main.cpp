@@ -17,6 +17,7 @@ namespace chips
     {
 		sf::Music music;
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
+        resource_manager::get();
         
         if (ts_name == "") ts_name = "pirate_tileset.png";
         resource_manager::init(ts_name);
@@ -32,7 +33,7 @@ namespace chips
 		   music.setLoop(true);
 		   music.play();
     
-        while (gh.update(window) != game_event_id::closed)
+        while (gh.update(window) == game_event_id::none)
         {
             window.clear(sf::Color::Black);
             gh.draw(window);
@@ -45,6 +46,7 @@ namespace chips
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         resource_manager::get();
+
 
 		menu_handler mh;
 		auto blist = parse_menu(CHIPS_RESOURCE_ROOT "main_menu.xml");
@@ -62,6 +64,7 @@ namespace chips
         }
 
 		window.close();
+		
 	}
 	
 #if defined(__GNUC__)
@@ -70,56 +73,56 @@ namespace chips
 #endif
     int chips_main(int argc, char** argv, char**)
     {        
-		bool level_flag = false;//, menu_flag = false;
-		int c;
-		std::string tileset_name, lvl_name;
-		
-		opterr = 0;
+        bool level_flag = false;//, menu_flag = false;
+        int c;
+        std::string tileset_fname, lvl_name;
 
-		while ((c = getopt (argc, argv, "l:mt:")) != -1)
-		{
-			switch (c)
-			{
-			case 't':
+        opterr = 0;
+
+        while ((c = getopt (argc, argv, "l:mt:")) != -1)
+        {
+            switch (c)
+            {
+            case 't':
                 if (optarg) {
-                    tileset_name = optarg;
+                    tileset_fname = optarg;
                 }
-				break;
+                break;
             case 'l':
-				level_flag = true;
-				if (optarg) {
+                level_flag = true;
+                if (optarg) {
                     lvl_name = optarg;
                 }
-				break;
-			case 'm':
-				//menu_flag = true;
-				break;
-			case '?':
-				if (optopt == 'l')
-				{
-					fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-					level_flag = false;
-				}
-				else if (isprint (optopt))
-					fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-				else
-					fprintf(stderr,
-							"Unknown option character `\\x%x'.\n",
-							optopt);
+                break;
+            case 'm':
+                //menu_flag = true;
+                break;
+            case '?':
+                if (optopt == 'l')
+                {
+                    fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+                    level_flag = false;
+                }
+                else if (isprint (optopt))
+                    fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+                else
+                    fprintf(stderr,
+                            "Unknown option character `\\x%x'.\n",
+                            optopt);
 
-				fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
+                fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
 
-				exit(EXIT_FAILURE);
-			}
-		}
-		
-		if (not level_flag) {
-            printf("SHIT NO LEVEL\n");
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        if (not level_flag) {
+            printf("No level flag given");
             return 1;
         }
-		
-		run_level(lvl_name, tileset_name);
-		
+
+        run_level(lvl_name, tileset_fname);
+        
         return 0;
     }
 #if defined(__GNUC__)
