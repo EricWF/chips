@@ -157,8 +157,7 @@ namespace chips
         
         if (st == chips_state::normal)
         {
-            chip_dummy << chip.get<direction>()
-                       << texture_type::cutout; 
+            chip_dummy << chip.get<direction>();
         }
         else if (st == chips_state::swimming) 
         {

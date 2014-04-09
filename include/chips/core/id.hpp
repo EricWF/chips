@@ -446,26 +446,12 @@ namespace chips
         chip_E = 111, 
     };
     
-    /// texture_type refers to the different sets of colunms in the sprite sheet.
-    /// tile: the sprite against the default base tile
-    /// cutout: the sprite's against white.
-    /// outline: the black outline version of the sprites
-    enum class texture_type
-    {
-        tile, 
-        cutout,
-        outline
-    };
-    
-    /// Allow tile_id and texture_type to be used as
+    /// Allow tile_id to be used as
     /// attributes in entity (compile time check)
     namespace extension
     {
         template <>
         struct is_attribute_impl<tile_id> : elib::true_ {};
-        
-        template <>
-        struct is_attribute_impl<texture_type> : elib::true_ {};
     }                                                    // namespace extension
 }                                                           // namespace chips
 
@@ -476,12 +462,6 @@ namespace elib { namespace enumeration
     struct basic_enum_traits<::chips::tile_id>
     {
         static const std::map<::chips::tile_id, std::string> name_map;
-    };
-    
-    template <>
-    struct basic_enum_traits<::chips::texture_type>
-    {
-        static const std::map<::chips::texture_type, std::string> name_map;
     };
 }}                                               // namespace elib::enumeration
 
@@ -495,16 +475,6 @@ namespace chips
     inline tile_id to_tile_id(std::string const & s)
     {
         return elib::enumeration::enum_cast<tile_id>(s);
-    }
-
-    inline std::string to_string(texture_type t)
-    {
-        return elib::enumeration::enum_cast<std::string>(t);
-    }
-    
-    inline texture_type to_texture_type(std::string const & s)
-    {
-        return elib::enumeration::enum_cast<texture_type>(s);
     }
     
     /// Checks if the texture has a direction component
