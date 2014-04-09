@@ -3,6 +3,8 @@
 #include "chips/draw.hpp"
 #include "chips/logic.hpp"
 #include "chips/entity.hpp"
+#include <iostream>
+#include <chrono>
 
 #include <elib/fmt.hpp>
 #include <string>
@@ -50,9 +52,7 @@ namespace chips
         while (not m_try_tick()) 
         {
         }
-        
         m_tick(win);
-       
         return m_event;
     }
     
@@ -76,7 +76,7 @@ namespace chips
         // Update based on input event, then check state.
         if ((m_tick_count % 2) == 0) {
             m_handle_event(win);
-            if (m_event == game_event_id::closed) return;
+            if (m_event != game_event_id::none) return;
         } 
         
         if (m_check_success() || m_check_failure()) return;
@@ -154,7 +154,8 @@ namespace chips
     ////////////////////////////////////////////////////////////////////////////
     bool game_handler::m_check_success()
     {
-        ELIB_ASSERT(m_event != game_event_id::level_passed);
+        if (m_event == game_event_id::level_passed)
+        { return true; }
         if (not m_level.chip || m_event != game_event_id::none)
         { return false; }
     
@@ -384,7 +385,7 @@ namespace chips
                 case sf::Event::Closed:
                     m_event = game_event_id::closed;
                     return;
-                case sf::Event::KeyPressed:
+                case sf::Event::KeyReleased:
                     if (m_event != game_event_id::none) {
                         break;
                     }

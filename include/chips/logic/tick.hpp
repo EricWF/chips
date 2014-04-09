@@ -18,8 +18,8 @@ namespace chips
     
     ////////////////////////////////////////////////////////////////////////////
     /// Ten ticks per second
-    using resolution = std::ratio<1, 10>;
-    using tick_dur = std::chrono::duration<std::intmax_t, resolution>;
+    using resolution = std::ratio<1, 1000>;
+    using tick_dur = std::chrono::duration<std::intmax_t, std::ratio<1, 10>>;
     
     ////////////////////////////////////////////////////////////////////////////
     /// An attribute used for speed
@@ -92,7 +92,7 @@ namespace chips
             speed const *sptr = e.get_raw<speed>();
             if (not sptr) return false;
             ELIB_ASSERT(sptr->num == 1);
-            return (m_tick % sptr->den) && (not e.has<move_lock>());
+            return (m_tick % sptr->den) == 0 && (not e.has<move_lock>());
         }
         
     private:
