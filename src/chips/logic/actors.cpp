@@ -57,7 +57,8 @@ namespace chips { namespace logic
                 else if (!back)  self(move_, turn_around(d), lv);
             };
         
-            e << method(update_, bug_update_);
+            e << method(update_, bug_update_)
+              << regular_speed;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,8 @@ namespace chips { namespace logic
                 self(move_, self.get<direction>(), l);
             };
                 
-            e << method(update_, tank_update);
+            e << method(update_, tank_update)
+              << regular_speed;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -103,7 +105,8 @@ namespace chips { namespace logic
                     self(move_, turn_around(d), l);
             };
                 
-            e << method(update_, fireball_update);
+            e << method(update_, fireball_update)
+              << regular_speed;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -120,7 +123,8 @@ namespace chips { namespace logic
                     self(move_, turn_around(self.get<direction>()), l);
             };
             
-            e << method(update_, update);
+            e << method(update_, update)
+              << regular_speed;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -155,7 +159,8 @@ namespace chips { namespace logic
              
             };    
             
-            e << method(update_, teeth_update);
+            e << method(update_, teeth_update)
+              << half_speed;
         }
         
         
@@ -189,7 +194,8 @@ namespace chips { namespace logic
                     self(move_, turn_around(d), l);
             };
             
-            e << method(update_, glider_update);
+            e << method(update_, glider_update)
+              << full_speed;
         }
         
         void init_germ(entity & e, level &)
@@ -214,7 +220,8 @@ namespace chips { namespace logic
                 else if (!behind) self(move_, turn_around(d), lv);
             };
             
-            e << method(update_, germ_update);
+            e << method(update_, germ_update)
+              << regular_speed;
         }
         
 #if defined(__GNUC__)

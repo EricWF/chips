@@ -6,6 +6,7 @@
 # include <elib/aux.hpp>
 # include <SFML/Graphics.hpp>
 # include <chrono>
+# include <cstddef>
 
 namespace chips
 {
@@ -38,7 +39,13 @@ namespace chips
         game_event_id state() const { return m_event; }
         
     private:
-        void m_update_logic();
+        bool m_try_tick();
+        void m_tick(sf::RenderWindow &);
+        void m_slide();
+        void m_update();
+        bool m_check_success();
+        bool m_check_failure();
+        
         void m_handle_event(sf::RenderWindow & win);
         void m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);
@@ -51,7 +58,8 @@ namespace chips
     private:
         game_event_id m_event{game_event_id::none};
         chips::level m_level;
-        std::chrono::high_resolution_clock::time_point m_tick;
+        time_point m_last_tick;
+        std::intmax_t m_tick_count = 0;
     };
     
     

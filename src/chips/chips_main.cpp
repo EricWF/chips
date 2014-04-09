@@ -27,9 +27,9 @@ namespace chips
         
         // load the level using the tileset info
         auto l = create_level(lv_name, prop_list);
-        
         game_handler gh(l);
 
+        // initialize the music
         sf::Music music;
 		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav")) {
 		   fprintf(stderr, "Failed to open music: poc.wav\n");
@@ -38,6 +38,7 @@ namespace chips
             music.play();
         }
         
+        // Enter the game loop.
         game_event_id last = game_event_id::none;
         while (gh.update(window) != game_event_id::closed)
         {

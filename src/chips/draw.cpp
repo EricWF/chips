@@ -24,14 +24,12 @@ namespace chips
             return static_cast<unsigned>(i) / texture_rows;
         }
 
-        
-        
         ////////////////////////////////////////////////////////////////////////
         constexpr position to_texture_position(tile_id i) noexcept
         {
             return position{
                 texture_index_col(i) * tile_width
-            , texture_index_row(i) * tile_height
+              , texture_index_row(i) * tile_height
             };
         }
     }                                                       // namespace 
@@ -52,8 +50,7 @@ namespace chips
             {
                 case font_uid::arial: return CHIPS_RESOURCE_ROOT "/Treamd.ttf";
                 case font_uid::none:
-                default: 
-                    ELIB_THROW_EXCEPTION(chips_error("Invalid font_uid"));
+                default: ELIB_THROW_EXCEPTION(chips_error("Invalid font_uid"));
             }
         }
 #if defined(__clang__)
@@ -75,11 +72,13 @@ namespace chips
 # pragma clang diagnostic pop
 #endif
 
+    ////////////////////////////////////////////////////////////////////////////
     resource_manager & resource_manager::init(std::string const & s)
     {
         return resource_manager::get_impl(s.c_str());
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     resource_manager & resource_manager::get()
     {
         return resource_manager::get_impl();
@@ -90,6 +89,27 @@ namespace chips
     {
         ELIB_ASSERT(tileset_name);
         init_tileset(tileset_name);
+        init_scoreboard();
+       
+    }
+    
+    void resource_manager::init_scoreboard()
+    {
+         sf::Image scoreboard_img;
+        if (not scoreboard_img.loadFromFile(CHIPS_RESOURCE_ROOT "/scoreboard.png"))
+            throw "TODO";
+            
+        sf::Texture scoreboard_tex;
+        if (not scoreboard_tex.loadFromImage(scoreboard_img))
+            throw "TODO";
+            
+        m_tex_map[texture_uid::scoreboard] = scoreboard_tex;
+        
+        m_scoreboard.setTexture(m_tex_map[texture_uid::scoreboard]);
+        
+        m_scoreboard.setPosition(
+            sf::Vector2f((float)scoreboard_xpos, (float)scoreboard_ypos)
+          );
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -184,8 +204,8 @@ namespace chips
     ////////////////////////////////////////////////////////////////////////////
     void draw(sf::RenderWindow & to, position p, tile_id index)
     {
-        resource_manager & res_man = resource_manager::get();
-        sf::Sprite & s = res_man[index];
+        auto & rm = resource_manager::get();
+        sf::Sprite & s = rm[index];
         s.setPosition(
             static_cast<float>(p.x)
           , static_cast<float>(p.y)

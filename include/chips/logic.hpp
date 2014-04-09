@@ -5,6 +5,7 @@
 # include "chips/logic/attributes.hpp"
 # include "chips/logic/concepts.hpp"
 # include "chips/logic/methods.hpp"
+# include "chips/logic/tick.hpp"
 # 
 # /// This module includes a number of cpp files with no headers.
 # /// These cpp files are entity definitions. entities are constructed by 

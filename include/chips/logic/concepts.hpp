@@ -302,10 +302,11 @@ namespace chips
     private:
         entity m_ent;
     };
-
+    
   
     /// Concepts about basic functionality
-    using CanUpdate  = EntityHas<update_m>;
+    using HasUpdateLock = EntityHas<update_lock>;
+    using CanUpdate  = Concept<EntityHas<update_m>>;
     using CanMove    = Concept<EntityHas<move_m>, EntityHasNone<move_lock>>;
     using CanCollide = EntityHasAny<collides_m, on_collision_m>;
   

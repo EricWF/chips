@@ -38,6 +38,11 @@ namespace chips
     constexpr struct
     clone_m : method_base<clone_m, void(level &)>
     {} clone_ {};
+    
+    /// Used by chip to fire his weapon
+    constexpr struct
+    attack_m : method_base<attack_m, void(level &)>
+    {} attack_ {};
    
 ////////////////////////////////////////////////////////////////////////////////
 //                              COMMON METHODS

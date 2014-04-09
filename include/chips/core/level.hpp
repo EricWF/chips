@@ -10,12 +10,35 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
 //                                LEVEL
 ////////////////////////////////////////////////////////////////////////////////
-
+    
+    enum class level_state
+    {
+        in_play, 
+        passed, 
+        failed
+    };
+    
+    inline std::string to_string(level_state l)
+    {
+        switch (l)
+        {
+            case level_state::in_play:
+                return "in_play";
+            case level_state::passed:
+                return "passed";
+            case level_state::failed:
+                return "failed";
+        }
+    }
+    
     class level
     {
     public:
         level(std::string xname, unsigned xchip_count, std::string help_str)
-          : m_name(elib::move(xname)), m_chip_count(xchip_count), m_help(help_str)
+          : state(level_state::in_play)
+          , m_name(elib::move(xname))
+          , m_chip_count(xchip_count)
+          , m_help(help_str)
         {}
         
         level(level const &) = default;
@@ -34,8 +57,10 @@ namespace chips
         /// return the help text for the level.
         std::string const & help() const noexcept { return m_help; }
         
+    public:
         entity chip;
         std::vector<entity> entity_list;
+        level_state state;
         
     private:
         std::string m_name;

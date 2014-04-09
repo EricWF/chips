@@ -40,7 +40,8 @@ namespace chips { namespace logic
         
         e << inventory() 
           << method(update_, chip_update_)
-          << method(move_, common::move_);
+          << method(move_, common::move_)
+          << regular_speed;
     }
     
     void process_chip(entity &, level &)

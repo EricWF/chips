@@ -200,7 +200,8 @@ namespace chips { namespace logic
             e << entity_list()
               << method(update_, on_update)
               << method(collides_, collides)
-              << method(on_collision_, on_collide);
+              << method(on_collision_, on_collide)
+              << full_speed;
         }
         
         ////////////////////////////////////////////////////////////////////////
@@ -364,7 +365,8 @@ namespace chips { namespace logic
             auto on_col =
             [](entity & self, entity &, level &)
             {
-                self << method(update_, pop_up_wall_update);
+                self << method(update_, pop_up_wall_update)
+                     << full_speed;
             };
             
             e << method(on_collision_, on_col);

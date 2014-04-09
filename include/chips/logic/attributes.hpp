@@ -23,6 +23,12 @@ namespace chips
     
     /// For use with traps and other things
     struct move_lock : attribute_base {};
+    
+    struct update_lock : attribute_base {};
+    
+    /// For use with chips weapons
+    namespace logic_detail { struct ammo_tag {}; }
+    using ammo_t = any_attribute<int, logic_detail::ammo_tag>;
 
 }                                                           // namespace chips
 #endif /* CHIPS_LOGIC_ATTRIBUTES_HPP */

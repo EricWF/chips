@@ -72,7 +72,6 @@ namespace chips { namespace logic
     
     void move_on_ice(entity & e, entity const & ice, level & l)
     {
-        e << move_lock();
         tile_id tid = ice.get<tile_id>();
         direction d = e.get<direction>();
 
@@ -108,9 +107,6 @@ namespace chips { namespace logic
         {
             e(move_, e.get<direction>(), l);
         }
-        
-        if (!OnIce(e).contains(l.entity_list))
-            e.remove<move_lock>();
     }
     
     ////////////////////////////////////////////////////////////////////////////

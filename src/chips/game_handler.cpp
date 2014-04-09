@@ -47,72 +47,162 @@ namespace chips
     
     game_event_id game_handler::update(sf::RenderWindow & win)
     {
-        m_handle_event(win);
-        if (m_event == game_event_id::closed) 
+        while (not m_try_tick()) 
         {
-            log::info("Game: Window closed");
-            return m_event;
         }
         
-        if (m_event == game_event_id::none) {
-            m_update_logic();
-        }
-        
+        m_tick(win);
+       
         return m_event;
     }
     
-    void game_handler::m_update_logic()
+    ////////////////////////////////////////////////////////////////////////////
+    bool game_handler::m_try_tick()
+    {
+        auto tp = tick_clock::now();
+        if (tp >= m_last_tick) {
+            m_last_tick = tp + tick_dur(1);
+            m_tick_count = ++m_tick_count % resolution::den;
+            return true;
+        }
+        return false;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    void game_handler::m_tick(sf::RenderWindow & win)
+    {
+        m_slide();
+        
+        // Update based on input event, then check state.
+        if ((m_tick_count % 2) == 0) {
+            m_handle_event(win);
+            if (m_event == game_event_id::closed) return;
+        } 
+        
+        if (m_check_success() || m_check_failure()) return;
+        
+        m_update();
+        
+        // Check the state one last time (sets global state)
+        m_check_failure();
+    }
+    
+    void game_handler::m_slide()
     {
         if (m_event != game_event_id::none) return;
             
-        if (m_tick < std::chrono::high_resolution_clock::now())
+        // Handle sliding.
+        auto CanSlide = Concept<Alive, EntityMatches<is_actor>>();
+        for (auto & e : CanSlide.filter(m_level.entity_list)) 
         {
-            for (auto & e : Concept<Alive, EntityHas<update_m>>()
-                           .filter(m_level.entity_list))
-            {
-                e(update_, m_level);
+            auto pos = OnIce(e).find(m_level.entity_list);
+            if (pos != m_level.entity_list.end()) {
+                logic::move_on_ice(e, *pos, m_level);
+                e << update_lock{};
             }
-            
-            auto CollidedMonsters =
-              Concept<Alive, EntityMatches<&is_monster>>(
-                 AtPosition(m_level.chip.get<position>())
-                );
-                  
-            for (auto & e : CollidedMonsters.filter(m_level.entity_list))
+            else if ((pos = OnForceFloor(e).find(m_level.entity_list)) 
+                    != m_level.entity_list.end() )
             {
-              if (e.has(on_collision_))
-                e(on_collision_, m_level.chip, m_level);
-              if (!m_level.chip) {
-                  m_event = game_event_id::level_failed;
-                  return;
-              }
+                logic::move_on_force_floor(e, *pos, m_level);
+                e << update_lock{};
             }
-              
-            m_level.chip(update_, m_level);
-            
-            m_tick = std::chrono::high_resolution_clock::now() 
-                    + std::chrono::milliseconds(200);
         }
         
-        if (!m_level.chip) 
+        // Check chip on floor
         {
-            log::info("Game: level failed");
-            m_event = game_event_id::level_failed;
-        }
-        else if (Concept<>(IsExit(), AtEntity(m_level.chip)).contains(m_level.entity_list))
-        {
-            log::info("Game: level passed");
-            m_event = game_event_id::level_passed;
+            entity & chip = m_level.chip;
+            auto & elist = m_level.entity_list;
+            auto & inv = chip.get<inventory>();
+            
+            decltype(Concept<>().find(elist)) pos;
+            if (not inv.count(entity_id::skates) 
+                && ((pos = OnIce(chip).find(elist)) != elist.end()) 
+              ) 
+            {
+                logic::move_on_ice(chip, *pos, m_level);
+                chip << update_lock{};
+            }
+            else if (not inv.count(entity_id::suction_boots) 
+                && ((pos = OnForceFloor(chip).find(elist)) != elist.end()))
+            {
+                logic::move_on_force_floor(chip, *pos, m_level);
+            }
         }
     }
+    
+    void game_handler::m_update()
+    {
+        // we may not have set it, but if we did we want to remove it.
+        m_level.chip.remove<update_lock>();
+        
+        // Either remove an update lock, or update a entity
+        // if it is their tick.
+        auto UpdateThisTick = UpdateOnTick(m_tick_count);
+        auto OnTick = Predicate([&](entity const & en) { 
+            return UpdateThisTick.check(en) || en.has<update_lock>();
+        });
+        
+        for (auto & e : OnTick.filter(m_level.entity_list)) {
+            if (e.has<update_lock>()) {
+                e.remove<update_lock>();
+                continue;
+            }
+            e(update_, m_level);
+        }
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    bool game_handler::m_check_success()
+    {
+        ELIB_ASSERT(m_event != game_event_id::level_passed);
+        if (not m_level.chip || m_event != game_event_id::none)
+        { return false; }
+    
+        if (Concept<>(IsExit(), AtEntity(m_level.chip)).contains(m_level.entity_list)) {
+            m_event = game_event_id::level_passed;
+        }
+        return (m_event == game_event_id::level_passed);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    bool game_handler::m_check_failure()
+    {
+        if (not m_level.chip) {
+            m_event = game_event_id::level_failed;
+            return true;
+        }
+            
+        auto CollidedMonsters =
+            Concept<Alive, EntityMatches<&is_monster>>(
+                AtPosition(m_level.chip.get<position>())
+            );
+                  
+        for (auto & e : CollidedMonsters.filter(m_level.entity_list))
+        {
+            if (e.has(on_collision_))
+            e(on_collision_, m_level.chip, m_level);
+            if (!m_level.chip) {
+                m_event = game_event_id::level_failed;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     
 #if defined(__GNUC__)
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_move_chip_event(sf::Event const & ev)
     {
-        if (not m_level.chip || !CanMove()(m_level.chip)) return;
+        if (not m_level.chip 
+            || m_level.chip.has<update_lock>()
+            || m_level.chip.has<move_lock>()
+          )
+        { return; }
             
         direction d;
         switch (ev.key.code)
@@ -133,6 +223,7 @@ namespace chips
 #if defined(__GNUC__)
 # pragma GCC diagnostic pop
 #endif
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::draw(sf::RenderWindow & win) const
     {
         position tl_pos = detail::top_left_position(m_level);
@@ -154,9 +245,9 @@ namespace chips
         m_draw_chip(win, detail::entity_window_position(tl_pos, m_level.chip));
         m_draw_helptext(win);
         m_draw_scoreboard(win);
-        
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_draw_chip(sf::RenderWindow & win, position win_pos) const
     {
         entity const & chip = m_level.chip;
@@ -168,8 +259,7 @@ namespace chips
         {
             if (m_event == game_event_id::level_passed) {
                 tid = tile_id::chip_fake_exit;
-            }
-            else {
+            } else {
                 tid = directional_tile_id(tid, chip.get<direction>());
             }
         }
@@ -177,6 +267,7 @@ namespace chips
         chips::draw(win, win_pos, tid);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_draw_helptext(sf::RenderWindow & win) const
     {
         auto CheckHelp = Concept<EntityIs<entity_id::hint>>(
@@ -202,33 +293,18 @@ namespace chips
         win.draw(txt);
     }
     
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
     {
-		sf::Image img;
-		sf::Texture tex;
-		sf::Sprite s;
-
-
-		// TODO: Put this in resource manager
-
-		if(!img.loadFromFile(CHIPS_RESOURCE_ROOT "/scoreboard.png"))
-			throw "TODO";
-
-		if(!tex.loadFromImage(img))
-			throw "TODO";
-
-		s.setTexture(tex);
-		s.setPosition(sf::Vector2f((float)scoreboard_xpos, (float)scoreboard_ypos));
-		win.draw(s);
-		        
+		auto & rm = resource_manager::get();
+		win.draw(rm.scoreboard());
         m_draw_chip_count(win);
         m_draw_inventory(win);
     }
     
-    
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_draw_chip_count(sf::RenderWindow & win) const
     {
-        
         auto & res = resource_manager::get();
         auto & inv = m_level.chip.get<inventory>();
         
@@ -250,6 +326,7 @@ namespace chips
         auto & inv = m_level.chip.get<inventory>();
         position p(inventory_xpos, inventory_ypos);
         
+        /// Draw keys
         int key_pos = static_cast<int>(entity_id::blue_key);
         for (int i=0; i < 4; ++i)
         {
@@ -268,6 +345,7 @@ namespace chips
             p.x += tile_width;
         }
         
+        /// Draw Boots
         p = position(inventory_xpos, inventory_ypos + tile_height);
         int boot_pos = static_cast<int>(entity_id::flippers);
         for (int i=0; i < 4; ++i)
@@ -279,6 +357,14 @@ namespace chips
                 chips::draw(win, entity(entity_id::floor), p);
             p.x += tile_width;
         }
+        
+          // TODO Draw weapons
+//         p = position(inventory_xpos, inventory_ypos + (tile_height * 2));
+//         for (int i=0; i < 4; ++i)
+//         {
+//             chips::draw(win, entity(entity_id::floor), p);
+//             p.x += tile_width;
+//         }
     }
     
 #if defined(__clang__)

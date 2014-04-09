@@ -17,7 +17,7 @@ namespace chips
     
     enum class texture_uid
     {
-        none, tiles, menu
+        none, tiles, menu, scoreboard
     };
     
     enum class font_uid
@@ -43,17 +43,22 @@ namespace chips
         sf::Texture const & operator[](texture_uid) const;
         sf::Sprite & operator[](tile_id);
         
+        sf::Sprite & scoreboard()
+        { return m_scoreboard; }
+        
     private:
         resource_manager(const char* tileset_name);
         ~resource_manager() = default;
         
         void init_tileset(const char* tileset_name);
+        void init_scoreboard();
         void init_fonts();
         void create_sprite(tile_id);
         
         std::map<font_uid, sf::Font> m_font_map;
         std::map<texture_uid, sf::Texture> m_tex_map;
         std::map<tile_id, sf::Sprite> m_sprite_map;
+        sf::Sprite m_scoreboard;
     };
     
 ////////////////////////////////////////////////////////////////////////////////
