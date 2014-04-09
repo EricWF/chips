@@ -24,6 +24,12 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
+ <tile id="7">
+  <properties>
+   <property name="direction" value="N"/>
+   <property name="entity_id" value="large_bullet"/>
+  </properties>
+ </tile>
  <tile id="8">
   <properties>
    <property name="entity_id" value="wall"/>
@@ -55,6 +61,12 @@
   <properties>
    <property name="direction" value="W"/>
    <property name="entity_id" value="germ"/>
+  </properties>
+ </tile>
+ <tile id="15">
+  <properties>
+   <property name="direction" value="W"/>
+   <property name="entity_id" value="large_bullet"/>
   </properties>
  </tile>
  <tile id="16">
@@ -97,6 +109,12 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
+ <tile id="23">
+  <properties>
+   <property name="direction" value="S"/>
+   <property name="entity_id" value="large_bullet"/>
+  </properties>
+ </tile>
  <tile id="24">
   <properties>
    <property name="entity_id" value="water"/>
@@ -135,6 +153,12 @@
   <properties>
    <property name="direction" value="E"/>
    <property name="entity_id" value="germ"/>
+  </properties>
+ </tile>
+ <tile id="31">
+  <properties>
+   <property name="direction" value="E"/>
+   <property name="entity_id" value="large_bullet"/>
   </properties>
  </tile>
  <tile id="32">
@@ -176,6 +200,12 @@
    <property name="entity_id" value="blue_key"/>
   </properties>
  </tile>
+ <tile id="39">
+  <properties>
+   <property name="direction" value="N"/>
+   <property name="entity_id" value="small_bullet"/>
+  </properties>
+ </tile>
  <tile id="40">
   <properties>
    <property name="entity_id" value="invisible_wall"/>
@@ -215,6 +245,12 @@
    <property name="entity_id" value="red_key"/>
   </properties>
  </tile>
+ <tile id="47">
+  <properties>
+   <property name="direction" value="W"/>
+   <property name="entity_id" value="small_bullet"/>
+  </properties>
+ </tile>
  <tile id="48">
   <properties>
    <property name="direction" value="N"/>
@@ -232,6 +268,11 @@
    <property name="tile_id" value="toggle_wall_open"/>
   </properties>
  </tile>
+ <tile id="51">
+  <properties>
+   <property name="entity_id" value="gun"/>
+  </properties>
+ </tile>
  <tile id="52">
   <properties>
    <property name="direction" value="S"/>
@@ -247,6 +288,12 @@
  <tile id="54">
   <properties>
    <property name="entity_id" value="green_key"/>
+  </properties>
+ </tile>
+ <tile id="55">
+  <properties>
+   <property name="direction" value="S"/>
+   <property name="entity_id" value="small_bullet"/>
   </properties>
  </tile>
  <tile id="56">
@@ -280,6 +327,12 @@
  <tile id="62">
   <properties>
    <property name="entity_id" value="yellow_key"/>
+  </properties>
+ </tile>
+ <tile id="63">
+  <properties>
+   <property name="direction" value="E"/>
+   <property name="entity_id" value="small_bullet"/>
   </properties>
  </tile>
  <tile id="64">
@@ -512,7 +565,7 @@
  <tile id="113">
   <properties>
    <property name="entity_id" value="blue_wall"/>
-   <property name="tile_id" value="blue_wall_fake"/>
+   <property name="tile_id" value="blue_wall_real"/>
   </properties>
  </tile>
  <tile id="114">
@@ -547,7 +600,7 @@
  <tile id="121">
   <properties>
    <property name="entity_id" value="blue_wall"/>
-   <property name="tile_id" value="blue_wall_real"/>
+   <property name="tile_id" value="blue_wall_fake"/>
   </properties>
  </tile>
  <tile id="122">

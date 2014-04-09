@@ -65,6 +65,8 @@ namespace elib { namespace enumeration
             , _(skates) 
             , _(suction_boots) 
             , _(chip)
+            , _(large_bullet)
+            , _(small_bullet)
             , _(BAD_ID)
         };
 #undef _
@@ -200,6 +202,14 @@ namespace elib { namespace enumeration
             , _(chip_W) 
             , _(chip_S) 
             , _(chip_E)
+            , _(large_bullet_N)
+            , _(large_bullet_W)
+            , _(large_bullet_S)
+            , _(large_bullet_E)
+            , _(small_bullet_N)
+            , _(small_bullet_W)
+            , _(small_bullet_S)
+            , _(small_bullet_E)
         };
 #undef _
 

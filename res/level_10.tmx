@@ -5,7 +5,7 @@
   <property name="help" value="Don't Die"/>
   <property name="level" value="10"/>
  </properties>
- <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="1" source="default_tileset.tsx"/>
  <layer name="Base" width="32" height="32">
   <data>
    <tile gid="1"/>

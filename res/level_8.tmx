@@ -5,7 +5,7 @@
   <property name="help" value="Don't Die"/>
   <property name="level" value="8"/>
  </properties>
- <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="1" source="default_tileset.tsx"/>
  <layer name="Base" width="32" height="32">
   <data>
    <tile gid="9"/>
@@ -618,9 +618,9 @@
    <tile gid="9"/>
    <tile gid="9"/>
    <tile gid="1"/>
-   <tile gid="122"/>
-   <tile gid="122"/>
-   <tile gid="122"/>
+   <tile gid="114"/>
+   <tile gid="114"/>
+   <tile gid="114"/>
    <tile gid="1"/>
    <tile gid="9"/>
    <tile gid="9"/>
@@ -650,9 +650,9 @@
    <tile gid="9"/>
    <tile gid="9"/>
    <tile gid="1"/>
-   <tile gid="122"/>
+   <tile gid="114"/>
    <tile gid="1"/>
-   <tile gid="122"/>
+   <tile gid="114"/>
    <tile gid="1"/>
    <tile gid="9"/>
    <tile gid="9"/>
@@ -682,9 +682,9 @@
    <tile gid="9"/>
    <tile gid="9"/>
    <tile gid="1"/>
-   <tile gid="122"/>
    <tile gid="114"/>
    <tile gid="122"/>
+   <tile gid="114"/>
    <tile gid="1"/>
    <tile gid="9"/>
    <tile gid="9"/>
@@ -819,7 +819,7 @@
    <tile gid="105"/>
    <tile gid="105"/>
    <tile gid="105"/>
-   <tile gid="122"/>
+   <tile gid="114"/>
    <tile gid="1"/>
    <tile gid="1"/>
    <tile gid="1"/>
@@ -838,38 +838,6 @@
    <tile gid="97"/>
    <tile gid="97"/>
    <tile gid="97"/>
-   <tile gid="33"/>
-   <tile gid="9"/>
-   <tile gid="9"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="9"/>
-   <tile gid="1"/>
-   <tile gid="105"/>
-   <tile gid="105"/>
-   <tile gid="105"/>
-   <tile gid="122"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="1"/>
-   <tile gid="9"/>
-   <tile gid="9"/>
-   <tile gid="9"/>
-   <tile gid="33"/>
-   <tile gid="97"/>
-   <tile gid="97"/>
-   <tile gid="1"/>
-   <tile gid="97"/>
-   <tile gid="97"/>
-   <tile gid="1"/>
-   <tile gid="97"/>
-   <tile gid="97"/>
-   <tile gid="1"/>
    <tile gid="33"/>
    <tile gid="9"/>
    <tile gid="9"/>
@@ -884,6 +852,38 @@
    <tile gid="105"/>
    <tile gid="105"/>
    <tile gid="114"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="33"/>
+   <tile gid="97"/>
+   <tile gid="97"/>
+   <tile gid="1"/>
+   <tile gid="97"/>
+   <tile gid="97"/>
+   <tile gid="1"/>
+   <tile gid="97"/>
+   <tile gid="97"/>
+   <tile gid="1"/>
+   <tile gid="33"/>
+   <tile gid="9"/>
+   <tile gid="9"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="1"/>
+   <tile gid="9"/>
+   <tile gid="1"/>
+   <tile gid="105"/>
+   <tile gid="105"/>
+   <tile gid="105"/>
+   <tile gid="122"/>
    <tile gid="1"/>
    <tile gid="1"/>
    <tile gid="1"/>
@@ -915,7 +915,7 @@
    <tile gid="34"/>
    <tile gid="34"/>
    <tile gid="34"/>
-   <tile gid="122"/>
+   <tile gid="114"/>
    <tile gid="1"/>
    <tile gid="1"/>
    <tile gid="1"/>
@@ -1034,7 +1034,7 @@
    <tile gid="9"/>
   </data>
  </layer>
- <layer name="Items" width="32" height="32" opacity="0.89">
+ <layer name="Items" width="32" height="32">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>
@@ -2062,7 +2062,7 @@
    <tile gid="0"/>
   </data>
  </layer>
- <layer name="Actors" width="32" height="32" opacity="0.64">
+ <layer name="Actors" width="32" height="32">
   <data>
    <tile gid="0"/>
    <tile gid="0"/>

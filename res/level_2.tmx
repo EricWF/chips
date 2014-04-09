@@ -5,7 +5,7 @@
   <property name="help" value="Watch out for the bugs!"/>
   <property name="level" value="2"/>
  </properties>
- <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32"/>
+ <tileset firstgid="1" source="default_tileset.tsx"/>
  <layer name="Base" width="32" height="32">
   <data>
    <tile gid="0"/>

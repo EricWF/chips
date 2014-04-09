@@ -75,7 +75,8 @@ namespace chips
         skates = 106, 
         suction_boots = 107, 
         chip = 108, 
-        
+        large_bullet = 112, 
+        small_bullet = 116, 
         BAD_ID = -1
     };
     
@@ -147,7 +148,10 @@ namespace chips
     
     constexpr bool is_actor(entity_id id) noexcept
     {
-        return is_chip(id) || is_monster(id) || entity_id::block == id;
+        return is_chip(id) || is_monster(id) 
+          || entity_id::block == id
+          || entity_id::large_bullet == id
+          || entity_id::small_bullet == id;
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -247,11 +251,17 @@ namespace chips
             || id == entity_id::yellow_key;
     }
     
+    constexpr bool is_weapon(entity_id id) noexcept
+    {
+        return id == entity_id::gun;
+    }
+    
     constexpr bool is_item(entity_id id) noexcept
     {
         return id == entity_id::computer_chip
             || is_key(id)
-            || is_boots(id); 
+            || is_boots(id)
+            || is_weapon(id);
     }
     
     constexpr bool boots_match_floor(entity_id boots, entity_id floor) noexcept
@@ -446,6 +456,14 @@ namespace chips
         chip_W = 109, 
         chip_S = 110, 
         chip_E = 111, 
+        large_bullet_N = 112, 
+        large_bullet_W = 113, 
+        large_bullet_S = 114, 
+        large_bullet_E = 115, 
+        small_bullet_N = 116, 
+        small_bullet_W = 117, 
+        small_bullet_S = 118, 
+        small_bullet_E = 119, 
     };
     
     /// Allow tile_id to be used as
