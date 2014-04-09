@@ -12,7 +12,8 @@ namespace chips
     constexpr const char resource_root[] = CHIPS_RESOURCE_ROOT;
     
     /// Information about the textures/sprites
-    constexpr const char tile_image_file[] = CHIPS_RESOURCE_ROOT "/pirate_tileset.png";
+    constexpr const char default_tileset_file[] = "pirate_tileset.png";
+    constexpr const char tileset_info_file[] = CHIPS_RESOURCE_ROOT "/default_tileset.tsx";
     constexpr const unsigned tile_width = 32;
     constexpr const unsigned tile_height = 32;
     constexpr const unsigned texture_rows = 16;

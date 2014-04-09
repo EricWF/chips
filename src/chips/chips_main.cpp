@@ -15,26 +15,28 @@ namespace chips
     void run_level(std::string const & lv_name, std::string ts_name);
     void run_level(std::string const & lv_name, std::string ts_name)
     {
-		sf::Music music;
+		
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         
         // initialize the tileset
-        if (ts_name == "") ts_name = "pirate_tileset.png";
+        if (ts_name == "") ts_name = default_tileset_file;
         resource_manager::init(ts_name);
         
         // parse the tileset info
-        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "/default_tileset.tsx");
+        auto prop_list = parse_tileset(tileset_info_file);
         
         // load the level using the tileset info
         auto l = create_level(lv_name, prop_list);
         
         game_handler gh(l);
 
-		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav"))
+        sf::Music music;
+		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav")) {
 		   fprintf(stderr, "Failed to open music: poc.wav\n");
-			
-        music.setLoop(true);
-        music.play();
+        } else {
+            music.setLoop(true);
+            music.play();
+        }
         
         game_event_id last = game_event_id::none;
         while (gh.update(window) != game_event_id::closed)
