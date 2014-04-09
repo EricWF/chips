@@ -24,16 +24,7 @@ namespace chips
             return static_cast<unsigned>(i) / texture_rows;
         }
 
-        ////////////////////////////////////////////////////////////////////////
-        constexpr tile_id directional_tile_id(tile_id id, direction dir)
-        {
-            return (is_directional_texture(id)
-                ? static_cast<tile_id>(
-                    static_cast<unsigned>(id) + static_cast<unsigned>(dir)
-                )
-                : throw chips_error("not a directional texture")
-            );
-        }
+        
         
         ////////////////////////////////////////////////////////////////////////
         constexpr position to_texture_position(tile_id i) noexcept

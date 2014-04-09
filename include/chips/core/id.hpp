@@ -2,6 +2,7 @@
 #define CHIPS_CORE_ID_HPP
 
 # include "chips/core/error.hpp"
+# include "chips/core/direction.hpp"
 # include "chips/entity/fwd.hpp"
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
@@ -483,6 +484,17 @@ namespace chips
         return (id >= tile_id::thin_wall_N && id <= tile_id::thin_wall_E)
             || (id >= tile_id::chip_swimming_N && id <= tile_id::germ_E)
             || (id >= tile_id::chip_N && id <= tile_id::chip_E);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////
+    constexpr tile_id directional_tile_id(tile_id id, direction dir)
+    {
+        return (is_directional_texture(id)
+            ? static_cast<tile_id>(
+                static_cast<unsigned>(id) + static_cast<unsigned>(dir)
+            )
+            : throw chips_error("not a directional texture")
+        );
     }
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_ID_HPP */
