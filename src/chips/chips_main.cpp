@@ -19,7 +19,7 @@ namespace chips
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
         resource_manager::get();
         
-        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "tileset.tsx" );
+        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "default_tileset.tsx" );
         auto l = create_level(lvl_pick, prop_list);
         
         game_handler gh(l);
@@ -42,7 +42,7 @@ namespace chips
 	void level_test(const unsigned lvl_pick)
 	{
 		log::level(level_e::debug);
-		auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "tileset.tsx" );
+		auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "default_tileset.tsx" );
         auto l = create_level(lvl_pick, prop_list);
 	}
 

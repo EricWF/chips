@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset name="pirate_tileset" tilewidth="32" tileheight="32">
- <image source="pirate_tileset.png" width="256" height="512"/>
+<tileset name="default_tileset" tilewidth="32" tileheight="32">
+ <image source="default_tileset.png" width="256" height="512"/>
  <tile id="0">
   <properties>
    <property name="entity_id" value="floor"/>
@@ -24,7 +24,7 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
- <tile id="13">
+ <tile id="8">
   <properties>
    <property name="entity_id" value="wall"/>
   </properties>
@@ -57,7 +57,7 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
- <tile id="26">
+ <tile id="16">
   <properties>
    <property name="entity_id" value="computer_chip"/>
   </properties>
@@ -97,7 +97,7 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
- <tile id="39">
+ <tile id="24">
   <properties>
    <property name="entity_id" value="water"/>
   </properties>
@@ -137,7 +137,7 @@
    <property name="entity_id" value="germ"/>
   </properties>
  </tile>
- <tile id="52">
+ <tile id="32">
   <properties>
    <property name="entity_id" value="fire"/>
   </properties>
@@ -176,7 +176,7 @@
    <property name="entity_id" value="blue_key"/>
   </properties>
  </tile>
- <tile id="65">
+ <tile id="40">
   <properties>
    <property name="entity_id" value="invisible_wall"/>
   </properties>
@@ -215,7 +215,7 @@
    <property name="entity_id" value="red_key"/>
   </properties>
  </tile>
- <tile id="78">
+ <tile id="48">
   <properties>
    <property name="direction" value="N"/>
    <property name="entity_id" value="thin_wall"/>
@@ -249,7 +249,7 @@
    <property name="entity_id" value="green_key"/>
   </properties>
  </tile>
- <tile id="91">
+ <tile id="56">
   <properties>
    <property name="direction" value="W"/>
    <property name="entity_id" value="thin_wall"/>
@@ -282,7 +282,7 @@
    <property name="entity_id" value="yellow_key"/>
   </properties>
  </tile>
- <tile id="104">
+ <tile id="64">
   <properties>
    <property name="direction" value="S"/>
    <property name="entity_id" value="thin_wall"/>
@@ -315,7 +315,7 @@
    <property name="entity_id" value="flippers"/>
   </properties>
  </tile>
- <tile id="117">
+ <tile id="72">
   <properties>
    <property name="direction" value="E"/>
    <property name="entity_id" value="thin_wall"/>
@@ -354,7 +354,7 @@
    <property name="entity_id" value="fire_boots"/>
   </properties>
  </tile>
- <tile id="130">
+ <tile id="80">
   <properties>
    <property name="entity_id" value="block"/>
   </properties>
@@ -393,7 +393,7 @@
    <property name="entity_id" value="skates"/>
   </properties>
  </tile>
- <tile id="143">
+ <tile id="88">
   <properties>
    <property name="entity_id" value="dirt"/>
   </properties>
@@ -432,7 +432,7 @@
    <property name="entity_id" value="suction_boots"/>
   </properties>
  </tile>
- <tile id="156">
+ <tile id="96">
   <properties>
    <property name="entity_id" value="ice"/>
    <property name="tile_id" value="ice"/>
@@ -468,7 +468,7 @@
    <property name="entity_id" value="chip"/>
   </properties>
  </tile>
- <tile id="169">
+ <tile id="104">
   <properties>
    <property name="entity_id" value="force_floor"/>
    <property name="tile_id" value="force_floor_S"/>

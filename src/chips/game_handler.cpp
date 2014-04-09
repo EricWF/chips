@@ -153,17 +153,14 @@ namespace chips
         entity chip_dummy(entity_id::chip);
         
         chips_state st = get_chips_state(m_level);
-        chip_dummy << static_cast<tile_id>(st);
+        tile_id tid = static_cast<tile_id>(st);
         
-        if (st == chips_state::normal)
+        if (st == chips_state::normal || st == chips_state::swimming)
         {
-            chip_dummy << chip.get<direction>()
-                       << texture_type::cutout; 
+            tid = directional_tile_id(tid, chip.get<direction>());
         }
-        else if (st == chips_state::swimming) 
-        {
-            chip_dummy << chip.get<direction>();
-        }
+        
+        chip_dummy << tid;
         
         chips::draw(win, chip_dummy, win_pos);
     }

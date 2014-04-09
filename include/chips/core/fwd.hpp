@@ -19,7 +19,6 @@ namespace chips
     enum class entity_id;
     enum class entity_type;
     enum class tile_id;
-    enum class texture_type;
     
     // inventory.hpp //
     class inventory;

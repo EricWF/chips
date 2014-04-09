@@ -227,7 +227,6 @@ namespace chips { namespace logic
             e.remove<tile_id>();
             
             e << method(move_, common::move_)
-              << texture_type::cutout
               << method(collides_, common::always_collides_)
               << method(on_collision_, kill_chip_on_col);
               

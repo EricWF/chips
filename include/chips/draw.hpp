@@ -9,12 +9,11 @@ namespace chips
     // forward //
     class entity;
     struct position;
+    enum class tile_id;
     
 ////////////////////////////////////////////////////////////////////////////////
 //                           RESOURCE MANAGER
 ////////////////////////////////////////////////////////////////////////////////
-    
-    enum class texture_index : unsigned {};
     
     enum class texture_uid
     {
@@ -37,7 +36,7 @@ namespace chips
         const sf::Font & at(font_uid id) const;
         
         sf::Texture const & operator[](texture_uid) const;
-        sf::Sprite & operator[](texture_index);
+        sf::Sprite & operator[](tile_id);
         
     private:
         resource_manager();
@@ -45,11 +44,11 @@ namespace chips
         
         void init_tileset();
         void init_fonts();
-        void create_sprite(texture_index index);
+        void create_sprite(tile_id);
         
         std::map<font_uid, sf::Font> m_font_map;
         std::map<texture_uid, sf::Texture> m_tex_map;
-        std::map<texture_index, sf::Sprite> m_sprite_map;
+        std::map<tile_id, sf::Sprite> m_sprite_map;
     };
     
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,6 +57,6 @@ namespace chips
 
     // return true if the entity is drawn
     bool draw(sf::RenderWindow &, entity const &, position at);
-    void draw(sf::RenderWindow &, position, texture_index);
+    void draw(sf::RenderWindow &, position, tile_id);
 }                                                           // namespace chips
 #endif /* CHIPS_DRAW_HPP */

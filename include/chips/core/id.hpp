@@ -2,6 +2,7 @@
 #define CHIPS_CORE_ID_HPP
 
 # include "chips/core/error.hpp"
+# include "chips/core/direction.hpp"
 # include "chips/entity/fwd.hpp"
 # include <elib/aux.hpp>
 # include <elib/enumeration.hpp>
@@ -446,26 +447,12 @@ namespace chips
         chip_E = 111, 
     };
     
-    /// texture_type refers to the different sets of colunms in the sprite sheet.
-    /// tile: the sprite against the default base tile
-    /// cutout: the sprite's against white.
-    /// outline: the black outline version of the sprites
-    enum class texture_type
-    {
-        tile, 
-        cutout,
-        outline
-    };
-    
-    /// Allow tile_id and texture_type to be used as
+    /// Allow tile_id to be used as
     /// attributes in entity (compile time check)
     namespace extension
     {
         template <>
         struct is_attribute_impl<tile_id> : elib::true_ {};
-        
-        template <>
-        struct is_attribute_impl<texture_type> : elib::true_ {};
     }                                                    // namespace extension
 }                                                           // namespace chips
 
@@ -476,12 +463,6 @@ namespace elib { namespace enumeration
     struct basic_enum_traits<::chips::tile_id>
     {
         static const std::map<::chips::tile_id, std::string> name_map;
-    };
-    
-    template <>
-    struct basic_enum_traits<::chips::texture_type>
-    {
-        static const std::map<::chips::texture_type, std::string> name_map;
     };
 }}                                               // namespace elib::enumeration
 
@@ -496,16 +477,6 @@ namespace chips
     {
         return elib::enumeration::enum_cast<tile_id>(s);
     }
-
-    inline std::string to_string(texture_type t)
-    {
-        return elib::enumeration::enum_cast<std::string>(t);
-    }
-    
-    inline texture_type to_texture_type(std::string const & s)
-    {
-        return elib::enumeration::enum_cast<texture_type>(s);
-    }
     
     /// Checks if the texture has a direction component
     constexpr bool is_directional_texture(tile_id id) noexcept
@@ -513,6 +484,17 @@ namespace chips
         return (id >= tile_id::thin_wall_N && id <= tile_id::thin_wall_E)
             || (id >= tile_id::chip_swimming_N && id <= tile_id::germ_E)
             || (id >= tile_id::chip_N && id <= tile_id::chip_E);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////
+    constexpr tile_id directional_tile_id(tile_id id, direction dir)
+    {
+        return (is_directional_texture(id)
+            ? static_cast<tile_id>(
+                static_cast<unsigned>(id) + static_cast<unsigned>(dir)
+            )
+            : throw chips_error("not a directional texture")
+        );
     }
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_ID_HPP */

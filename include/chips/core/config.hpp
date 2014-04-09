@@ -12,17 +12,14 @@ namespace chips
     constexpr const char resource_root[] = CHIPS_RESOURCE_ROOT;
     
     /// Information about the textures/sprites
-    constexpr const char tile_image_file[] = CHIPS_RESOURCE_ROOT "/tileset.png";
+    constexpr const char tile_image_file[] = CHIPS_RESOURCE_ROOT "/pirate_tileset.png";
+    constexpr const unsigned tile_width = 32;
+    constexpr const unsigned tile_height = 32;
     constexpr const unsigned texture_rows = 16;
-    constexpr const unsigned texture_cols = 13;
-    constexpr const unsigned texture_width = 416;
-    constexpr const unsigned texture_height = 512;
-    constexpr const unsigned tile_width = texture_width / texture_cols;
-    constexpr const unsigned tile_height = texture_height / texture_rows;
+    constexpr const unsigned texture_cols = 8;
+    constexpr const unsigned texture_width = tile_width * texture_cols;
+    constexpr const unsigned texture_height = tile_height * texture_rows;
     constexpr const unsigned num_tiles = texture_rows * texture_cols;
-    
-    static_assert(texture_width % texture_cols == 0, "Must evenly divide");
-    static_assert(texture_height % texture_rows == 0, "Must evenly divide");
     
     /// Information about the levels
     constexpr const char level_file_root[] = CHIPS_RESOURCE_ROOT "/levels";
