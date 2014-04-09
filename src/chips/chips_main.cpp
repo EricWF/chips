@@ -119,13 +119,13 @@ namespace chips
 
                 fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
 
-                exit(EXIT_FAILURE);
+                return EXIT_FAILURE;
             }
         }
 
         if (not level_flag) {
             printf("No level flag given");
-            return 1;
+            return EXIT_FAILURE;
         }
 
         run_level(lvl_name, tileset_fname);
