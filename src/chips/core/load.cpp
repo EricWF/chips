@@ -176,7 +176,7 @@ namespace chips
     parsed_level parse_level(unsigned level_num)
     {
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "/level%u.tmx"
+            CHIPS_RESOURCE_ROOT "/new_level%u.tmx"
           , level_num
         );
         
