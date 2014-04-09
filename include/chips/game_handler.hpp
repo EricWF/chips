@@ -50,6 +50,7 @@ namespace chips
         void m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);
         
+        void m_draw(sf::RenderWindow &) const;
         void m_draw_chip(sf::RenderWindow &, position win_pos) const;
         void m_draw_scoreboard(sf::RenderWindow &) const;
         void m_draw_helptext(sf::RenderWindow &) const;
@@ -60,6 +61,7 @@ namespace chips
         chips::level m_level;
         time_point m_last_tick;
         std::intmax_t m_tick_count = 0;
+         
     };
     
     

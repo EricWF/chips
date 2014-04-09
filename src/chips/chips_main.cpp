@@ -46,9 +46,7 @@ namespace chips
                 last = gh.state();
                 music.stop();
             }
-            window.clear(sf::Color::Black);
-            gh.draw(window);
-            window.display();
+           
         }
         window.close();
     }

@@ -19,7 +19,7 @@ namespace chips
     ////////////////////////////////////////////////////////////////////////////
     /// Ten ticks per second
     using resolution = std::ratio<1, 1000>;
-    using tick_dur = std::chrono::duration<std::intmax_t, std::ratio<1, 10>>;
+    using tick_dur = std::chrono::duration<std::intmax_t, std::ratio<1, 100>>;
     
     ////////////////////////////////////////////////////////////////////////////
     /// An attribute used for speed
@@ -59,9 +59,9 @@ namespace chips
     /// The common speeds
     using speed = updates_per_tick;
     
-    constexpr speed half_speed(1, 5);
-    constexpr speed regular_speed(1, 2);
-    constexpr speed full_speed(1, 1);
+    constexpr speed half_speed(1, 50);
+    constexpr speed regular_speed(1, 20);
+    constexpr speed full_speed(1, 10);
     
     ////////////////////////////////////////////////////////////////////////////
     inline speed speed_from_string(std::string const & s)

@@ -53,6 +53,7 @@ namespace chips
         {
         }
         m_tick(win);
+        draw(win);
         return m_event;
     }
     
@@ -71,12 +72,17 @@ namespace chips
     ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_tick(sf::RenderWindow & win)
     {
-        m_slide();
+        if (m_tick_count % full_speed.den == 0) {
+            m_slide();
+        }
+        
+        draw(win);
         
         // Update based on input event, then check state.
-        if ((m_tick_count % 2) == 0) {
+        if ((m_tick_count % full_speed.den) == 0) {
             m_handle_event(win);
             if (m_event != game_event_id::none) return;
+            draw(win);
         } 
         
         if (m_check_success() || m_check_failure()) return;
@@ -224,8 +230,15 @@ namespace chips
 #if defined(__GNUC__)
 # pragma GCC diagnostic pop
 #endif
-    ////////////////////////////////////////////////////////////////////////////
     void game_handler::draw(sf::RenderWindow & win) const
+    {
+        win.clear(sf::Color::Black);
+        m_draw(win);
+        win.display();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    void game_handler::m_draw(sf::RenderWindow & win) const
     {
         position tl_pos = detail::top_left_position(m_level);
         
