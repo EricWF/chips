@@ -66,19 +66,30 @@ namespace chips
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wexit-time-destructors"
 #endif
-    resource_manager & resource_manager::get()
+    resource_manager & resource_manager::get_impl(const char* opt_str)
     {
-        static resource_manager tm;
+        static resource_manager tm(opt_str);
         return tm;
     }
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif
+
+    resource_manager & resource_manager::init(std::string const & s)
+    {
+        return resource_manager::get_impl(s.c_str());
+    }
+    
+    resource_manager & resource_manager::get()
+    {
+        return resource_manager::get_impl();
+    }
     
     ////////////////////////////////////////////////////////////////////////////
-    resource_manager::resource_manager()
+    resource_manager::resource_manager(const char *tileset_name)
     {
-        init_tileset();
+        ELIB_ASSERT(tileset_name);
+        init_tileset(tileset_name);
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -113,10 +124,11 @@ namespace chips
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    void resource_manager::init_tileset()
+    void resource_manager::init_tileset(const char *tileset_name)
     {
+        std::string fname = elib::fmt(CHIPS_RESOURCE_ROOT "/%s", tileset_name);
         sf::Image img;
-        if (!img.loadFromFile(tile_image_file))
+        if (!img.loadFromFile(fname.c_str()))
             throw "TODO";
        
         if (!m_tex_map[texture_uid::tiles].loadFromImage(img))

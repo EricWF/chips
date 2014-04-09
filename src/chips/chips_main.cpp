@@ -12,15 +12,17 @@
 
 namespace chips
 { 
-    void run_level(unsigned lvl_pick);
-    void run_level(unsigned lvl_pick)
+    void run_level(std::string const & lv_name, std::string ts_name);
+    void run_level(std::string const & lv_name, std::string ts_name)
     {
 		sf::Music music;
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
-        resource_manager::get();
         
-        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "default_tileset.tsx" );
-        auto l = create_level(lvl_pick, prop_list);
+        if (ts_name == "") ts_name = "pirate_tileset.png";
+        resource_manager::init(ts_name);
+        
+        auto prop_list = parse_tileset(CHIPS_RESOURCE_ROOT "/default_tileset.tsx");
+        auto l = create_level(lv_name, prop_list);
         
         game_handler gh(l);
 
@@ -30,7 +32,7 @@ namespace chips
 		   music.setLoop(true);
 		   music.play();
     
-        while (gh.update(window) == game_event_id::closed)
+        while (gh.update(window) != game_event_id::closed)
         {
             window.clear(sf::Color::Black);
             gh.draw(window);
@@ -69,8 +71,9 @@ namespace chips
     int chips_main(int argc, char** argv, char**)
     {        
 		bool level_flag = false;//, menu_flag = false;
-		int lvl_arg = 1, c;
-		char *tileset_fname = nullptr;
+		int c;
+		std::string tileset_name, lvl_name;
+		
 		opterr = 0;
 
 		while ((c = getopt (argc, argv, "l:mt:")) != -1)
@@ -78,11 +81,15 @@ namespace chips
 			switch (c)
 			{
 			case 't':
-				tileset_fname = optarg;
+                if (optarg) {
+                    tileset_name = optarg;
+                }
 				break;
             case 'l':
 				level_flag = true;
-				lvl_arg = atoi(optarg);
+				if (optarg) {
+                    lvl_name = optarg;
+                }
 				break;
 			case 'm':
 				//menu_flag = true;
@@ -106,10 +113,12 @@ namespace chips
 			}
 		}
 		
-		if(level_flag)
-		 	run_level((unsigned)lvl_arg);
-		else
-		 	menu_test();
+		if (not level_flag) {
+            printf("SHIT NO LEVEL\n");
+            return 1;
+        }
+		
+		run_level(lvl_name, tileset_name);
 		
         return 0;
     }

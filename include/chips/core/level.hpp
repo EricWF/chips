@@ -14,8 +14,8 @@ namespace chips
     class level
     {
     public:
-        level(unsigned xid, unsigned xchip_count, std::string help_str)
-          : m_id(xid), m_chip_count(xchip_count), m_help(help_str)
+        level(std::string xname, unsigned xchip_count, std::string help_str)
+          : m_name(elib::move(xname)), m_chip_count(xchip_count), m_help(help_str)
         {}
         
         level(level const &) = default;
@@ -24,8 +24,8 @@ namespace chips
         level & operator=(level &&) = default;
         
         /// The level number
-        unsigned id() const noexcept { return m_id; }
-        void id(unsigned xid) { m_id = xid; }
+        std::string const & name() const { return m_name; }
+        void name(std::string xname) { m_name = elib::move(xname); }
         
         /// The number of computer chips in the level
         unsigned chip_count() const noexcept { return m_chip_count; }
@@ -38,7 +38,7 @@ namespace chips
         std::vector<entity> entity_list;
         
     private:
-        unsigned m_id;
+        std::string m_name;
         unsigned m_chip_count;
         std::string m_help;
     };

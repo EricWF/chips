@@ -61,9 +61,7 @@ namespace chips { namespace logic
                 if (!is_chip(other)) return;
                 auto & inv  = other.get<inventory>();
                     
-                if (inv.contains(entity_id::fire_boots)) { 
-                }
-                else {
+                if (not inv.contains(entity_id::fire_boots)) { 
                     other.kill();
                 }
             };

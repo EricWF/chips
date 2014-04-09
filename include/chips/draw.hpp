@@ -27,8 +27,13 @@ namespace chips
     
     class resource_manager
     {
+    private:
+        static resource_manager & get_impl(const char* tileset_str = nullptr);
+
     public:
+        static resource_manager & init(std::string const &);
         static resource_manager & get();
+        
         
         // creates font if not found
         const sf::Font & operator[](font_uid);
@@ -39,10 +44,10 @@ namespace chips
         sf::Sprite & operator[](tile_id);
         
     private:
-        resource_manager();
+        resource_manager(const char* tileset_name);
         ~resource_manager() = default;
         
-        void init_tileset();
+        void init_tileset(const char* tileset_name);
         void init_fonts();
         void create_sprite(tile_id);
         

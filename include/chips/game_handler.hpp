@@ -13,7 +13,6 @@ namespace chips
     {
         none,
         closed, 
-        paused, 
         level_failed,
         level_passed
     };
@@ -37,8 +36,8 @@ namespace chips
         chips::level const & level() const { return m_level; }
         
     private:
-        game_event_id m_update_logic();
-        game_event_id m_handle_event(sf::RenderWindow & win);
+        void m_update_logic();
+        void m_handle_event(sf::RenderWindow & win);
         void m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);
         
@@ -48,6 +47,7 @@ namespace chips
         void m_draw_chip_count(sf::RenderWindow &) const;
         void m_draw_inventory(sf::RenderWindow &) const;
     private:
+        game_event_id m_event{game_event_id::none};
         chips::level m_level;
         std::chrono::high_resolution_clock::time_point m_tick;
     };

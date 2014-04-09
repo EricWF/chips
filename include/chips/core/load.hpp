@@ -30,7 +30,7 @@ namespace chips
     /// The raw level data as parsed from the XML. 
     struct parsed_level
     {
-        unsigned level;
+        std::string name;
         unsigned chip_count;
         std::string help;
         
@@ -40,7 +40,7 @@ namespace chips
     };
     
     /// Parse XML output by tiled into an intermediate representation
-    parsed_level parse_level(unsigned level);
+    parsed_level parse_level(std::string const & name);
     
     enum class action_type
     {
@@ -87,12 +87,12 @@ namespace chips
         std::vector<entity_locator> act_on;
     };
     
-    std::vector<parsed_action> parse_actions(unsigned level);
+    std::vector<parsed_action> parse_actions(std::string const & name);
     
      /// create a level from its number
     /// and the list of properties to pass to the tile factory
     level create_level(
-        unsigned level_number
+        std::string const & name
       , std::map<unsigned, tile_properties> const &
     );
     

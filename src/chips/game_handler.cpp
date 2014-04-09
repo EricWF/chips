@@ -45,8 +45,26 @@ namespace chips
     //                           GAME_HANDLER  
     ////////////////////////////////////////////////////////////////////////////
     
-    game_event_id game_handler::m_update_logic(sf::RenderWindow & win)
+    game_event_id game_handler::update(sf::RenderWindow & win)
     {
+        m_handle_event(win);
+        if (m_event == game_event_id::closed) 
+        {
+            log::info("Game: Window closed");
+            return m_event;
+        }
+        
+        if (m_event == game_event_id::none) {
+            m_update_logic();
+        }
+        
+        return m_event;
+    }
+    
+    void game_handler::m_update_logic()
+    {
+        if (m_event != game_event_id::none) return;
+            
         if (m_tick < std::chrono::high_resolution_clock::now())
         {
             for (auto & e : Concept<Alive, EntityHas<update_m>>()
@@ -64,7 +82,10 @@ namespace chips
             {
               if (e.has(on_collision_))
                 e(on_collision_, m_level.chip, m_level);
-              if (!m_level.chip) return game_event_id::level_failed;
+              if (!m_level.chip) {
+                  m_event = game_event_id::level_failed;
+                  return;
+              }
             }
               
             m_level.chip(update_, m_level);
@@ -73,26 +94,16 @@ namespace chips
                     + std::chrono::milliseconds(200);
         }
         
-        
-        game_event_id ev_id = m_handle_event(win);
-        if (ev_id == game_event_id::closed) 
-        {
-            log::info("Game: Window closed");
-            return ev_id;
-        }
         if (!m_level.chip) 
         {
             log::info("Game: level failed");
-            return game_event_id::level_failed;
+            m_event = game_event_id::level_failed;
         }
-        
-        if (Concept<>(IsExit(), AtEntity(m_level.chip)).contains(m_level.entity_list))
+        else if (Concept<>(IsExit(), AtEntity(m_level.chip)).contains(m_level.entity_list))
         {
             log::info("Game: level passed");
-            return game_event_id::level_passed;
+            m_event = game_event_id::level_passed;
         }
-            
-        return game_event_id::none;
     }
     
 #if defined(__GNUC__)
@@ -155,9 +166,13 @@ namespace chips
         
         if (st == chips_state::normal || st == chips_state::swimming)
         {
-            tid = directional_tile_id(tid, chip.get<direction>());
+            if (m_event == game_event_id::level_passed) {
+                tid = tile_id::chip_fake_exit;
+            }
+            else {
+                tid = directional_tile_id(tid, chip.get<direction>());
+            }
         }
-        
         
         chips::draw(win, win_pos, tid);
     }
@@ -167,14 +182,24 @@ namespace chips
         auto CheckHelp = Concept<EntityIs<entity_id::hint>>(
             AtPosition(m_level.chip.get<position>())
           );
-        if (CheckHelp.contains(m_level.entity_list))
-        {
-            auto & res = resource_manager::get();
-            sf::Text txt(m_level.help(), res[font_uid::arial], 25);
-            txt.setPosition((float)helptext_xpos, (float)helptext_ypos);
-            txt.setColor(sf::Color::Red);
-            win.draw(txt);
+        
+        std::string msg;
+        if (m_event == game_event_id::level_failed) {
+            msg = "Level Failed! Better luck next time";
         }
+        else if (m_event == game_event_id::level_passed) {
+            msg = "Level Passed!";
+        }
+        else if (CheckHelp.contains(m_level.entity_list)) {
+            msg = m_level.help();
+        }
+        else { return; }
+            
+        auto & res = resource_manager::get();
+        sf::Text txt(msg, res[font_uid::arial], 25);
+        txt.setPosition((float)helptext_xpos, (float)helptext_ypos);
+        txt.setColor(sf::Color::Red);
+        win.draw(txt);
     }
     
     void game_handler::m_draw_scoreboard(sf::RenderWindow & win) const
@@ -263,7 +288,7 @@ namespace chips
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
-    game_event_id game_handler::m_handle_event(sf::RenderWindow & win)
+    void game_handler::m_handle_event(sf::RenderWindow & win)
     {
         sf::Event e;
         while (win.pollEvent(e))
@@ -271,15 +296,17 @@ namespace chips
             switch (e.type)
             {
                 case sf::Event::Closed:
-                    return game_event_id::closed;
+                    m_event = game_event_id::closed;
+                    return;
                 case sf::Event::KeyPressed:
-                    if ()
+                    if (m_event != game_event_id::none) {
+                        break;
+                    }
                     m_move_chip_event(e);
                     break;
                 default: break;
             }
         }
-        return game_event_id::none;
     }
 #if defined(__clang__)
 # pragma clang diagnostic pop

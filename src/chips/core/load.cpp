@@ -173,11 +173,11 @@ namespace chips
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    parsed_level parse_level(unsigned level_num)
+    parsed_level parse_level(std::string const & lv_name)
     {
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "/level%u.tmx"
-          , level_num
+            CHIPS_RESOURCE_ROOT "/level_%s.tmx"
+          , lv_name
         );
         
         parsed_level lv;
@@ -208,7 +208,7 @@ namespace chips
             }
             else if (name == "level")
             {
-                lv.level = detail::query_attr<unsigned>(*pelem, "value");
+                lv.name = detail::query_attr<std::string>(*pelem, "value");
             }
             else if (name == "help")
             {
@@ -270,12 +270,12 @@ namespace chips
         }
     }}                                                      // namespace detail
     
-    std::vector<parsed_action> parse_actions(unsigned level_num)
+    std::vector<parsed_action> parse_actions(std::string const & name)
     {
         std::vector<parsed_action> actions;
         
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "actions%u.xml", level_num
+            CHIPS_RESOURCE_ROOT "actions_%s.xml", name
         );
         
         TiXmlDocument doc(fname.c_str());
@@ -328,7 +328,7 @@ namespace chips
         
         void process_actions(level & l)
         {
-            std::vector<parsed_action> actions = parse_actions(l.id());
+            std::vector<parsed_action> actions = parse_actions(l.name());
          
             for (auto & act : actions)
             {
@@ -365,17 +365,17 @@ namespace chips
     
     ////////////////////////////////////////////////////////////////////////////
     level create_level(
-        unsigned num
+        std::string const & lv_name
       , std::map<unsigned, tile_properties> const & props
       )
     {        
-        parsed_level raw = parse_level(num);
+        parsed_level raw = parse_level(lv_name);
         ELIB_ASSERT(raw.base.size()   == level_width * level_height);
         ELIB_ASSERT(raw.items.size()  == level_width * level_height);
         ELIB_ASSERT(raw.actors.size() == level_width * level_height);
         
         // Create the level
-        level l(raw.level, raw.chip_count, raw.help);
+        level l(raw.name, raw.chip_count, raw.help);
         
         unsigned index = 0;
         for (auto & gid : raw.base)
