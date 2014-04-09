@@ -400,6 +400,8 @@ namespace chips { namespace logic
                 
             if (e.get<tile_id>() == tile_id::blue_wall_fake)
             {
+                // change the tile_id since we actually don't want to draw it
+                e << tile_id::blue_wall_real;
                 e << method(on_collision_, fake_on_col)
                   << method(collides_, common::always_collides_);
             }
