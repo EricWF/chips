@@ -79,7 +79,7 @@ namespace chips
     {        
 		bool level_flag = false;//, menu_flag = false;
 		int lvl_arg = 1, c;
-		char *file_name = nullptr;
+		char *tileset_fname = nullptr;
 		opterr = 0;
 
 		while ((c = getopt (argc, argv, "l:mt:")) != -1)
@@ -87,8 +87,7 @@ namespace chips
 			switch (c)
 			{
 			case 't':
-				file_name = optarg;
-				printf("%s\n", optarg);
+				tileset_fname = optarg;
 				break;
             case 'l':
 				level_flag = true;
