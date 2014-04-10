@@ -10,6 +10,8 @@
 #include <chrono>
 #include <unistd.h>
 
+#include "chips/sounds.hpp"
+
 namespace chips
 { 
     void run_level(std::string const & lv_name, std::string ts_name);
@@ -29,9 +31,19 @@ namespace chips
         auto l = create_level(lv_name, prop_list);
         game_handler gh(l);
 
+        bug_die_sound();
+        
+        // teeth_die_sound();
+        // chip_die_sound();
+        // generic_die_sound();
+        // add_inventory_sound();
+        // pickup_chip_sound();
+        // pistol_sound();
+
+
         // initialize the music
         sf::Music music;
-		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav")) {
+		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "sounds/poc.wav")) {
 		   fprintf(stderr, "Failed to open music: poc.wav\n");
         } else {
             music.setLoop(true);
