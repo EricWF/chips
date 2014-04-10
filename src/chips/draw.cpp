@@ -130,11 +130,12 @@ namespace chips
     if (!sb.loadFromFile(detail::get_sound_uid_path(id)))
       throw "TODO";
     
-    m_sb_map.insert(std::make_pair(id, sb));
-    sound.setBuffer(sb);
-    auto pos = m_sound_map.insert(std::make_pair(id, sound));
+    auto buf_pos = m_sb_map.insert(std::make_pair(id, sb));
+    auto sound_pos = m_sound_map.insert(std::make_pair(id, sound));
+
+    sound_pos.first->second.setBuffer(buf_pos.first->second);
        
-    return pos.first->second;
+    return sound_pos.first->second;
   }
 
     void resource_manager::init_scoreboard()
