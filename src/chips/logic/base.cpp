@@ -495,7 +495,7 @@ namespace chips { namespace logic
                   , tele_list.end()
                   , cmp
                 );
-                
+#if 0
                 tele_list.erase(tele_list.end()--);
                 
                 for (auto & tmp_wrap : tele_list)
@@ -521,6 +521,7 @@ namespace chips { namespace logic
                         e << tmp_pos;
                         return;
                     }
+# endif
                 }
             };
             
