@@ -14,6 +14,8 @@
 
 namespace chips
 { 
+    namespace { bool cheats = false; }
+    
     void run_level(std::string const & lv_name, std::string ts_name);
     void run_level(std::string const & lv_name, std::string ts_name)
     {
@@ -29,6 +31,20 @@ namespace chips
         
         // load the level using the tileset info
         auto l = create_level(lv_name, prop_list);
+        
+        if (cheats) {
+            auto & inv = l.chip.get<inventory>();
+            inv.add_item(entity_id::computer_chip, 100);
+            inv.add_item(entity_id::red_key, 100);
+            inv.add_item(entity_id::blue_key, 100);
+            inv.add_item(entity_id::green_key, 100);
+            inv.add_item(entity_id::yellow_key, 100);
+            inv.add_item(entity_id::flippers);
+            inv.add_item(entity_id::skates);
+            inv.add_item(entity_id::fire_boots);
+            inv.add_item(entity_id::suction_boots);
+        }
+        
         game_handler gh(l);
 
         bug_die_sound();
@@ -99,7 +115,7 @@ namespace chips
 
         opterr = 0;
 
-        while ((c = getopt (argc, argv, "l:mt:")) != -1)
+        while ((c = getopt (argc, argv, "l:mt:c")) != -1)
         {
             switch (c)
             {
@@ -113,6 +129,9 @@ namespace chips
                 if (optarg) {
                     lvl_name = optarg;
                 }
+                break;
+            case 'c':
+                cheats = true;
                 break;
             case 'm':
                 //menu_flag = true;

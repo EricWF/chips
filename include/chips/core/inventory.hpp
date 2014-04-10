@@ -24,7 +24,7 @@ namespace chips
         inventory & operator=(inventory &&) = default;
         
         /// insert the item in non-existent, otherwise increase its count
-        void add_item(entity_id item);
+        void add_item(entity_id item, unsigned count = 1);
         
         /// Decrease an items count, throw if it isn't contained
         void use_item(entity_id item, unsigned count = 1);

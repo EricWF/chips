@@ -20,10 +20,10 @@ namespace chips
 {
 
     ////////////////////////////////////////////////////////////////////////////
-    void inventory::add_item(entity_id item)
+    void inventory::add_item(entity_id item, unsigned count)
     {
         CHIPS_THROW_BAD_ITEM(item);
-        m_items[item]++;
+        m_items[item] += count;
     }
     
     ////////////////////////////////////////////////////////////////////////////
