@@ -1,5 +1,7 @@
 #include "chips/sounds.hpp"
 #include "chips/draw.hpp"
+#include <SFML/Audio.hpp>
+
 namespace chips
 {
   
