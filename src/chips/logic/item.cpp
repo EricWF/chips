@@ -22,8 +22,10 @@ namespace chips { namespace logic
             } else {
                 add_inventory_sound();
             }
-            self.clear();
+            self.kill();
         };
+        
+        e.on_death([](entity & self){ self.clear(); });
         
         e << method(collides_, common::collides_with_monster_)
           << method(on_collision_, item_on_col);
