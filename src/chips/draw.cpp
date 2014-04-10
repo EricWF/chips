@@ -53,6 +53,31 @@ namespace chips
                 default: ELIB_THROW_EXCEPTION(chips_error("Invalid font_uid"));
             }
         }
+
+      const char* get_sound_uid_path(sound_uid id)
+      {
+        switch (id)
+          {
+          case sound_uid::bug_die: 
+            return CHIPS_RESOURCE_ROOT "sounds/bug.wav";        
+          case sound_uid::teeth_die: 
+            return CHIPS_RESOURCE_ROOT "sounds/teeth.wav";
+          case sound_uid::chip_die: 
+            return CHIPS_RESOURCE_ROOT "sounds/chip_death.wav";
+          case sound_uid::generic_die:
+            return CHIPS_RESOURCE_ROOT "sounds/generic_death.wav";
+          case sound_uid::add_inventory:
+            return CHIPS_RESOURCE_ROOT "sounds/add_inventory.wav";
+          case sound_uid::pickup_chip:
+            return CHIPS_RESOURCE_ROOT "sounds/pickup_chip.wav";
+          case sound_uid::pistol:
+            return CHIPS_RESOURCE_ROOT "sounds/pistol.wav";        
+          case sound_uid::none:
+          default:
+            ELIB_THROW_EXCEPTION(chips_error("Invalid sound_uid"));
+          }
+      }
+
 #if defined(__clang__)
 # pragma clang diagnostic pop
 #endif
@@ -92,7 +117,23 @@ namespace chips
         init_scoreboard();
        
     }
+
+  const sf::SoundBuffer & resource_manager::operator[](sound_uid id)
+  {
+    auto found = m_sound_map.find(id);
+    if (found != m_sound_map.end())
+      return found->second;
     
+    sf::SoundBuffer tmp;
+    
+    if (!tmp.loadFromFile(detail::get_sound_uid_path(id)))
+      throw "TODO";
+    
+    auto pos = m_sound_map.insert(std::make_pair(id, tmp));
+    
+    return pos.first->second;
+  }
+
     void resource_manager::init_scoreboard()
     {
          sf::Image scoreboard_img;

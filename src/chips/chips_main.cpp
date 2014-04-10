@@ -31,7 +31,7 @@ namespace chips
 
         // initialize the music
         sf::Music music;
-		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "poc.wav")) {
+		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "sounds/poc.wav")) {
 		   fprintf(stderr, "Failed to open music: poc.wav\n");
         } else {
             music.setLoop(true);
