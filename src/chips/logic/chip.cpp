@@ -1,6 +1,7 @@
 #include "chips/logic.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
+#include "chips/sounds.hpp"
 #include <elib/aux.hpp>
 #include <elib/fmt.hpp>
 
