@@ -389,6 +389,8 @@ namespace chips
         int key_pos = static_cast<int>(entity_id::blue_key);
         for (int i=0; i < 4; ++i)
         {
+            chips::draw(win, entity(entity_id::floor), p);
+            
             entity_id key_id = static_cast<entity_id>(key_pos + i);
             unsigned count = inv.count(key_id);
             if (count)
@@ -399,8 +401,7 @@ namespace chips
                 count_str.setPosition((float)p.x, (float)p.y);
                 win.draw(count_str);
             }
-            else
-                chips::draw(win, entity(entity_id::floor), p);
+                
             p.x += tile_width;
         }
         
@@ -409,11 +410,10 @@ namespace chips
         int boot_pos = static_cast<int>(entity_id::flippers);
         for (int i=0; i < 4; ++i)
         {
+            chips::draw(win, entity(entity_id::floor), p);
             entity_id boot_id = static_cast<entity_id>(boot_pos + i);
             if (inv.contains(boot_id))
                 chips::draw(win, entity(boot_id), p);
-            else
-                chips::draw(win, entity(entity_id::floor), p);
             p.x += tile_width;
         }
         

@@ -116,7 +116,7 @@ namespace chips
     {
         ELIB_ASSERT(tileset_name);
         init_tileset(tileset_name);
-        init_scoreboard();
+        init_scoreboard(tileset_name);
        
     }
 
@@ -140,10 +140,16 @@ namespace chips
     return sound_pos.first->second;
   }
 
-    void resource_manager::init_scoreboard()
+    void resource_manager::init_scoreboard(const char* tileset_name)
     {
-         sf::Image scoreboard_img;
-        if (not scoreboard_img.loadFromFile(CHIPS_RESOURCE_ROOT "/scoreboard.png"))
+        std::string fname;
+        if (tileset_name == std::string{"default_tileset.png"}) {
+            fname = CHIPS_RESOURCE_ROOT "/grey-scoreboard.png";
+        } else  {
+            fname = CHIPS_RESOURCE_ROOT"/scoreboard.png";
+        }
+        sf::Image scoreboard_img;
+        if (not scoreboard_img.loadFromFile(fname.c_str()))
             throw "TODO";
             
         sf::Texture scoreboard_tex;
