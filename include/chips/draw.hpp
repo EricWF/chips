@@ -43,8 +43,8 @@ namespace chips
         
     // creates font if not found
     const sf::Font & operator[](font_uid);
-    // creates sound if not found
-    const sf::SoundBuffer & operator[](sound_uid id);    
+    // creates sound and buffer if not found
+    sf::Sound & operator[](sound_uid id);    
     // throws if font not found
     const sf::Font & at(font_uid id) const;
         
@@ -63,7 +63,8 @@ namespace chips
     void init_fonts();
     void create_sprite(tile_id);
         
-    std::map<sound_uid, sf::SoundBuffer> m_sound_map;
+    std::map<sound_uid, sf::SoundBuffer> m_sb_map;
+    std::map<sound_uid, sf::Sound> m_sound_map;
     std::map<font_uid, sf::Font> m_font_map;
     std::map<texture_uid, sf::Texture> m_tex_map;
     std::map<tile_id, sf::Sprite> m_sprite_map;

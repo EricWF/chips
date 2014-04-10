@@ -10,6 +10,8 @@
 #include <chrono>
 #include <unistd.h>
 
+#include "chips/sounds.hpp"
+
 namespace chips
 { 
     void run_level(std::string const & lv_name, std::string ts_name);
@@ -28,6 +30,16 @@ namespace chips
         // load the level using the tileset info
         auto l = create_level(lv_name, prop_list);
         game_handler gh(l);
+
+        bug_die_sound();
+        
+        // teeth_die_sound();
+        // chip_die_sound();
+        // generic_die_sound();
+        // add_inventory_sound();
+        // pickup_chip_sound();
+        // pistol_sound();
+
 
         // initialize the music
         sf::Music music;

@@ -25,11 +25,8 @@ namespace chips
   { play_sound(sound_uid::pistol); }
   
   void play_sound(sound_uid id){
-    sf::Sound sound;
     auto & res = resource_manager::get();
-    sound.setBuffer(res[id]);
-    sound.play();
+    res[id].play();   
   }
-  
   
 }

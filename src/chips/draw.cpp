@@ -118,19 +118,22 @@ namespace chips
        
     }
 
-  const sf::SoundBuffer & resource_manager::operator[](sound_uid id)
+  sf::Sound & resource_manager::operator[](sound_uid id)
   {
     auto found = m_sound_map.find(id);
     if (found != m_sound_map.end())
       return found->second;
     
-    sf::SoundBuffer tmp;
+    sf::SoundBuffer sb;
+    sf::Sound sound;
     
-    if (!tmp.loadFromFile(detail::get_sound_uid_path(id)))
+    if (!sb.loadFromFile(detail::get_sound_uid_path(id)))
       throw "TODO";
     
-    auto pos = m_sound_map.insert(std::make_pair(id, tmp));
-    
+    m_sb_map.insert(std::make_pair(id, sb));
+    sound.setBuffer(sb);
+    auto pos = m_sound_map.insert(std::make_pair(id, sound));
+       
     return pos.first->second;
   }
 
@@ -216,7 +219,7 @@ namespace chips
         if (m_sprite_map.count(index) == 0) create_sprite(index);
         return m_sprite_map.at(index);
     }
-    
+      
 ////////////////////////////////////////////////////////////////////////////////
 //                               DRAW
 ////////////////////////////////////////////////////////////////////////////////
