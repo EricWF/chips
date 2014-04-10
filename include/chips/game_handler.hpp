@@ -41,13 +41,17 @@ namespace chips
     private:
         bool m_try_tick();
         void m_tick(sf::RenderWindow &);
-        void m_slide();
+        /// Returns true if any entity was moved
+        bool m_slide();
+        bool m_slide_chip();
         void m_update();
         bool m_check_success();
         bool m_check_failure();
         
-        void m_handle_event(sf::RenderWindow & win);
-        void m_move_chip_event(sf::Event const &);
+        // returns true if the window should be redrawn
+        bool m_handle_event(sf::RenderWindow & win);
+        // returns true if it chips was moved
+        bool m_move_chip_event(sf::Event const &);
         void m_move_chip(direction);
         
         void m_draw(sf::RenderWindow &) const;

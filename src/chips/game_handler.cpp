@@ -43,10 +43,11 @@ namespace chips
         }
     }}                                                      // namespace detail
     
-    ////////////////////////////////////////////////////////////////////////////
-    //                           GAME_HANDLER  
-    ////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//                                   GAME_HANDLER  
+////////////////////////////////////////////////////////////////////////////////
     
+    ////////////////////////////////////////////////////////////////////////////
     game_event_id game_handler::update(sf::RenderWindow & win)
     {
         while (not m_try_tick()) 
@@ -72,31 +73,39 @@ namespace chips
     ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_tick(sf::RenderWindow & win)
     {
+        bool need_check = false;
+        bool chip_slid = false;
+        
         if (m_tick_count % full_speed.den == 0) {
-            m_slide();
+            bool actor_slid = m_slide();
+            chip_slid = m_slide_chip();
+            if (actor_slid || chip_slid) draw(win);
+            need_check = true;
         }
         
-        draw(win);
-        
         // Update based on input event, then check state.
-        if ((m_tick_count % full_speed.den) == 0) {
-            m_handle_event(win);
+        if (not chip_slid || (m_tick_count % half_speed.den) == 0) {
+            bool chip_moved = m_handle_event(win);
             if (m_event != game_event_id::none) return;
-            draw(win);
+            if (chip_moved) draw(win);
+            need_check = true;
         } 
         
-        if (m_check_success() || m_check_failure()) return;
-        
-        m_update();
-        
-        // Check the state one last time (sets global state)
-        m_check_failure();
+        if (need_check && (m_check_success() || m_check_failure())) return; 
+    
+        if ((m_tick_count % full_speed.den) == 0) {
+            m_update();
+            m_check_failure();
+        }
     }
     
-    void game_handler::m_slide()
+    ////////////////////////////////////////////////////////////////////////////
+    bool game_handler::m_slide()
     {
-        if (m_event != game_event_id::none) return;
+        if (m_event != game_event_id::none) return false;
             
+        bool needs_redraw = false;
+        
         // Handle sliding.
         auto CanSlide = Concept<Alive, EntityMatches<is_actor>>();
         for (auto & e : CanSlide.filter(m_level.entity_list)) 
@@ -105,42 +114,56 @@ namespace chips
             if (pos != m_level.entity_list.end()) {
                 logic::move_on_ice(e, *pos, m_level);
                 e << update_lock{};
+                needs_redraw = true;
             }
             else if ((pos = OnForceFloor(e).find(m_level.entity_list)) 
                     != m_level.entity_list.end() )
             {
                 logic::move_on_force_floor(e, *pos, m_level);
                 e << update_lock{};
+                needs_redraw = true;
             }
         }
         
-        // Check chip on floor
-        {
-            entity & chip = m_level.chip;
-            auto & elist = m_level.entity_list;
-            auto & inv = chip.get<inventory>();
-            
-            decltype(Concept<>().find(elist)) pos;
-            if (not inv.count(entity_id::skates) 
-                && ((pos = OnIce(chip).find(elist)) != elist.end()) 
-              ) 
-            {
-                logic::move_on_ice(chip, *pos, m_level);
-                chip << update_lock{};
-            }
-            else if (not inv.count(entity_id::suction_boots) 
-                && ((pos = OnForceFloor(chip).find(elist)) != elist.end()))
-            {
-                logic::move_on_force_floor(chip, *pos, m_level);
-            }
-        }
+        return needs_redraw;
     }
     
+    ////////////////////////////////////////////////////////////////////////////
+    bool game_handler::m_slide_chip()
+    {
+        entity & chip = m_level.chip;
+        auto & elist = m_level.entity_list;
+        auto & inv = chip.get<inventory>();
+        
+        // remove old force floor move and update lock if present
+        chip.remove<update_lock>();
+        chip.remove<force_floor_move>();
+    
+        if (not inv.contains(entity_id::skates)) {
+            auto pos = OnIce(chip).find(elist);
+            if (pos != elist.end()) {
+                logic::move_on_ice(chip, *pos, m_level);
+                chip << update_lock{};
+                return true;
+            }
+        }
+        
+        if (not inv.contains(entity_id::suction_boots)) {
+            auto pos = OnForceFloor(chip).find(elist);
+            if (pos != elist.end()) {
+                force_floor_move mv = 
+                    logic::move_on_force_floor(chip, *pos, m_level);
+                chip << mv;
+                return true;
+            } 
+        }
+        
+        return false;
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     void game_handler::m_update()
     {
-        // we may not have set it, but if we did we want to remove it.
-        m_level.chip.remove<update_lock>();
-        
         // Either remove an update lock, or update a entity
         // if it is their tick.
         auto UpdateThisTick = UpdateOnTick(m_tick_count);
@@ -202,14 +225,34 @@ namespace chips
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wswitch-enum"
 #endif
+    bool game_handler::m_handle_event(sf::RenderWindow & win)
+    {
+        bool chip_moved = false;
+        sf::Event e;
+        while (win.pollEvent(e))
+        {
+            if (e.type == sf::Event::Closed) {
+                m_event = game_event_id::closed;
+                return false;
+            }
+            else if (m_event != game_event_id::none) {
+                // nothing
+            }
+            else if (not chip_moved && e.type == sf::Event::KeyReleased) {
+                chip_moved = m_move_chip_event(e);
+            } 
+        }
+        return chip_moved;
+    }
+
     ////////////////////////////////////////////////////////////////////////////
-    void game_handler::m_move_chip_event(sf::Event const & ev)
+    bool game_handler::m_move_chip_event(sf::Event const & ev)
     {
         if (not m_level.chip 
-            || m_level.chip.has<update_lock>()
             || m_level.chip.has<move_lock>()
+            || m_level.chip.has<update_lock>()
           )
-        { return; }
+        { return false; }
             
         direction d;
         switch (ev.key.code)
@@ -222,14 +265,16 @@ namespace chips
                 d = direction::E; break;
             case sf::Keyboard::Left:
                 d = direction::W; break;
-            default: return;
+            default: return false;
         }
         
         m_level.chip(move_, d, m_level);
+        return true;
     }
 #if defined(__GNUC__)
 # pragma GCC diagnostic pop
 #endif
+
     void game_handler::draw(sf::RenderWindow & win) const
     {
         win.clear(sf::Color::Black);
@@ -381,38 +426,7 @@ namespace chips
 //         }
     }
     
-#if defined(__clang__)
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wswitch-enum"
-#elif defined(ELIB_CONFIG_GCC)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wswitch-enum"
-#endif
-    void game_handler::m_handle_event(sf::RenderWindow & win)
-    {
-        sf::Event e;
-        while (win.pollEvent(e))
-        {
-            switch (e.type)
-            {
-                case sf::Event::Closed:
-                    m_event = game_event_id::closed;
-                    return;
-                case sf::Event::KeyReleased:
-                    if (m_event != game_event_id::none) {
-                        break;
-                    }
-                    m_move_chip_event(e);
-                    break;
-                default: break;
-            }
-        }
-    }
-#if defined(__clang__)
-# pragma clang diagnostic pop
-#elif defined(ELIB_CONFIG_GCC)
-# pragma GCC diagnostic pop
-#endif
+
 
     
     

@@ -26,19 +26,17 @@ namespace chips { namespace logic
             auto water_on_collide =
             [](entity & self, entity & other, level & l)
             {
-                if (is_chip(other))
-                {
+                if (is_chip(other)) {
                     auto & inv = other.get<inventory>();
-                    if (!inv.contains(entity_id::flippers))
+                    if (!inv.contains(entity_id::flippers)) {
                         other.kill();
-                    return;
+                        other << chips_state::drowned;
+                    }
                 }
-                else if (is_monster(other) && !(other.id() == entity_id::glider))
-                {
+                else if (is_monster(other) && !(other.id() == entity_id::glider)){
                     other.kill();
                 }
-                else if (other.id() == entity_id::block)
-                {
+                else if (other.id() == entity_id::block) {
                     other.kill();
                     clean_entity(self);
                     self.id(entity_id::dirt);
@@ -63,6 +61,7 @@ namespace chips { namespace logic
                     
                 if (not inv.contains(entity_id::fire_boots)) { 
                     other.kill();
+                    other << chips_state::burned_fire;
                 }
             };
                 
@@ -237,6 +236,10 @@ namespace chips { namespace logic
                 self.clear_methods();
                 self.remove<tile_id>();
                 self.id(entity_id::floor);
+                
+                if (is_chip(other)) {
+                    other << chips_state::burned_smoke;
+                }
             };
             
             e << method(on_collision_, on_collide);

@@ -29,6 +29,11 @@ namespace chips
     /// For use with chips weapons
     namespace logic_detail { struct ammo_tag {}; }
     using ammo_t = any_attribute<int, logic_detail::ammo_tag>;
+    
+    /// For use with determining what ways chips is allowed to move when
+    /// he is on force floor.
+    namespace logic_detail { struct ff_move_tag {}; }
+    using force_floor_move = any_attribute<direction, logic_detail::ff_move_tag>;
 
 }                                                           // namespace chips
 #endif /* CHIPS_LOGIC_ATTRIBUTES_HPP */

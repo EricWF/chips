@@ -7,9 +7,14 @@ namespace chips { namespace logic
 {
     namespace 
     {
-        void kill_chip_on_col(entity &, entity & other, level &)
+        void kill_chip_on_col(entity & self, entity & other, level &)
         {
-            if (is_chip(other)) other.kill();
+            if (is_chip(other)) {
+                other.kill();
+                if (self.id() == entity_id::fireball) {
+                    other << chips_state::burned_smoke;
+                }
+            }
         }
         
         ////////////////////////////////////////////////////////////////////////

@@ -7,13 +7,32 @@
 namespace chips { namespace logic
 {
     ////////////////////////////////////////////////////////////////////////////
+    void chips_move_(entity & self, direction d, level & l) 
+    {
+        /// Check to see if the last move was a FF move. If so, only allow
+        /// perpindicular movement
+        force_floor_move const* opt_move = self.get_raw<force_floor_move>();
+        if (opt_move) {
+            direction in = *opt_move;
+            if ((in == NORTH || in == SOUTH) && (d == NORTH || d == SOUTH)) {
+                return;
+            }
+            else if ((in == EAST || in == WEST) && (d == EAST || d == WEST)) {
+                return;
+            }
+        }
+        
+        common::move_(self, d, l);
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
     void init_chip(entity & e, level &)
     {
         ELIB_ASSERT(is_chip(e));
         e.remove<tile_id>();
         
         e << inventory() 
-          << method(move_, common::move_);
+          << method(move_, chips_move_);
           
     }
     

@@ -2,6 +2,8 @@
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
 
+#include <random>
+
 namespace chips
 {
     void clean_entity(entity & e)
@@ -70,57 +72,93 @@ namespace chips { namespace logic
         }
     }
     
-    void move_on_ice(entity & e, entity const & ice, level & l)
+    direction move_on_ice(entity & e, entity const & ice, level & l)
     {
         tile_id tid = ice.get<tile_id>();
         direction d = e.get<direction>();
 
-        if (tid == tile_id::ice_NW)
-        {
-            if (d == direction::N)
-                e(move_, direction::E, l);
-            else
-                e(move_, direction::S, l);
+        direction move_dir = direction::N;
+        
+        if (tid == tile_id::ice_NW) {
+            if (d == direction::N) {
+                move_dir = direction::E;
+            } else {
+                move_dir = direction::S;
+            }
         }
-        else if (tid == tile_id::ice_NE)
-        {
-            if (d == direction::N) 
-                e(move_, direction::W, l);
-            else
-                e(move_, direction::S, l);
+        else if (tid == tile_id::ice_NE) {
+            if (d == direction::N) {
+                move_dir = direction::W;
+            } else {
+                move_dir = direction::S;
+            }
         }
-        else if (tid == tile_id::ice_SW)
-        {
-            if (d == direction::S)
-                e(move_, direction::E, l);
-            else
-                e(move_, direction::N, l);
+        else if (tid == tile_id::ice_SW) {
+            if (d == direction::S) {
+                move_dir = direction::E;
+            } else {
+                move_dir = direction::N;
+            }
         }
-        else if (tid == tile_id::ice_SE)
-        {
-            if (d == direction::S)
-                e(move_, direction::W, l);
-            else
-                e(move_, direction::N, l);
+        else if (tid == tile_id::ice_SE) {
+            if (d == direction::S) {
+                move_dir = direction::W;
+            } else {
+                move_dir = direction::N;
+            }
         }
-        else
-        {
-            e(move_, e.get<direction>(), l);
+        else {
+            move_dir = e.get<direction>();
         }
+        
+        e(move_, move_dir, l);
+        return move_dir;
     }
     
+    namespace 
+    {
+        /// The engine of choice for randomness in llama
+        using random_engine = std::mt19937;
+        
+        /// Access to a statically allocated random_engine.
+        /// TODO: this is not thread safe
+        inline random_engine & get_rand_engine()
+        {
+            static random_engine eng((std::random_device()()));
+            return eng;
+        }
+    }                                                       // namespace 
+    
     ////////////////////////////////////////////////////////////////////////////
-    void move_on_force_floor(entity & e, entity const & ff, level & l)
+    direction move_on_force_floor(entity & e, entity const & ff, level & l)
     {
         tile_id id = ff.get<tile_id>();
-        if (id == tile_id::force_floor_N)
+        if (id == tile_id::force_floor_N) {
             e(move_, direction::N, l);
-        else if (id == tile_id::force_floor_S)
+            return direction::N;
+        }
+        else if (id == tile_id::force_floor_S) {
             e(move_, direction::S, l);
-        else if (id == tile_id::force_floor_E)
+            return direction::S;
+        } 
+        else if (id == tile_id::force_floor_E) {
             e(move_, direction::E, l);
-        else if (id == tile_id::force_floor_W)
+            return direction::E;
+        }
+        else if (id == tile_id::force_floor_W) {
             e(move_, direction::W, l); 
+            return direction::W;
+        }
+        else if (id == tile_id::force_floor_random) {
+            std::uniform_int_distribution<int> rand_dist(0, 3);
+            int r = rand_dist(get_rand_engine());
+            direction d = static_cast<direction>(r);
+            e(move_, d, l);
+            return d;
+        } else {
+            ELIB_ASSERT(false);
+            throw "TODO";
+        }
     }
     
     ////////////////////////////////////////////////////////////////////////////
@@ -172,21 +210,16 @@ namespace chips { namespace logic
         entity const & chip = l.chip;
         auto const & el = l.entity_list;
         
-        if (OnWater(chip).contains(el))
-        {
-            if (chip) return chips_state::swimming;
-            else      return chips_state::drowned;
+        if (not chip) {
+            chips_state const *opt_st = chip.get_raw<chips_state>();
+            if (opt_st) return *opt_st;
+            return chips_state::normal;
         }
         
-        if (OnFire(chip).contains(el))
-        {
-            if (chip) return chips_state::normal;
-            else      return chips_state::burned_fire;
-        }
+        ELIB_ASSERT(!chip.has<chips_state>());
         
-        if (OnEntity<entity_id::fake_exit>(chip).contains(el))
-        {
-            return chips_state::fake_exit;
+        if (OnWater(chip).contains(el)) {
+            return chips_state::swimming;
         }
       
         return chips_state::normal;

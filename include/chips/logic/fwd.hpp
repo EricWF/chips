@@ -55,10 +55,13 @@ namespace chips { namespace logic
     /// Compute chips state based on the state of the level.
     chips_state get_chips_state(level const &);
     
+    /// The move method used by chip.
+    void chips_move_(entity &, direction, level &);
+    
     /// Move an entity on ice or force floor. This method should be
     /// called with the ice/ff tile that entity is currently on.
-    void move_on_ice(entity & e, entity const & ice, level &);
-    void move_on_force_floor(entity & e, entity const & ff, level &);
+    direction move_on_ice(entity & e, entity const & ice, level &);
+    direction move_on_force_floor(entity & e, entity const & ff, level &);
     
     /// Common methods used by a large amount of entities.
     namespace common

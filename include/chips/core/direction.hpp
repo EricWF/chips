@@ -18,6 +18,11 @@ namespace chips
     {
         N, W, S, E
     };
+    
+    constexpr direction NORTH = direction::N;
+    constexpr direction WEST = direction::W;
+    constexpr direction SOUTH = direction::S;
+    constexpr direction EAST = direction::E;
 
     constexpr direction 
     turn_right(direction dir, unsigned times = 1) noexcept
