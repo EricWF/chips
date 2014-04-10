@@ -28,7 +28,8 @@ namespace chips
     
   enum class sound_uid
   { 
-    none, bug_die, teeth_die, chip_die, generic_die, add_inventory, pickup_chip, pistol
+	  none, bug_die, teeth_die, chip_die, generic_die,
+		  add_inventory, pickup_chip, pistol, bomb
       };
 
   class resource_manager
