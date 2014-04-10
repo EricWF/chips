@@ -59,7 +59,7 @@ namespace chips
     ~resource_manager() = default;
         
     void init_tileset(const char* tileset_name);
-    void init_scoreboard();
+    void init_scoreboard(const char* tileset_name);
     void init_fonts();
     void create_sprite(tile_id);
     
