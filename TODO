@@ -23,6 +23,6 @@
 
 
 
-- Fix background for scoreboard
-- Add resource management for scoreboard
-- Black key unlocks silver lock and vice versa
+- Add custom levels
+- Add menus
+- More sounds? (e.g. dumping blocks in water)
