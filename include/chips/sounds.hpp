@@ -14,6 +14,7 @@ namespace chips
     void add_inventory_sound();
     void pickup_chip_sound();
     void pistol_sound();
+	void bomb_sound();
 
     void play_sound(sound_uid);
 }

@@ -71,7 +71,9 @@ namespace chips
           case sound_uid::pickup_chip:
             return CHIPS_RESOURCE_ROOT "sounds/pickup_chip.wav";
           case sound_uid::pistol:
-            return CHIPS_RESOURCE_ROOT "sounds/pistol.wav";        
+			  return CHIPS_RESOURCE_ROOT "sounds/pistol.wav";
+		  case sound_uid::bomb:
+            return CHIPS_RESOURCE_ROOT "sounds/bomb.wav";        
           case sound_uid::none:
           default:
             ELIB_THROW_EXCEPTION(chips_error("Invalid sound_uid"));
