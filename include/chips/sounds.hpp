@@ -1,6 +1,9 @@
 #ifndef CHIPS_SOUNDS_HPP
 #define CHIPS_SOUNDS_HPP
 
+#include <SFML/Audio.hpp>
+#include <chips/draw.hpp>
+
 namespace chips 
 {
   
@@ -12,7 +15,7 @@ namespace chips
     void pickup_chip_sound();
     void pistol_sound();
 
-    void play_sound();
+    void play_sound(sound_uid);
 
 
 }
