@@ -21,14 +21,11 @@ namespace chips
 	};
 	
     namespace { bool cheats = false; }
-    
-    void run_level(std::string const & lv_name, std::string ts_name);
-    void run_level(std::string const & lv_name, std::string ts_name)
-    {
-		
-        sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
-        
-        // initialize the tileset
+
+	level init_level(std::string const & lv_name, std::string ts_name);
+	level init_level(std::string const & lv_name, std::string ts_name)
+	{
+		// initialize the tileset
         if (ts_name == "") ts_name = default_tileset_file;
         resource_manager::init(ts_name);
         
@@ -50,7 +47,15 @@ namespace chips
             inv.add_item(entity_id::fire_boots);
             inv.add_item(entity_id::suction_boots);
         }
-        
+
+		return l;
+	}
+	
+	void run_level(level l, sf::RenderWindow & window);
+    void run_level(level l, sf::RenderWindow & window)
+    {
+		
+	        
         game_handler gh(l);
 		
         // initialize the music
@@ -59,20 +64,22 @@ namespace chips
 			fprintf(stderr, "Failed to open music: poc.wav\n");
         } else {
             music.setLoop(true);
-            music.play();
+            //music.play();
         }
         
         // Enter the game loop.
         game_event_id last = game_event_id::none;
-        while (gh.update(window) != game_event_id::level_passed)
-        {
-			if (last != gh.state()) {
-				last = gh.state();
-				music.stop();
-			}
-           
-        }
-        window.close();
+        while ( (last = gh.update(window)) == game_event_id::none ); // {}
+
+		// if(last == game_even_id::level_failed)
+		// 	run_level(lv_name, ts_name, window);
+
+		
+		// if (last != gh.state()) {
+		// 		last = gh.state();
+		// 		music.stop();
+		// }
+		
     }
     
 	void menu_test()
@@ -87,7 +94,7 @@ namespace chips
         while (window.isOpen())
         {
             window.clear(sf::Color::Black);
-            
+			
             auto bid = mh.handle_event(window);
             if (bid == menu_item_id::quit) break;
                 
@@ -97,16 +104,16 @@ namespace chips
 
 		window.close();
 	}
-
+	
 	struct cmdline_opts parse_args(int argc, char** argv);
 	struct cmdline_opts parse_args(int argc, char** argv)
 	{
 		struct cmdline_opts opts;
         int c;		
-
+		
 		opts.level_flag = false;
         opterr = 0;
-
+		
         while ((c = getopt (argc, argv, "l:mt:c")) != -1)
         {
             switch (c)
@@ -153,14 +160,20 @@ namespace chips
 
 	int chips_main(int argc, char** argv, char**)
 	{
-		struct cmdline_opts opts = parse_args(argc, argv);
+		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");		
+		auto opts = parse_args(argc, argv);
 		
 		if (not opts.level_flag) {
 			printf("No level flag given");
 			return EXIT_FAILURE;
 		}
-
-		run_level(opts.lvl_name, opts.tileset_fname);
+		
+		int i;
+		for(i = 1; i < 5; i++)
+		{
+			auto l = init_level(std::to_string(i), opts.tileset_fname);
+			run_level(l, window);
+		}
 		
 		return 0;
 	}
