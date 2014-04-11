@@ -51,25 +51,27 @@ namespace chips
 		return l;
 	}
 	
-	void run_level(level l, sf::RenderWindow & window);
-    void run_level(level l, sf::RenderWindow & window)
+	game_event_id run_level(level l, sf::RenderWindow & window);
+    game_event_id run_level(level l, sf::RenderWindow & window)
     {
-		
-	        
+        
         game_handler gh(l);
 		
-        // initialize the music
-        sf::Music music;
-		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "sounds/poc.wav")) {
-			fprintf(stderr, "Failed to open music: poc.wav\n");
-        } else {
-            music.setLoop(true);
-            //music.play();
-        }
+        // // initialize the music
+        // sf::Music music;
+		// if(!music.openFromFile(CHIPS_RESOURCE_ROOT "sounds/poc.wav")) {
+		// 	fprintf(stderr, "Failed to open music: poc.wav\n");
+        // } else {
+        //     music.setLoop(true);
+        //     //music.play();
+        // }
         
         // Enter the game loop.
         game_event_id last = game_event_id::none;
         while ( (last = gh.update(window)) == game_event_id::none ); // {}
+		
+
+		return last;
 
 		// if(last == game_even_id::level_failed)
 		// 	run_level(lv_name, ts_name, window);
@@ -169,10 +171,19 @@ namespace chips
 		}
 		
 		int i;
-		for(i = 1; i < 5; i++)
+		for(i = 2; i < 5; i++)
 		{
 			auto l = init_level(std::to_string(i), opts.tileset_fname);
-			run_level(l, window);
+			auto id = run_level(l, window);
+			
+			while(id  == game_event_id::level_failed)
+				id = run_level(l, window);
+
+			if(id == game_event_id::closed){
+				window.close();
+				return EXIT_SUCCESS;
+			}
+			
 		}
 		
 		return 0;
