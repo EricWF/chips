@@ -69,7 +69,6 @@ namespace chips
         // Enter the game loop.
         game_event_id last = game_event_id::none;
         while ( (last = gh.update(window)) == game_event_id::none ); // {}
-		
 
 		return last;
 

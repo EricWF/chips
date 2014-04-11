@@ -23,11 +23,19 @@ Influenced by Chips Challenge
  * Must Swim, Skate, Walk on fire, and some magic green stuff to complete the level
  
 ## Tech Stack
- * C++
- * SDL2
+ * C++11
+ * SFML 2.1
+ * CMake
  
 ## Why it's Retro
  * Original First released on Atari Lynx 
  * Simple 2D graphical style
  * Because I'm sentimental about the original
  * Limited color and sound
+
+## Usage
+ * Executable: /bin/chips
+ * From the command line
+ ..* -l <level name> # level names "1", "2", ..., "8" and "test"
+ ..* -c # turns on cheats
+ ..* -t <tileset file name> # see /res for tilesets
