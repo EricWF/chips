@@ -36,6 +36,6 @@ Influenced by Chips Challenge
 ## Usage
  * Executable: /bin/chips
  * From the command line
-   * -l <level name> # level names "1", "2", ..., "8" and "test"
+   * -l \<level name\> # level names are "1", "2", ..., "8" and "test"
    * -c # turns on cheats
-   * -t <tileset file name> # see /res for tilesets
+   * -t \<tileset file name\> # see /res for tilesets
