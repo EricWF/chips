@@ -13,7 +13,13 @@
 #include "chips/sounds.hpp"
 
 namespace chips
-{ 
+{
+	struct cmdline_opts {
+		bool level_flag;
+        std::string tileset_fname;
+		std::string lvl_name;
+	};
+	
     namespace { bool cheats = false; }
     
     void run_level(std::string const & lv_name, std::string ts_name);
@@ -46,21 +52,11 @@ namespace chips
         }
         
         game_handler gh(l);
-
-        bug_die_sound();
-        
-        // teeth_die_sound();
-        // chip_die_sound();
-        // generic_die_sound();
-        // add_inventory_sound();
-        // pickup_chip_sound();
-        // pistol_sound();
-
-
+		
         // initialize the music
         sf::Music music;
 		if(!music.openFromFile(CHIPS_RESOURCE_ROOT "sounds/poc.wav")) {
-		   fprintf(stderr, "Failed to open music: poc.wav\n");
+			fprintf(stderr, "Failed to open music: poc.wav\n");
         } else {
             music.setLoop(true);
             music.play();
@@ -68,12 +64,12 @@ namespace chips
         
         // Enter the game loop.
         game_event_id last = game_event_id::none;
-        while (gh.update(window) != game_event_id::closed)
+        while (gh.update(window) != game_event_id::level_passed)
         {
-            if (last != gh.state()) {
-                last = gh.state();
-                music.stop();
-            }
+			if (last != gh.state()) {
+				last = gh.state();
+				music.stop();
+			}
            
         }
         window.close();
@@ -100,19 +96,15 @@ namespace chips
         }
 
 		window.close();
-		
 	}
-	
-#if defined(__GNUC__)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wswitch-default"
-#endif
-    int chips_main(int argc, char** argv, char**)
-    {        
-        bool level_flag = false;//, menu_flag = false;
-        int c;
-        std::string tileset_fname, lvl_name;
 
+	struct cmdline_opts parse_args(int argc, char** argv);
+	struct cmdline_opts parse_args(int argc, char** argv)
+	{
+		struct cmdline_opts opts;
+        int c;		
+
+		opts.level_flag = false;
         opterr = 0;
 
         while ((c = getopt (argc, argv, "l:mt:c")) != -1)
@@ -121,13 +113,13 @@ namespace chips
             {
             case 't':
                 if (optarg) {
-                    tileset_fname = optarg;
+                    opts.tileset_fname = optarg;
                 }
                 break;
             case 'l':
-                level_flag = true;
+                opts.level_flag = true;
                 if (optarg) {
-                    lvl_name = optarg;
+                    opts.lvl_name = optarg;
                 }
                 break;
             case 'c':
@@ -137,34 +129,49 @@ namespace chips
                 //menu_flag = true;
                 break;
             case '?':
-                if (optopt == 'l')
-                {
+			default:
+                if (optopt == 'l'){
                     fprintf(stderr, "Option -%c requires an argument.\n", optopt);
-                    level_flag = false;
-                }
-                else if (isprint (optopt))
+                    opts.level_flag = false;
+                } else if (isprint (optopt)) {
                     fprintf(stderr, "Unknown option `-%c'.\n", optopt);
-                else
+				} else {
                     fprintf(stderr,
                             "Unknown option character `\\x%x'.\n",
                             optopt);
+				
+					fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
+					
+					exit(EXIT_FAILURE);
+				}
+			}
+		}
 
-                fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
+		return opts;
+		
+	}
 
-                return EXIT_FAILURE;
-            }
-        }
+	int chips_main(int argc, char** argv, char**)
+	{
+		struct cmdline_opts opts = parse_args(argc, argv);
+		
+		if (not opts.level_flag) {
+			printf("No level flag given");
+			return EXIT_FAILURE;
+		}
 
-        if (not level_flag) {
-            printf("No level flag given");
-            return EXIT_FAILURE;
-        }
+		run_level(opts.lvl_name, opts.tileset_fname);
+		
+		return 0;
+	}
+	
 
-        run_level(lvl_name, tileset_fname);
-        
-        return 0;
-    }
-#if defined(__GNUC__)
-# pragma GCC diagnostic pop
-#endif
+					
+// #if defined(__GNUC__)
+// # pragma GCC diagnostic push
+// # pragma GCC diagnostic ignored "-Wswitch-default"
+// #endif	
+// #if defined(__GNUC__)
+// # pragma GCC diagnostic pop
+// #endif
 }                                                           // namespace chips

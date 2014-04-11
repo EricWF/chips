@@ -75,7 +75,7 @@ namespace chips
     {
         bool need_check = false;
         bool chip_slid = false;
-        
+		
         if (m_tick_count % full_speed.den == 0) {
             bool actor_slid = m_slide();
             chip_slid = m_slide_chip();
@@ -169,7 +169,7 @@ namespace chips
         auto UpdateThisTick = UpdateOnTick(m_tick_count);
         auto OnTick = Predicate([&](entity const & en) { 
             return UpdateThisTick.check(en) || en.has<update_lock>();
-        });
+			});
         
         for (auto & e : OnTick.filter(m_level.entity_list)) {
             if (e.has<update_lock>()) {
