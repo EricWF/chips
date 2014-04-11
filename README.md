@@ -21,18 +21,18 @@ Influenced by Chips Challenge
  * Alter the level by moving tiles to create paths
  * Unlock sections of the level by collecting keys
  * Must Swim, Skate, Walk on fire, and some magic green stuff to complete the level
- 
-## Dependencies
- * C++11 compliant compiler
- * SFML 2.1
- * CMake
- 
+
 ## Why it's Retro
  * Original First released on Atari Lynx 
  * Simple 2D graphical style
  * Because I'm sentimental about the original
  * Limited color and sound
 
+## Dependencies
+ * C++11 compliant compiler
+ * SFML 2.1
+ * CMake
+ 
 ## Usage
  * To compile: make
  * Executable: /bin/chips
