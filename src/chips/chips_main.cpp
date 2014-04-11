@@ -83,13 +83,13 @@ namespace chips
 		// }
 		
     }
-    
-	void menu_test()
-	{
-		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");
-        resource_manager::get();
 
+	bool menu(sf::RenderWindow & window);
+	bool menu(sf::RenderWindow & window)
+	{
+        resource_manager::init(default_tileset_file);
 		menu_handler mh;
+
 		auto blist = parse_menu(CHIPS_RESOURCE_ROOT "main_menu.xml");
         mh.set_menu(window, blist);
         
@@ -98,13 +98,18 @@ namespace chips
             window.clear(sf::Color::Black);
 			
             auto bid = mh.handle_event(window);
-            if (bid == menu_item_id::quit) break;
+            if (bid == menu_item_id::quit)
+				return false;
+
+			if (bid == menu_item_id::begin)
+				return true;
                 
             mh.draw(window);
             window.display();
         }
 
-		window.close();
+		return false;
+		
 	}
 	
 	struct cmdline_opts parse_args(int argc, char** argv);
@@ -113,6 +118,7 @@ namespace chips
 		struct cmdline_opts opts;
         int c;		
 		
+		opts.lvl_name = "1";
 		opts.level_flag = false;
         opterr = 0;
 		
@@ -147,11 +153,9 @@ namespace chips
 				} else {
                     fprintf(stderr,
                             "Unknown option character `\\x%x'.\n",
-                            optopt);
-				
-					fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
+							optopt);
 					
-					exit(EXIT_FAILURE);
+					fprintf(stderr, "Usage: ./chips [-l [1 - 4] -m]\n");
 				}
 			}
 		}
@@ -159,43 +163,51 @@ namespace chips
 		return opts;
 		
 	}
-
+	
 	int chips_main(int argc, char** argv, char**)
 	{
 		sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");		
 		auto opts = parse_args(argc, argv);
+		int i;		
 		
-		if (not opts.level_flag) {
-			printf("No level flag given");
-			return EXIT_FAILURE;
-		}
-		
-		int i;
-		for(i = 2; i < 5; i++)
-		{
-			auto l = init_level(std::to_string(i), opts.tileset_fname);
+		if (opts.level_flag) {
+			auto l = init_level(opts.lvl_name, opts.tileset_fname);
 			auto id = run_level(l, window);
 			
 			while(id  == game_event_id::level_failed)
 				id = run_level(l, window);
 
-			if(id == game_event_id::closed){
-				window.close();
-				return EXIT_SUCCESS;
-			}
-			
+			window.close();
+			return EXIT_SUCCESS;
 		}
+		
+		if(menu(window)) {
+			for(i = 1 ; i < 8 ; i++)
+			{
+				auto l = init_level(std::to_string(i), opts.tileset_fname);
+				auto id = run_level(l, window);
+			
+				while(id  == game_event_id::level_failed)
+					id = run_level(l, window);
+				
+				if(id == game_event_id::closed)
+					break;
+			
+			}
+		}
+
+		window.close();
 		
 		return 0;
 	}
 	
 
 					
-// #if defined(__GNUC__)
-// # pragma GCC diagnostic push
-// # pragma GCC diagnostic ignored "-Wswitch-default"
-// #endif	
-// #if defined(__GNUC__)
-// # pragma GCC diagnostic pop
-// #endif
+	// #if defined(__GNUC__)
+	// # pragma GCC diagnostic push
+	// # pragma GCC diagnostic ignored "-Wswitch-default"
+	// #endif	
+	// #if defined(__GNUC__)
+	// # pragma GCC diagnostic pop
+	// #endif
 }                                                           // namespace chips
