@@ -22,8 +22,8 @@ Influenced by Chips Challenge
  * Unlock sections of the level by collecting keys
  * Must Swim, Skate, Walk on fire, and some magic green stuff to complete the level
  
-## Tech Stack
- * C++11
+## Dependencies
+ * C++11 compliant compiler
  * SFML 2.1
  * CMake
  
@@ -34,6 +34,7 @@ Influenced by Chips Challenge
  * Limited color and sound
 
 ## Usage
+ * To compile: make
  * Executable: /bin/chips
  * From the command line
    * -l \<level name\> # level names are "1", "2", ..., "8" and "test"
