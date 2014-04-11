@@ -13,7 +13,8 @@ namespace chips
     class menu_handler
     {
     public:
-        ELIB_DEFAULT_CLASS(menu_handler);
+        //ELIB_DEFAULT_CLASS(menu_handler);
+		menu_handler();
         
         void set_menu(sf::RenderWindow const &, std::vector<button_info> const &);
         menu_item_id handle_event(sf::RenderWindow &);
@@ -31,6 +32,7 @@ namespace chips
         );
         
         std::vector<text_button> m_buttons;
+		sf::Text m_title;
     };
 }                                                           // namespace chips
 #endif /* CHIPS_MENU_MENU_HANDLER_HPP */

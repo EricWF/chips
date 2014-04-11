@@ -1,15 +1,9 @@
 <?xml version="1.0" ?>
 <menu>
-    <button id="begin" x="0.50" align_x="center" y="0.20" align_y="center">
+    <button id="begin" x="0.50" align_x="center" y="0.40" align_y="center">
         Begin
     </button>
-    <button id="levels" x="0.50" align_x="center" y="0.40" align_y="center">
-        Levels
-    </button>
-    <button id="highscore" x="0.50" align_x="center" y="0.60" align_y="center">
-        Highscores
-    </button>
-    <button id="quit" x="0.50" align_x="center" y="0.80" align_y="center">
+    <button id="quit" x="0.50" align_x="center" y="0.60" align_y="center">
         Quit
     </button>
 </menu>

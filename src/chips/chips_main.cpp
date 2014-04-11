@@ -186,7 +186,7 @@ namespace chips
 			{
 				auto l = init_level(std::to_string(i), opts.tileset_fname);
 				auto id = run_level(l, window);
-			
+				
 				while(id  == game_event_id::level_failed)
 					id = run_level(l, window);
 				

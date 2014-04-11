@@ -1,11 +1,22 @@
 #include "chips/menu/menu_handler.hpp"
 #include "chips/core.hpp"
+#include "chips/draw.hpp"
 #include <elib/config.hpp>
 
 namespace chips
 {
+
+	menu_handler::menu_handler(){
+		m_title.setString("Chip's Challenge!");
+		m_title.setFont(resource_manager::get()[menu_font_id]);
+		m_title.setCharacterSize(100);
+		m_title.setColor(sf::Color::Red);
+		m_title.setPosition(10, 20);
+	}
+	
     void menu_handler::set_menu(sf::RenderWindow const & win, std::vector<button_info> const & blist)
     {
+	
         m_buttons.clear();
         m_buttons.reserve(blist.size());
         
@@ -55,6 +66,8 @@ namespace chips
     {
         for (auto & b : m_buttons)
             to.draw(b);
+
+		to.draw(m_title);
     }
     
     menu_item_id 
