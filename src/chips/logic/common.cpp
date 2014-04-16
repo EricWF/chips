@@ -124,7 +124,7 @@ namespace chips { namespace logic
         /// TODO: this is not thread safe
         inline random_engine & get_rand_engine()
         {
-            static random_engine eng((std::random_device()()));
+            static random_engine eng((std::random_device{}()));
             return eng;
         }
     }                                                       // namespace 

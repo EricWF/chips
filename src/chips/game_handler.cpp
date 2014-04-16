@@ -64,7 +64,8 @@ namespace chips
         auto tp = tick_clock::now();
         if (tp >= m_last_tick) {
             m_last_tick = tp + tick_dur(1);
-            m_tick_count = ++m_tick_count % resolution::den;
+            ++m_tick_count;
+            m_tick_count = m_tick_count % resolution::den;
             return true;
         }
         return false;
