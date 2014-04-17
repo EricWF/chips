@@ -35,8 +35,10 @@ if (CONFIG_ALL_WARNINGS)
     #add_flags( LIBRARY_FLAGS -Weffc++)
   elseif (CXX_COMPILER_CLANG)
     add_flags( LIBRARY_FLAGS
-      -Weverything -Wno-c++98-compat 
-      -Wno-c++98-compat-pedantic -Wno-newline-eof
+      -Weverything 
+      -Wno-c++98-compat 
+      -Wno-c++98-compat-pedantic 
+      -Wno-newline-eof
       -Wno-weak-vtables
       -Wno-documentation
       -Wno-documentation-deprecated-sync

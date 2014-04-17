@@ -18,6 +18,10 @@ namespace chips
         failed
     };
     
+# if defined(__GNUC__)
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wswitch-default"
+#   endif
     inline std::string to_string(level_state l)
     {
         switch (l)
@@ -30,6 +34,9 @@ namespace chips
                 return "failed";
         }
     }
+# if defined(__GNUC__)
+#   pragma GCC diagnostic pop
+# endif
     
     class level
     {

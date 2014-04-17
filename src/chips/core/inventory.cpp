@@ -20,14 +20,14 @@ namespace chips
 {
 
     ////////////////////////////////////////////////////////////////////////////
-    void inventory::add_item(entity_id item, unsigned count)
+    void inventory::add_item(entity_id item, unsigned xcount)
     {
         CHIPS_THROW_BAD_ITEM(item);
-        m_items[item] += count;
+        m_items[item] += xcount;
     }
     
     ////////////////////////////////////////////////////////////////////////////
-    void inventory::use_item(entity_id item, unsigned ucount)
+    void inventory::use_item(entity_id item, unsigned xcount)
     {
         CHIPS_THROW_BAD_ITEM(item);
         
@@ -42,10 +42,10 @@ namespace chips
         
         ELIB_ASSERT(pos->second > 0);
         
-        if (pos->second <= ucount) 
+        if (pos->second <= xcount) 
             m_items.erase(pos);
         else
-            pos->second -= ucount;
+            pos->second -= xcount;
     }
     
     ////////////////////////////////////////////////////////////////////////////
