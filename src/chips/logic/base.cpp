@@ -1,6 +1,7 @@
 #include "chips/logic.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
+#include "chips/sounds.hpp"
 #include <elib/aux.hpp>
 
 namespace chips { namespace logic
@@ -233,6 +234,7 @@ namespace chips { namespace logic
             {
                 ELIB_ASSERT(is_actor(other));
                 other.kill();
+                bomb_sound();
                 self.clear_methods();
                 self.remove<tile_id>();
                 self.id(entity_id::floor);

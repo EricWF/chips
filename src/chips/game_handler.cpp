@@ -3,6 +3,7 @@
 #include "chips/draw.hpp"
 #include "chips/logic.hpp"
 #include "chips/entity.hpp"
+#include "chips/resource_manager.hpp"
 #include <iostream>
 #include <chrono>
 

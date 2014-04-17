@@ -3,6 +3,7 @@
 
 # include "chips/core.hpp"
 # include "chips/draw.hpp"
+# include "chips/resource_manager.hpp"
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
 # include <SFML/Graphics.hpp>
