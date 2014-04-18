@@ -1,6 +1,9 @@
 #ifndef CHIPS_CORE_CONFIG_HPP
 #define CHIPS_CORE_CONFIG_HPP
 
+# include <vector>
+# include <string>
+
 namespace chips
 {
 ////////////////////////////////////////////////////////////////////////////////
@@ -58,5 +61,18 @@ namespace chips
     constexpr const unsigned window_ypos = 100;
     constexpr const unsigned window_width = level_window_width + 300 + 20;
     constexpr const unsigned window_height = level_window_height + 100 + 20;
+    
+# if defined(__clang__)
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wglobal-constructors"
+#   pragma clang diagnostic ignored "-Wexit-time-destructors"
+# endif
+    const std::vector<std::string> level_list = 
+        {
+            "1", "2", "3", "4", "5", "6", "7", "8"
+        };
+#if defined(__clang__)
+#   pragma clang diagnostic pop
+# endif
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_CONFIG_HPP */

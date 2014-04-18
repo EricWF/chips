@@ -203,10 +203,10 @@ namespace chips { namespace
             
         start_music();
             
-        for(int i = 1 ; i < 8 ; i++) 
+        for(auto const & lv_name : level_list) 
         {
             cmdline_opts lvl_opts = opts;
-            lvl_opts.lvl_name = std::to_string(i);
+            lvl_opts.lvl_name = lv_name;
             if (run_level_repeat(lvl_opts, window) == level_state::exited)
                 break;
         }
