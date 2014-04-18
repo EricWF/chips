@@ -58,6 +58,7 @@ namespace chips { namespace logic
                 else if (!back)  self(move_, turn_around(d), lv);
             };
         
+            e.on_death([](entity &) { bug_die_sound(); });
             e << method(update_, bug_update_)
               << regular_speed;
         }
@@ -72,6 +73,7 @@ namespace chips { namespace logic
                 self(move_, self.get<direction>(), l);
             };
                 
+            e.on_death([](entity &) { generic_die_sound(); });
             e << method(update_, tank_update)
               << regular_speed;
         }
@@ -126,6 +128,7 @@ namespace chips { namespace logic
                     self(move_, turn_around(self.get<direction>()), l);
             };
             
+            e.on_death([](entity &) { generic_die_sound(); });
             e << method(update_, update)
               << regular_speed;
         }
@@ -162,6 +165,7 @@ namespace chips { namespace logic
              
             };    
             
+            e.on_death([](entity &) { teeth_die_sound(); });
             e << method(update_, teeth_update)
               << half_speed;
         }
@@ -197,6 +201,7 @@ namespace chips { namespace logic
                     self(move_, turn_around(d), l);
             };
             
+            e.on_death([](entity &) { generic_die_sound(); });
             e << method(update_, glider_update)
               << full_speed;
         }
@@ -223,6 +228,7 @@ namespace chips { namespace logic
                 else if (!behind) self(move_, turn_around(d), lv);
             };
             
+            e.on_death([](entity &) { generic_die_sound(); });
             e << method(update_, germ_update)
               << regular_speed;
         }
