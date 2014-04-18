@@ -6,7 +6,6 @@ namespace chips
     // forward //
     enum class sound_uid;
     
-    
     void bug_die_sound();
     void teeth_die_sound();
     void chip_die_sound();

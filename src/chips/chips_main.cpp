@@ -22,6 +22,7 @@ namespace chips { namespace
     struct cmdline_opts {
         bool level_flag;
         bool cheats;
+        bool mute;
         std::string tileset_fname;
         std::string lvl_name;
     };
@@ -35,6 +36,7 @@ namespace chips { namespace
         opts.lvl_name = "1";
         opts.level_flag = false;
         opts.cheats = false;
+        opts.mute = false;
         opterr = 0;
             
         while ((c = getopt (argc, argv, "l:mt:c")) != -1)
@@ -52,7 +54,7 @@ namespace chips { namespace
                 opts.cheats = true;
                 break;
             case 'm':
-                //menu_flag = true;
+                opts.mute = true;
                 break;
             case '?':
             default:
@@ -159,7 +161,7 @@ namespace chips { namespace
     {
         auto l = init_level(opts);
         
-        start_music();
+        if (not opts.mute) start_music();
         
         auto id = run_level(l, window);
         while(id  == level_state::failed)
@@ -200,8 +202,9 @@ namespace chips { namespace
     int run_from_menu(cmdline_opts const & opts, sf::RenderWindow & window)
     {
         if (!run_menu(window)) return EXIT_SUCCESS;
-            
-        start_music();
+         
+        if (not opts.mute)
+            start_music();
             
         for(auto const & lv_name : level_list) 
         {

@@ -152,7 +152,7 @@ namespace chips
               , get_music_uid_path(id)
             )));
         }
-        
+        music.setLoop(true);
         return music;
     }
 
