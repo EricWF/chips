@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action type="bind">
+        <source entity_id="trap"         x="16" y="16" />
+        <to     entity_id="brown_button" x="16" y="9" />
+    </action>
+</actions>
+    
