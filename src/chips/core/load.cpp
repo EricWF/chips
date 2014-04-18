@@ -268,6 +268,30 @@ namespace chips
             ELIB_ASSERT(a.act_on.size() > 0);
             return a;
         }
+        
+        parsed_action parse_clone(TiXmlElement & root)
+        {
+            parsed_action a;
+            a.action = action_type::clone;
+            
+            TiXmlElement *elem = root.FirstChildElement();
+            ELIB_ASSERT(elem && elem->Value() == std::string{"source"});
+            
+            a.actor = parse_entity_location(*elem);
+            elem = elem->NextSiblingElement();
+            ELIB_ASSERT(elem);
+            
+            ELIB_ASSERT(elem->Value() == std::string{"target"});
+            a.clone_target_id = to_entity_id(
+                query_attr<std::string>(*elem, "entity_id")
+              );
+            
+            a.clone_target_direction = to_direction(
+                query_attr<std::string>(*elem, "direction")
+              );
+            
+            return a;
+        }
     }}                                                      // namespace detail
     
     std::vector<parsed_action> parse_actions(std::string const & name)
@@ -291,9 +315,11 @@ namespace chips
             
             parsed_action tmp_action;
             
-            if (type == "bind")
-            {
+            if (type == "bind") {
                 tmp_action = detail::parse_bind(*elem);
+            }
+            else if (type == "clone") {
+                tmp_action = detail::parse_clone(*elem);
             }
             else
             {
@@ -326,22 +352,54 @@ namespace chips
             }
         }
         
+        void process_clone(level & l, parsed_action & act)
+        {
+            auto pos = AtLocation(act.actor).find(l.entity_list);
+            ELIB_ASSERT(pos != l.entity_list.end());
+            
+            entity & actor = *pos;
+            REQUIRE_CONCEPT(actor, EntityIs<entity_id::clone_machine>);
+            
+            entity clone_type(
+                act.clone_target_id, act.clone_target_direction
+              , move(actor.get<position>(), act.clone_target_direction)
+              );
+            logic::init(clone_type, l);
+            actor << clone_target(clone_type);
+            
+            std::vector<std::pair<tile_id, position>> clone_draw_list;
+            
+            clone_draw_list.push_back(std::make_pair(
+                static_cast<tile_id>(actor.id()), actor.get<position>()
+            ));
+            
+            clone_draw_list.push_back(std::make_pair(
+                directional_tile_id(clone_type.id(), clone_type.get<direction>())
+              , actor.get<position>()
+            ));
+            
+            actor << draw_list(clone_draw_list);
+        }
+        
         void process_actions(level & l)
         {
             std::vector<parsed_action> actions = parse_actions(l.name());
          
             for (auto & act : actions)
             {
-                if (act.action == action_type::bind)
-                {
+                log::debug("Processing action: %s", to_string(act.action));
+                if (act.action == action_type::bind) {
                     detail::process_bind(l, act);
                 }
-                else
-                {
+                else if (act.action == action_type::clone) {
+                    detail::process_clone(l, act);
+                }
+                else {
                     ELIB_THROW_EXCEPTION(chips_error(elib::fmt(
                         "Unknown action type %s", to_string(act.action)
-                    )));
+                      )));
                 }
+                    
             }
         }
         
@@ -350,7 +408,6 @@ namespace chips
             logic::init(l.chip, l);
             for (auto & e : l.entity_list)
             {
-                log::debug("entity: %s", to_string(e.id()));
                 logic::init(e, l);
             }
             detail::process_actions(l);

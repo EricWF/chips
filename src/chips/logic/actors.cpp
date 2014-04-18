@@ -1,6 +1,7 @@
 #include "chips/logic.hpp"
 #include "chips/core.hpp"
 #include "chips/entity.hpp"
+#include "chips/sounds.hpp"
 #include <elib/aux.hpp>
 
 namespace chips { namespace logic
@@ -81,7 +82,8 @@ namespace chips { namespace logic
             auto fireball_update =
             [](entity & self, level & l)
             {
-               ELIB_ASSERT(self);
+                ELIB_ASSERT(self);
+                REQUIRE_CONCEPT(self, EntityHas<position, direction>);
                 
                 if (self.has<move_lock>()) 
                     return;
@@ -104,7 +106,8 @@ namespace chips { namespace logic
                 else if (!back)
                     self(move_, turn_around(d), l);
             };
-                
+            
+            e.on_death([](entity &) { generic_die_sound(); });
             e << method(update_, fireball_update)
               << regular_speed;
         }

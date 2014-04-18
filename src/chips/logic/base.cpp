@@ -139,8 +139,9 @@ namespace chips { namespace logic
                     return false;
                 if (self.has<trapped_entity>())
                 {
-                    entity const* eptr = self.get<trapped_entity>();
-                    return (eptr != &other);
+                    entity_locator loc = self.get<trapped_entity>();
+                    
+                    return (loc.id != other.id() && loc.pos != other.get<position>() );
                 }
                 
                 return false;
@@ -170,7 +171,7 @@ namespace chips { namespace logic
                 log::info("trapping entity %s"
                         , to_string(other.id())
                     );
-                self << trapped_entity(&other);
+                self << trapped_entity(entity_locator{other.id(), other.get<position>()});
                 other << move_lock();
             };
             
@@ -190,9 +191,22 @@ namespace chips { namespace logic
                         || lv.chip.get<position>() == loc.pos
                       )
                     {
-                        entity *eptr = self.get<trapped_entity>();
-                        eptr->remove<move_lock>();
-                        self.remove<trapped_entity>();
+                        entity_locator eloc = self.get<trapped_entity>();
+                        auto AtLoc = AtLocation(eloc);
+                        
+                        auto trapped_ent_pos = AtLoc.find(lv.entity_list);
+                        if (trapped_ent_pos != lv.entity_list.end()) {
+                            trapped_ent_pos->remove<move_lock>();
+                            self.remove<trapped_entity>();
+                        }
+                        else if (AtLoc(lv.chip)) {
+                            lv.chip.remove<move_lock>();
+                            self.remove<trapped_entity>();
+                        }
+                        else
+                        {
+                            ELIB_ASSERT(false);
+                        }
                     }
                 }
             };
@@ -207,13 +221,16 @@ namespace chips { namespace logic
         ////////////////////////////////////////////////////////////////////////
         void init_red_button(entity & e, level &)
         {
+            
             auto on_col =
             [](entity & self, entity & other, level & lv)
             {
                 REQUIRE_CONCEPT(self, HasEntityList);
                 if (!other || !is_actor(other)) return;
+                        
+                std::vector<entity_locator> const & el = 
+                    self.get<entity_list>().get();
                     
-                auto & el = self.get<entity_list>().get();
                 for (auto eloc : el)
                 {
                     entity & cloner = AtLocation(eloc).get(lv.entity_list);
@@ -441,11 +458,16 @@ namespace chips { namespace logic
         {
             // TODO
             auto clone =
-            [](entity &, level &)
+            [](entity & self, level & lv)
             {
-                
+                if (not self.has<clone_target>()) return;
+                entity const & target = self.get<clone_target>();
+                auto ColPred = ColAt(self);
+                if (ColPred.contains(lv.entity_list) == 0) {
+                    lv.new_entity_list.push_back(target);
+                }
             };
-            
+        
             e << method(collides_, common::always_collides_)
               << method(clone_, clone);
         }

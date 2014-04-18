@@ -36,7 +36,6 @@ namespace chips { namespace logic
         
         e << inventory() 
           << method(move_, chips_move_);
-          
     }
     
     void process_chip(entity &, level &)

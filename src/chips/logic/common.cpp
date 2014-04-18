@@ -18,7 +18,7 @@ namespace chips
 
     bool same_position(entity const & lhs, entity const & rhs)
     {
-        if (!lhs || !rhs || &lhs == &rhs)
+        if (!lhs || !rhs || lhs.id() == rhs.id())
             return false;
         return lhs.get<position>() == rhs.get<position>();
     }

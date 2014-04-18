@@ -10,14 +10,6 @@
 
 namespace chips
 {
-    enum class game_event_id
-    {
-        none,
-        closed, 
-        level_failed,
-        level_passed
-    };
-
     // TODO similar layout to menu/menu_handler
     class game_handler
     {
@@ -30,13 +22,26 @@ namespace chips
         
         ELIB_DEFAULT_COPY_MOVE(game_handler);
         
-        game_event_id update(sf::RenderWindow & win);
+        level_state update(sf::RenderWindow & win);
         
         void draw(sf::RenderWindow & to) const;
         
         chips::level const & level() const { return m_level; }
         
-        game_event_id state() const { return m_event; }
+        level_state state() const noexcept
+        { return m_level.state; }
+        
+        bool closed() const noexcept 
+        { return m_level.state == level_state::exited; }
+        
+        bool in_play() const noexcept 
+        { return m_level.state == level_state::in_play; }
+        
+        bool good() const noexcept
+        { return m_level.state == level_state::in_play; }
+        
+        explicit operator bool() const noexcept 
+        { return good(); }
         
     private:
         bool m_try_tick();
@@ -55,17 +60,10 @@ namespace chips
         void m_move_chip(direction);
         
         void m_draw(sf::RenderWindow &) const;
-        void m_draw_chip(sf::RenderWindow &, position win_pos) const;
-        void m_draw_scoreboard(sf::RenderWindow &) const;
-        void m_draw_helptext(sf::RenderWindow &) const;
-        void m_draw_chip_count(sf::RenderWindow &) const;
-        void m_draw_inventory(sf::RenderWindow &) const;
     private:
-        game_event_id m_event{game_event_id::none};
         chips::level m_level;
         time_point m_last_tick;
         std::intmax_t m_tick_count = 0;
-         
     };
     
     

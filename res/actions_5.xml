@@ -8,6 +8,14 @@
         <source entity_id="trap"         x="18" y="7" />
         <to     entity_id="brown_button" x="16" y="7" />
     </action>
+    <action type="bind">
+        <source entity_id="red_button" x="18" y="15" />
+        <to     entity_id="clone_machine" x="18" y="18" />
+    </action>
+    <action type="clone">
+        <source entity_id="clone_machine" x="18" y="18" />
+        <target entity_id="fireball" direction="E" />
+    </action>
 </actions>
     
     

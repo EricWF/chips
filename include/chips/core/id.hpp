@@ -515,5 +515,11 @@ namespace chips
             : throw chips_error("not a directional texture")
         );
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    constexpr tile_id directional_tile_id(entity_id id, direction dir)
+    {
+        return directional_tile_id(static_cast<tile_id>(id), dir);
+    }
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_ID_HPP */

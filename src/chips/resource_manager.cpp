@@ -42,43 +42,43 @@ namespace chips
             }
         }
 
-      const char* get_sound_uid_path(sound_uid id)
-      {
-        switch (id)
-          {
-          case sound_uid::bug_die: 
-            return CHIPS_RESOURCE_ROOT "sounds/bug.wav";        
-          case sound_uid::teeth_die: 
-            return CHIPS_RESOURCE_ROOT "sounds/teeth.wav";
-          case sound_uid::chip_die: 
-            return CHIPS_RESOURCE_ROOT "sounds/chip_death.wav";
-          case sound_uid::generic_die:
-            return CHIPS_RESOURCE_ROOT "sounds/generic_death.wav";
-          case sound_uid::add_inventory:
-            return CHIPS_RESOURCE_ROOT "sounds/add_inventory.wav";
-          case sound_uid::pickup_chip:
-            return CHIPS_RESOURCE_ROOT "sounds/pickup_chip.wav";
-          case sound_uid::pistol:
-              return CHIPS_RESOURCE_ROOT "sounds/pistol.wav";
-          case sound_uid::bomb:
-            return CHIPS_RESOURCE_ROOT "sounds/bomb.wav";        
-          case sound_uid::none:
-          default:
-            ELIB_THROW_EXCEPTION(chips_error("Invalid sound_uid"));
-          }
-      }
-      
-    const char* get_music_uid_path(music_uid id)
-    {
-        switch (id)
+        const char* get_sound_uid_path(sound_uid id)
         {
-            case music_uid::theme:
-                return CHIPS_RESOURCE_ROOT "sounds/poc.wav";
-            case music_uid::none:
-            default:
-                ELIB_THROW_EXCEPTION(chips_error("Invalid music_uid"));
+            switch (id)
+            {
+                case sound_uid::bug_die: 
+                    return CHIPS_RESOURCE_ROOT "sounds/bug.wav";        
+                case sound_uid::teeth_die: 
+                    return CHIPS_RESOURCE_ROOT "sounds/teeth.wav";
+                case sound_uid::chip_die: 
+                    return CHIPS_RESOURCE_ROOT "sounds/chip_death.wav";
+                case sound_uid::generic_die:
+                    return CHIPS_RESOURCE_ROOT "sounds/generic_death.wav";
+                case sound_uid::add_inventory:
+                    return CHIPS_RESOURCE_ROOT "sounds/add_inventory.wav";
+                case sound_uid::pickup_chip:
+                    return CHIPS_RESOURCE_ROOT "sounds/pickup_chip.wav";
+                case sound_uid::pistol:
+                    return CHIPS_RESOURCE_ROOT "sounds/pistol.wav";
+                case sound_uid::bomb:
+                    return CHIPS_RESOURCE_ROOT "sounds/bomb.wav";        
+                case sound_uid::none:
+                default:
+                    ELIB_THROW_EXCEPTION(chips_error("Invalid sound_uid"));
+            }
         }
-    }
+      
+        const char* get_music_uid_path(music_uid id)
+        {
+            switch (id)
+            {
+                case music_uid::theme:
+                    return CHIPS_RESOURCE_ROOT "sounds/poc.wav";
+                case music_uid::none:
+                default:
+                    ELIB_THROW_EXCEPTION(chips_error("Invalid music_uid"));
+            }
+        }
 
 #if defined(__clang__)
 # pragma clang diagnostic pop

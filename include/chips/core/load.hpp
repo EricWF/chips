@@ -85,6 +85,12 @@ namespace chips
         /// USED BY:
         ///  - bind (buttons & teleports)
         std::vector<entity_locator> act_on;
+        
+        /// The type to clone
+        /// USED BY:
+        ///  - clone
+        entity_id clone_target_id;
+        direction clone_target_direction;
     };
     
     std::vector<parsed_action> parse_actions(std::string const & name);

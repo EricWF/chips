@@ -15,7 +15,8 @@ namespace chips
     {
         in_play, 
         passed, 
-        failed
+        failed, 
+        exited
     };
     
 # if defined(__GNUC__)
@@ -32,6 +33,9 @@ namespace chips
                 return "passed";
             case level_state::failed:
                 return "failed";
+            case level_state::exited:
+                return "exited";
+
         }
     }
 # if defined(__GNUC__)
@@ -64,9 +68,16 @@ namespace chips
         /// return the help text for the level.
         std::string const & help() const noexcept { return m_help; }
         
+        bool in_play() const noexcept { return state == level_state::in_play; }
+        bool passed()  const noexcept { return state == level_state::passed;  }
+        bool failed()  const noexcept { return state == level_state::failed;  }
+        
+        void update_lists();
+        
     public:
         entity chip;
         std::vector<entity> entity_list;
+        std::vector<entity> new_entity_list;
         level_state state;
         
     private:

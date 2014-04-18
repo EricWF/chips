@@ -7,11 +7,14 @@
 #include "chips/resource_manager.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio/Music.hpp>
-#include <stdlib.h> 
+#include <cstdlib> 
 #include <chrono>
 #include <unistd.h>
 
 #include "chips/sounds.hpp"
+
+#include <exception>
+#include <execinfo.h>
 
 namespace chips { namespace 
 {
@@ -114,40 +117,41 @@ namespace chips { namespace
     }
         
     ////////////////////////////////////////////////////////////////////////////
-    game_event_id run_level(level l, sf::RenderWindow & window)
+    level_state run_level(level l, sf::RenderWindow & window)
     {
         game_handler gh(l);
-
-        // Enter the game loop.
-        game_event_id last = game_event_id::none;
-        while ((last = gh.update(window)) == game_event_id::none)
+        
+        while (gh.update(window) == level_state::in_play)
         {
         }
         
-        if(last == game_event_id::level_passed) {
+        if (gh.state() == level_state::passed || gh.state() == level_state::failed) {
             sf::Event event;
-            while(!window.pollEvent(event))
+            while(not window.pollEvent(event) 
+                || (event.type != sf::Event::Closed
+                    && event.type != sf::Event::KeyReleased)
+              )
             {
             }
+            
+            if (event.type == sf::Event::Closed) {
+                return level_state::exited;
+            } 
+
         }
         
-        return last;
+        return gh.state();
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    game_event_id run_level_repeat(cmdline_opts const & opts, sf::RenderWindow & window)
+    level_state run_level_repeat(cmdline_opts const & opts, sf::RenderWindow & window)
     {
-        game_event_id id = game_event_id::level_failed;
-            
-        while(id == game_event_id::level_failed) 
-        {
-            id = run_level(init_level(opts), window);
+        level_state st = level_state::failed;
+        while(st == level_state::failed) {
+            st = run_level(init_level(opts), window);
         }
-        
-        return id;
+        return st;
     }
-    
-	
     
     
     ////////////////////////////////////////////////////////////////////////////
@@ -158,7 +162,7 @@ namespace chips { namespace
         start_music();
         
         auto id = run_level(l, window);
-        while(id  == game_event_id::level_failed)
+        while(id  == level_state::failed)
                 id = run_level(l, window);
                 
         stop_music();
@@ -203,7 +207,7 @@ namespace chips { namespace
         {
             cmdline_opts lvl_opts = opts;
             lvl_opts.lvl_name = std::to_string(i);
-            if (run_level_repeat(lvl_opts, window) == game_event_id::closed)
+            if (run_level_repeat(lvl_opts, window) == level_state::exited)
                 break;
         }
         
@@ -217,6 +221,7 @@ namespace chips
         
     int chips_main(int argc, char** argv, char**)
     {
+        log::level(level_e::debug);
         sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Chips");		
         auto opts = parse_args(argc, argv);
         

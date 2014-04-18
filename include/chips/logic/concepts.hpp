@@ -204,18 +204,22 @@ namespace chips
 ////////////////////////////////////////////////////////////////////////////////
     namespace detail
     {
-        template <unsigned Times, bool DoColl = false>
+        template <int Times, bool DoColl = false>
         struct EntityAtPosImpl : concept_base<EntityAtPosImpl<Times, DoColl>>
         {
             EntityAtPosImpl(entity const & e)
             {
-                REQUIRE_CONCEPT(e, EntityHas<position, direction>);
-                
-                m_pos = move(
-                    e.get<position>()
-                  , turn_left(e.get<direction>(), Times)
-                  , 1
-                );
+                if (Times != -1) {
+                    REQUIRE_CONCEPT(e, EntityHas<position, direction>);
+                    m_pos = move(
+                        e.get<position>()
+                    , turn_left(e.get<direction>(), static_cast<unsigned>(Times))
+                    , 1
+                    );
+                } else {
+                    REQUIRE_CONCEPT(e, EntityHas<position>);
+                    m_pos = e.get<position>();
+                }
                 
                 m_ent = entity(e.id(), m_pos);
             }
@@ -257,16 +261,16 @@ namespace chips
     struct SamePosition : concept_base<SamePosition>
     {
         SamePosition(entity const & e)
-          : m_eptr(&e)
+          : m_eptr(e)
         {}
         
         bool test(entity const & e) const
         {
-            return same_position(e, *m_eptr);
+            return same_position(e, m_eptr);
         }
 
     private:
-        entity const* m_eptr;
+        entity m_eptr;
     };
     
     ////////////////////////////////////////////////////////////////////////////
@@ -315,6 +319,7 @@ namespace chips
     using ToRight = detail::EntityAtPosImpl<3>;
     using ToLeft  = detail::EntityAtPosImpl<1>;
     
+    using ColAt = detail::EntityAtPosImpl<-1, true>;
     using ColFront = detail::EntityAtPosImpl<0, true>;
     using ColBack  = detail::EntityAtPosImpl<2, true>;
     using ColRight = detail::EntityAtPosImpl<3, true>;

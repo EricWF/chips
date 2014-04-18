@@ -2,7 +2,6 @@
 #define CHIPS_MENU_CORE_HPP
 
 # include "chips/core.hpp"
-# include "chips/draw.hpp"
 # include "chips/resource_manager.hpp"
 # include <elib/enumeration.hpp>
 # include <elib/fmt.hpp>
