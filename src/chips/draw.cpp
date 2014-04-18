@@ -29,13 +29,30 @@ namespace chips
     }
        
     ////////////////////////////////////////////////////////////////////////////
+    position position_in_window(position top_left, position orig)
+    {
+        return position{
+              ((orig.x - top_left.x) * tile_width)  + level_window_xpos
+            , ((orig.y - top_left.y) * tile_height) + level_window_ypos
+        };
+    }
+    
     position position_in_window(position top_left, entity const & e)
     {
-        position ep = e.get<position>();
-        return position{
-              ((ep.x - top_left.x) * tile_width)  + level_window_xpos
-            , ((ep.y - top_left.y) * tile_height) + level_window_ypos
-        };
+        return position_in_window(top_left, e.get<position>());
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    bool in_window(position top_left, position p)
+    {
+        return (p.x >= top_left.x && p.x < top_left.x + level_view_width
+                 && p.y >= top_left.y && p.y < top_left.y + level_view_height);
+    }
+    
+    bool in_window(position top_left, entity const & e)
+    {
+        if (not e) return false;
+        return in_window(top_left, e.get<position>());
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -59,19 +76,27 @@ namespace chips
     {
         auto should_draw_pred = 
         [&](entity const & e)
-        {
-            if (not e) return false;
-            position ep = e.get<position>();
-            return (ep.x >= tl_pos.x && ep.x < tl_pos.x + level_view_width
-                 && ep.y >= tl_pos.y && ep.y < tl_pos.y + level_view_height);
-        };
+        { return in_window(tl_pos, e); };
         
         for (auto & e : Predicate(should_draw_pred).filter(lvl.entity_list))
         {
-            ELIB_ASSERT(e);
-            draw_entity_at(win, e, position_in_window(tl_pos, e));
+            if (e.has<draw_list>()) {
+                for (std::pair<tile_id, position> const & drawp : *e.get<draw_list>()) 
+                {
+                    if (not in_window(tl_pos, drawp.second)) continue;
+                    draw_tile_at(
+                        win, drawp.first
+                      , position_in_window(tl_pos, drawp.second)
+                    );
+                }
+            } else {
+                draw_entity_at(win, e, position_in_window(tl_pos, e));
+            }
         }
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    
     
     ////////////////////////////////////////////////////////////////////////////
     void draw_chip(sf::RenderWindow & win, position tl_pos, level const & lvl)

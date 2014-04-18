@@ -176,7 +176,7 @@ namespace chips
     parsed_level parse_level(std::string const & lv_name)
     {
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "levels/level_%s.tmx"
+            CHIPS_LEVEL_ROOT "level_%s.tmx"
           , lv_name
         );
         
@@ -296,7 +296,7 @@ namespace chips
         std::vector<parsed_action> actions;
         
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "levels/actions_%s.xml", name
+            CHIPS_LEVEL_ROOT "actions_%s.xml", name
         );
         
         TiXmlDocument doc(fname.c_str());

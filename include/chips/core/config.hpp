@@ -13,6 +13,7 @@ namespace chips
     /// The directory where all resources are held
     /// CHIPS_RESOURCE_ROOT must be defined by the build.
     constexpr const char resource_root[] = CHIPS_RESOURCE_ROOT;
+    constexpr const char level_root[] = CHIPS_LEVEL_ROOT;
     
     /// Information about the textures/sprites
     constexpr const char default_tileset_file[] = "pirate_tileset.png";

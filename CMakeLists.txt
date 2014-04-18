@@ -39,6 +39,7 @@ project(Chips CXX C)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/modules")
 add_definitions( "-DCHIPS_RESOURCE_ROOT=\"${CMAKE_CURRENT_LIST_DIR}/res/\"" )
+add_definitions( "-DCHIPS_LEVEL_ROOT=\"${CMAKE_CURRENT_LIST_DIR}/levels/\"")
 add_definitions( "-DCHIPS_SFML_WORKAROUNDS")
 
 ################################################################################

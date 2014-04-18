@@ -11,13 +11,18 @@ namespace chips
     
     unsigned top_left_window_coord(unsigned chip_dim);
     position top_left_window_position(level const & l);
+    position position_in_window(position top_left, position other);
     position position_in_window(position top_left, entity const & e);
+    
+    bool in_window(position top_left, position other);
+    bool in_window(position top_left, entity const & e);
     
     void draw_level(sf::RenderWindow &, level const &);
     
     void draw_playing_field(sf::RenderWindow &, level const &);
     void draw_chip(sf::RenderWindow &, position, level const &);
     void draw_entities(sf::RenderWindow &, position, level const &);
+    void draw_entity(sf::RenderWindow &, position, entity const &);
     
     void draw_scoreboard(sf::RenderWindow &, level const &);
     void draw_chip_count(sf::RenderWindow &, level const &);
