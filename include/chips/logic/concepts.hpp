@@ -261,16 +261,16 @@ namespace chips
     struct SamePosition : concept_base<SamePosition>
     {
         SamePosition(entity const & e)
-          : m_eptr(e)
+          : m_eptr(&e)
         {}
         
         bool test(entity const & e) const
         {
-            return same_position(e, m_eptr);
+            return same_position(e, *m_eptr);
         }
 
     private:
-        entity m_eptr;
+        entity const *m_eptr;
     };
     
     ////////////////////////////////////////////////////////////////////////////
