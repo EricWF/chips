@@ -176,11 +176,12 @@ namespace chips
     parsed_level parse_level(std::string const & lv_name)
     {
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "/level_%s.tmx"
+            CHIPS_RESOURCE_ROOT "levels/level_%s.tmx"
           , lv_name
         );
         
         parsed_level lv;
+        lv.name = lv_name;
         
         TiXmlDocument doc(fname.c_str());
         if (!doc.LoadFile())
@@ -205,10 +206,6 @@ namespace chips
             if (name == "chip_count")
             {
                 lv.chip_count = detail::query_attr<unsigned>(*pelem, "value");
-            }
-            else if (name == "level")
-            {
-                lv.name = detail::query_attr<std::string>(*pelem, "value");
             }
             else if (name == "help")
             {
@@ -299,7 +296,7 @@ namespace chips
         std::vector<parsed_action> actions;
         
         std::string fname = elib::fmt(
-            CHIPS_RESOURCE_ROOT "actions_%s.xml", name
+            CHIPS_RESOURCE_ROOT "levels/actions_%s.xml", name
         );
         
         TiXmlDocument doc(fname.c_str());
