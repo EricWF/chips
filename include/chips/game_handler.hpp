@@ -65,7 +65,5 @@ namespace chips
         time_point m_last_tick;
         std::intmax_t m_tick_count = 0;
     };
-    
-    
 }                                                           // namespace chips
 #endif /* CHIPS_GAME_HANDLER_HPP */

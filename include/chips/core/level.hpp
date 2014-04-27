@@ -63,7 +63,7 @@ namespace chips
         
         /// The number of computer chips in the level
         unsigned chip_count() const noexcept { return m_chip_count; }
-        void chip_count(unsigned c) { m_chip_count = c; }
+        void chip_count(unsigned c) noexcept { m_chip_count = c; }
         
         /// return the help text for the level.
         std::string const & help() const noexcept { return m_help; }
@@ -72,6 +72,8 @@ namespace chips
         bool passed()  const noexcept { return state == level_state::passed;  }
         bool failed()  const noexcept { return state == level_state::failed;  }
         
+        /// Remove dead entities from entity list
+        /// and add new_entity_list to the end of entity_list
         void update_lists();
         
     public:

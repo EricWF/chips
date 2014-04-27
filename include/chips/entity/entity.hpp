@@ -310,7 +310,7 @@ namespace chips
     {
         chips_error err(elib::fmt(
             "entity access error on entity %s with type: %s"
-          , to_string(id), typeid(Attr).name()
+          , to_string(id), elib::aux::demangle(typeid(Attr).name())
         ));
         err << elib::errinfo_type_info_name(typeid(Attr).name());
         return err;

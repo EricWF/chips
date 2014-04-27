@@ -146,7 +146,7 @@ namespace chips
     template <class ...Rest>
     constexpr bool concept_and(bool first, Rest&&... rest)
     {
-        return first ? concept_and(rest...) : false;
+        return first ? concept_and(elib::forward<Rest>(rest)...) : false;
     }
         
     ////////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ namespace chips
     template <class ...Rest>
     constexpr bool concept_or(bool first, Rest &&... rest)
     {
-        return first ? true : concept_or(rest...);
+        return first ? true : concept_or(elib::forward<Rest>(rest)...);
     }
     
     ////////////////////////////////////////////////////////////////////////
@@ -432,7 +432,6 @@ namespace chips
         
     private:
         using ptr_vector = std::vector<std::shared_ptr<basic_concept_holder>>;
-        
         ptr_vector m_stored_concepts;
     };
     
