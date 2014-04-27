@@ -1,7 +1,7 @@
 #ifndef CHIPS_CORE_LOG_HPP
 #define CHIPS_CORE_LOG_HPP
 
-# include <elib/log.hpp>
+# include <elib/logging.hpp>
 
 namespace chips
 {
@@ -15,13 +15,13 @@ namespace chips
     /// enum class level_e
     /// { debug, step, info, warn, err }
     /// usage: level_e::debug, level_e::err...
-    using elib::log::level_e;
+    using elib::logging::level_e;
     
     /// a log class with static logging methods.
     /// usage:
     /// log::debug(const char *msg, ...)
     /// log::step(const char *msg, ...)
     /// NOTE: they have the same signature as printf
-    using log = elib::log::static_log<detail::chips_log_tag>;
+    using log = elib::logging::static_log<detail::chips_log_tag>;
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_LOG_HPP */
