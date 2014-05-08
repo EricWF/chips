@@ -1,8 +1,7 @@
 #ifndef CHIPS_CORE_ERROR_HPP
 #define CHIPS_CORE_ERROR_HPP
 
-# include <elib/aux.hpp>
-# include <elib/except.hpp>
+# include <elib/exception.hpp>
 
 namespace chips
 {
@@ -17,7 +16,10 @@ namespace chips
     public:
         using elib::exception::exception;
         
-        ELIB_DEFAULT_COPY_MOVE(chips_error);
+        chips_error(chips_error const &) = default;
+        chips_error(chips_error &&) = default;
+        chips_error & operator=(chips_error const &) = default;
+        chips_error & operator=(chips_error &&) = default;
     };
 }                                                           // namespace chips
 #endif /* CHIPS_CORE_ERROR_HPP */
