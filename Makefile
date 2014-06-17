@@ -9,13 +9,13 @@ all:
 .PHONY: e
 e:
 	@ $(MAKE) --no-print-directory distclean
-	@ $(MAKE) --no-print-directory redep
+	@ $(MAKE) --no-print-directory configure
 	@ $(MAKE) --no-print-directory -C build
 	
 .PHONY: ej
 ej:
 	@ $(MAKE) --no-print-directory distclean
-	@ $(MAKE) --no-print-directory redep
+	@ $(MAKE) --no-print-directory configure
 	@ $(MAKE) --no-print-directory -j2 -C build
 	
 	
@@ -25,9 +25,13 @@ clean:
 		then $(MAKE) --no-print-directory -C build clean ; \
 	fi
 	
+.PHONY: configure
+configure:
+	@ rm -rf build/ ; mkdir -p build/ ; cd build/ ; cmake .. ; cd ..
+
 .PHONY: redep
 redep: 
-	@ rm -rf build/ ; mkdir -p build/ ; cd build/ ; cmake .. ; cd ..
+	@ cd build/ ; cmake .. ; cd ..
 	
 .PHONY: distclean
 distclean: 

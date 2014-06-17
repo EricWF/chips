@@ -4,30 +4,11 @@ cmake_minimum_required (VERSION 2.7)
 #                   Toolchain config
 ################################################################################
 
-# C++ Version Config 
-# Currently not supported!
-option(CONFIG_CXX1Y "Compile using c++1y standard" OFF)
-
-# Compiler Config
-option(CONFIG_USE_CLANG "use clang instead of gcc" OFF)
-
-# Standard Library config
-option(CONFIG_USE_LIBCXX "if clang is selected,  it will use libc++" OFF)
-
-# Sanitizers
-option(CONFIG_ASAN "address sanitizer" OFF)
-option(CONFIG_TSAN "thread sanitizer" OFF)
-option(CONFIG_MSAN "memory sanitizer" OFF)
 
 # Misc
 option(CONFIG_ALL_WARNINGS "Add warnings for GCC/Clang" ON)
 option(CONFIG_UNIT_TESTS "build unit tests" ON)
 
-# Toolchain Configuration
-if(CONFIG_USE_CLANG)
-    set(CMAKE_C_COMPILER   /usr/bin/clang)
-    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-endif()
 
         
 ################################################################################
@@ -63,23 +44,13 @@ elseif( ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" )
 else()
     message( FATAL_ERROR "Compiler not supported! (${CMAKE_CXX_COMPILER_ID})" )
 endif()
-# Flag Config
-if (NOT CONFIG_CXX1Y)
-    set(CXX_VERSION_FLAGS " -std=c++11 ")
-else()
-    message( STATUS "Using c++1y standard")
-    set(CXX_VERSION_FLAGS " -std=c++1y ")
-endif()
+
+set(CXX_VERSION_FLAGS " -std=c++11 ")
+
 
 set(CXX_WARNING_FLAGS " -Wall -Wextra -pedantic ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_VERSION_FLAGS} ${CXX_WARNING_FLAGS}")
 
-if ( CONFIG_ASAN OR CONFIG_TSAN OR CONFIG_MSAN )
-    if (NOT CMAKE_BUILD_TYPE MATCHES "DEBUG")
-        message( WARNING "Build configuration forced to DEBUG when using sanitizers")
-    endif()
-    set(CMAKE_BUILD_TYPE DEBUG CACHE STRING "Build configuration" FORCE)
-endif()
 
 
 if ( CXX_COMPILER_GCC )
@@ -105,36 +76,6 @@ elseif( CXX_COMPILER_CLANG )
     set(CXX_CLANG_FLAGS " -ferror-limit=3 " )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CXX_CLANG_FLAGS}")
 endif()
-
-
-if (CONFIG_USE_LIBCXX)
-    if (NOT CXX_COMPILER_CLANG)
-        message( FATAL_ERROR "Cannot use libc++ with GNU" )
-    endif()
-    message( STATUS "Using libc++ with Clang" )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -stdlib=libc++ ")
-endif()
-
-
-if (CONFIG_ASAN)
-  message( STATUS "Compiling with address sanitizer")
-  set(CONFIG_NO_LIBRARIES ON CACHE BOOL "" FORCE)
-  set(CMAKE_CXX_FLAGS  " ${CMAKE_CXX_FLAGS} -fsanitize=address ")
-endif()
-
-
-if (CONFIG_TSAN)
-  message( STATUS "Compiling with thread sanitizer")
-  set(CONFIG_NO_LIBRARIES ON CACHE BOOL "" FORCE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fsanitize=thread ")
-endif() 
-
-
-if (CONFIG_MSAN)
-  message( STATUS "Compiling with memory sanitizer")
-  set(CONFIG_NO_LIBRARIES ON CACHE BOOL "" FORCE)
-  set(CMAKE_CXX_FLAGS " ${CMAKE_CXX_FLAGS} -fsanitize=memory ")
-endif() 
 
 
 set( CMAKE_CXX_FLAGS_RELEASE "-O3  -DNDEBUG " )
