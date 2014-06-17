@@ -1,49 +1,55 @@
 SHELL := /bin/bash
 
+NOPRINTD ?= --no-print-directory
+CMD_VERB ?= @
+
 .PHONY: all
 all: 
-	@ mkdir -p build/ ; cd build/ ; cmake .. ; cd ..
-	@ $(MAKE) --no-print-directory -C build
+ifeq ($(wildcard build/Makefile),)
+	$(error make configure must be run)
+else
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) -C build
+endif
 
 	
-.PHONY: e
-e:
-	@ $(MAKE) --no-print-directory distclean
-	@ $(MAKE) --no-print-directory configure
-	@ $(MAKE) --no-print-directory -C build
-	
-.PHONY: ej
-ej:
-	@ $(MAKE) --no-print-directory distclean
-	@ $(MAKE) --no-print-directory configure
-	@ $(MAKE) --no-print-directory -j2 -C build
+.PHONY: everything
+everything:
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) distclean
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) configure
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) -C build
 	
 	
 .PHONY: clean
 clean:
-	@ if [ -f build/Makefile ]; \
-		then $(MAKE) --no-print-directory -C build clean ; \
+	$(CMD_VERB) if [ -f build/Makefile ]; \
+		then $(MAKE) $(NOPRINTD) -C build clean ; \
 	fi
 	
 .PHONY: configure
 configure:
-	@ rm -rf build/ ; mkdir -p build/ ; cd build/ ; cmake .. ; cd ..
+	$(CMD_VERB) rm -rf build/ ; mkdir -p build/ ; cd build/ ; cmake .. ; cd ..
 
 .PHONY: redep
 redep: 
-	@ cd build/ ; cmake .. ; cd ..
+	$(CMD_VERB) cd build/ ; cmake .. ; cd ..
 	
 .PHONY: distclean
 distclean: 
-	@ $(MAKE) --no-print-directory clean
-	@ rm -rf ./build ./bin
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) clean
+	$(CMD_VERB) rm -rf ./build ./bin
 	
 .PHONY: check
 check:
-	@ echo === Building tests ===
-	@ $(MAKE) --no-print-directory -C build
-	@ echo
-	@ echo === Running tests ===
-	@ ./bin/chips_test --log_level=message --report_level=short
+	$(CMD_VERB) echo === Building tests ===
+	$(CMD_VERB) $(MAKE) $(NOPRINTD) -C build
+	$(CMD_VERB) echo
+	$(CMD_VERB) echo === Running tests ===
+	$(CMD_VERB) ./bin/chips_test --log_level=message --report_level=short
+
+################################################################################
+.PHONY: scan-build
+scan-build:
+	$(CMD_VERB) rm -rf build/ ; mkdir -p build ; cd build/ ; cmake .. ; scan-build make $(NOPRINTD) -C all; cd ..
+
 	
 	

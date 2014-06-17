@@ -8,11 +8,11 @@
 # include <elib/aux.hpp>
 # include <elib/any.hpp>
 # include <elib/fmt.hpp>
+# include <elib/container/flat_map.hpp>
 # include <functional>
 # include <string>
 # include <typeindex>
 # include <typeinfo>
-# include <unordered_map>
 # include <utility> /* for std::make_pair */
 # include <cstddef>
 
@@ -718,8 +718,8 @@ namespace chips
         entity_id m_id;
         bool m_alive;
         death_function m_on_death;
-        std::unordered_map<std::type_index, elib::any> m_attributes;
-        std::unordered_map<std::type_index, elib::any> m_methods;
+        elib::flat_map<std::type_index, elib::any> m_attributes;
+        elib::flat_map<std::type_index, elib::any> m_methods;
     };                                                      // class entity
     
     ////////////////////////////////////////////////////////////////////////////
